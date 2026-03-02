@@ -20,6 +20,7 @@ import EmployerManagement from './pages/admin/EmployerManagement';
 import AdminSettings from './pages/admin/AdminSettings';
 import ProfileSettings from './pages/admin/ProfileSettings';
 import JobManagement from './pages/admin/JobManagement';
+import AdminEditJobRequest from './pages/admin/AdminEditJobRequest';
 import NotFoundPage from './pages/shared/NotFoundPage';
 
 // React Query Client
@@ -59,6 +60,7 @@ function App() {
               <Route path="/employers" element={<EmployerManagement />} />
               <Route path="/candidates" element={<CandidateManagement />} />
               <Route path="/jobs" element={<JobManagement />} />
+              <Route path="/jobs/:id" element={<AdminEditJobRequest />} />
               <Route path="/applications" element={<div className="p-10 text-center font-bold text-slate-400">Applications Management Module Coming Soon</div>} />
               <Route path="/shortlisted-candidates" element={<div className="p-10 text-center font-bold text-slate-400 text-2xl uppercase tracking-widest">Shortlisted Candidates Module Coming Soon</div>} />
               <Route path="/settings" element={<AdminSettings />} />

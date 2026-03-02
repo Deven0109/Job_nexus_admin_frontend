@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { adminAPI } from '../../api/admin.api';
 import toast from 'react-hot-toast';
 import {
@@ -18,6 +19,7 @@ import {
     HiOutlineBuildingOffice2,
     HiOutlineUserCircle,
     HiOutlineCalendarDays,
+    HiOutlinePencilSquare,
 } from 'react-icons/hi2';
 
 const STATUS_COLORS = {
@@ -35,6 +37,7 @@ const URGENCY_COLORS = {
 };
 
 const JobManagement = () => {
+    const navigate = useNavigate();
     const [jobRequests, setJobRequests] = useState([]);
     const [pagination, setPagination] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -105,6 +108,10 @@ const JobManagement = () => {
     const handleView = (job) => {
         setSelectedJob(job);
         setShowViewModal(true);
+    };
+
+    const handleEdit = (jobId) => {
+        navigate(`/jobs/${jobId}?edit=true`);
     };
 
     const formatSalary = (min, max) => {
@@ -224,6 +231,7 @@ const JobManagement = () => {
                                 <th className="text-left px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Company</th>
                                 <th className="text-left px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Experience</th>
                                 <th className="text-left px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Salary</th>
+                                <th className="text-left px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Recruiter</th>
                                 <th className="text-left px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Status</th>
                                 <th className="text-center px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -255,7 +263,7 @@ const JobManagement = () => {
                                                 <p className="font-bold text-dark-900">{job.jobTitle || job.title || 'Untitled Job'}</p>
                                                 <p className="text-[11px] text-dark-400 flex items-center gap-1 mt-0.5 leading-none">
                                                     <HiOutlineMapPin className="w-3 h-3" />
-                                                    {job.jobLocation || job.location || 'Location not specified'}
+                                                    {[job.city, job.state, job.country].filter(Boolean).join(', ') || job.jobLocation || job.location || 'Location not specified'}
                                                 </p>
                                             </div>
                                         </td>
@@ -276,6 +284,9 @@ const JobManagement = () => {
                                         </td>
                                         <td className="px-5 py-4 text-dark-600">{job.experienceRequired || job.experience || 'Not specified'}</td>
                                         <td className="px-5 py-4 text-dark-600">{formatSalary(job.salaryMin, job.salaryMax)}</td>
+                                        <td className="px-5 py-4 whitespace-nowrap">
+                                            <p className="text-xs font-bold text-dark-700">{job.approvedByRecruiter ? `${job.approvedByRecruiter.firstName} ${job.approvedByRecruiter.lastName}` : 'N/A'}</p>
+                                        </td>
                                         <td className="px-5 py-4">
                                             {(job.status === 'active' || job.status === 'inactive') ? (
                                                 <button
@@ -300,6 +311,13 @@ const JobManagement = () => {
                                                     title="View Full Details"
                                                 >
                                                     <HiOutlineEye className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleEdit(job._id)}
+                                                    className="p-1.5 rounded-lg text-dark-400 hover:text-primary-600 hover:bg-primary-50 transition-all"
+                                                    title="Edit Job Details"
+                                                >
+                                                    <HiOutlinePencilSquare className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </td>
@@ -367,7 +385,7 @@ const JobManagement = () => {
                                         {selectedJob.companyId?.companyName || 'Unknown Company'}
                                         <span className="w-1.5 h-1.5 rounded-full bg-white/40"></span>
                                         <HiOutlineMapPin className="w-4 h-4" />
-                                        {selectedJob.jobLocation || selectedJob.location || 'Remote'}
+                                        {[selectedJob.city, selectedJob.state, selectedJob.country].filter(Boolean).join(', ') || selectedJob.jobLocation || selectedJob.location || 'Remote'}
                                     </p>
                                 </div>
                             </div>
@@ -450,6 +468,11 @@ const JobManagement = () => {
                                             <span className="text-xs text-slate-500 font-medium">Urgency:</span>
                                             <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md ${URGENCY_COLORS[selectedJob.urgency] || 'text-slate-500'}`}>{selectedJob.urgency}</span>
                                         </div>
+                                        {selectedJob.approvedByRecruiter && (
+                                            <p className="text-xs text-slate-500 font-medium mt-1">
+                                                Managed by: <span className="text-slate-900 font-black">{selectedJob.approvedByRecruiter.firstName} {selectedJob.approvedByRecruiter.lastName}</span>
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>

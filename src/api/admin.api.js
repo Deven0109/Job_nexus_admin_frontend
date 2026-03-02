@@ -26,5 +26,7 @@ export const adminAPI = {
 
     // Job Management
     listJobRequests: (params) => api.get('/job-requests', { params }),
+    getJobRequestById: (id) => api.get(`/job-requests/${id}`),
+    updateJobRequest: (id, data) => api.put(`/job-requests/${id}`, data),
     toggleJobStatus: (id) => api.patch(`/job-requests/${id}/toggle-status`),
 };

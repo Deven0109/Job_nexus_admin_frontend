@@ -22,6 +22,10 @@ import {
     HiOutlineBriefcase,
     HiOutlineDocumentText,
     HiOutlineExclamationTriangle,
+    HiOutlinePencilSquare,
+    HiOutlineTrash,
+    HiOutlineLockClosed,
+    HiOutlineUser,
 } from 'react-icons/hi2';
 
 const EmployerManagement = () => {
@@ -36,13 +40,35 @@ const EmployerManagement = () => {
         limit: 10,
     });
 
+    const [fetchError, setFetchError] = useState(false);
+
     // View Profile Modal state
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [profileLoading, setProfileLoading] = useState(false);
     const [selectedEmployer, setSelectedEmployer] = useState(null);
     const [companyProfile, setCompanyProfile] = useState(null);
 
-    const [fetchError, setFetchError] = useState(false);
+    // Create/Edit Employer Modal state
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [formLoading, setFormLoading] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        phone: '',
+        companyName: '',
+        industry: '',
+        companyLocation: '',
+        companyEmail: '',
+        companyWebsite: '',
+        companySize: '1-10',
+        companyDescription: '',
+    });
+    const [showPassword, setShowPassword] = useState(false);
 
     const fetchEmployers = useCallback(async () => {
         setLoading(true);
@@ -134,6 +160,133 @@ const EmployerManagement = () => {
         setFilters({ search: '', isActive: '', page: 1, limit: 10 });
     };
 
+    const validateForm = (isCreate) => {
+        const errors = {};
+        if (!formData.firstName?.trim()) errors.firstName = 'Required';
+        if (!formData.lastName?.trim()) errors.lastName = 'Required';
+        if (!formData.email?.trim()) {
+            errors.email = 'Required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            errors.email = 'Invalid email';
+        }
+        if (isCreate && !formData.password) {
+            errors.password = 'Required';
+        } else if (isCreate && formData.password.length < 8) {
+            errors.password = 'Min 8 characters';
+        }
+        if (!formData.companyName?.trim()) errors.companyName = 'Required';
+        if (!formData.industry?.trim()) errors.industry = 'Required';
+        if (!formData.companyLocation?.trim()) errors.companyLocation = 'Required';
+        return errors;
+    };
+
+    const handleFormChange = (field, value) => {
+        setFormData((prev) => ({ ...prev, [field]: value }));
+        if (formErrors[field]) {
+            setFormErrors((prev) => ({ ...prev, [field]: '' }));
+        }
+    };
+
+    const openCreateModal = () => {
+        setFormData({
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            phone: '',
+            role: 'employer',
+            companyName: '',
+            industry: '',
+            companyLocation: '',
+            companyEmail: '',
+            companyWebsite: '',
+            companySize: '1-10',
+            companyDescription: '',
+        });
+        setFormErrors({});
+        setShowCreateModal(true);
+    };
+
+    const handleCreateEmployer = async (e) => {
+        e.preventDefault();
+        const errors = validateForm(true);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            return;
+        }
+
+        setFormLoading(true);
+        try {
+            await adminAPI.createUser({ ...formData, role: 'employer' });
+            toast.success('Employer created successfully');
+            setShowCreateModal(false);
+            fetchEmployers();
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to create employer');
+        } finally {
+            setFormLoading(false);
+        }
+    };
+
+    const openEditModal = (emp) => {
+        setSelectedEmployer(emp);
+        setFormData({
+            firstName: emp.firstName,
+            lastName: emp.lastName,
+            email: emp.email,
+            phone: emp.phone || '',
+            companyName: emp.companyName || '',
+            industry: emp.industry || '',
+            companyLocation: emp.companyLocation || '',
+            companyEmail: emp.companyEmail || '',
+            companyWebsite: emp.companyWebsite || '',
+            companySize: emp.companySize || '1-10',
+            companyDescription: emp.companyDescription || '',
+        });
+        setFormErrors({});
+        setShowEditModal(true);
+    };
+
+    const handleUpdateEmployer = async (e) => {
+        e.preventDefault();
+        const errors = validateForm(false);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            return;
+        }
+
+        setFormLoading(true);
+        try {
+            await adminAPI.updateUser(selectedEmployer._id, { ...formData, role: 'employer' });
+            toast.success('Employer updated successfully');
+            setShowEditModal(false);
+            fetchEmployers();
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to update employer');
+        } finally {
+            setFormLoading(false);
+        }
+    };
+
+    const openDeleteModal = (emp) => {
+        setSelectedEmployer(emp);
+        setShowDeleteModal(true);
+    };
+
+    const handleDeleteEmployer = async () => {
+        setFormLoading(true);
+        try {
+            await adminAPI.deleteUser(selectedEmployer._id);
+            toast.success('Employer deleted successfully');
+            setShowDeleteModal(false);
+            fetchEmployers();
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to delete employer');
+        } finally {
+            setFormLoading(false);
+        }
+    };
+
     const formatDate = (dateStr) => {
         if (!dateStr) return '—';
         return new Date(dateStr).toLocaleDateString('en-US', {
@@ -167,14 +320,29 @@ const EmployerManagement = () => {
     const inactiveCount = employers.filter((e) => !e.isActive).length;
     const verifiedCount = employers.filter((e) => e.verifiedByAdmin).length;
 
+    const inputCls = (field) =>
+        `w-full pl-10 pr-4 py-2.5 rounded-lg border text-sm text-dark-800 placeholder-dark-400 transition-all focus:ring-2 focus:ring-primary-100 ${formErrors[field]
+            ? 'border-danger-400 focus:border-danger-500'
+            : 'border-dark-200 focus:border-primary-500'
+        }`;
+
     return (
         <div className="space-y-6">
             {/* Page Header */}
-            <div>
-                <h2 className="text-xl font-bold text-dark-900">Employer Management</h2>
-                <p className="text-sm text-dark-500 mt-0.5">
-                    Review, approve, and manage employer accounts
-                </p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h2 className="text-xl font-bold text-dark-900">Employer Management</h2>
+                    <p className="text-sm text-dark-500 mt-0.5">
+                        Review, approve, and manage employer accounts
+                    </p>
+                </div>
+                <button
+                    onClick={openCreateModal}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 gradient-primary text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity shadow-md"
+                >
+                    <HiOutlineBuildingOffice2 className="w-4 h-4" />
+                    Add Employer
+                </button>
             </div>
 
             {/* Stats Row */}
@@ -348,6 +516,16 @@ const EmployerManagement = () => {
                                         </>
                                     )}
                                 </span>
+                                <span
+                                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold ${emp.status === 'approved'
+                                        ? 'bg-success-50 text-success-700'
+                                        : emp.status === 'rejected'
+                                            ? 'bg-danger-50 text-danger-700'
+                                            : 'bg-warning-50 text-warning-700'
+                                        }`}
+                                >
+                                    {emp.status === 'approved' ? 'Approved' : emp.status === 'rejected' ? 'Rejected' : 'Pending'}
+                                </span>
                                 {emp.verifiedByAdmin && (
                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-primary-50 text-primary-700">
                                         <HiOutlineShieldCheck className="w-3 h-3" />
@@ -376,48 +554,44 @@ const EmployerManagement = () => {
                             <div className="flex items-center gap-2 pt-3 border-t border-dark-100">
                                 <button
                                     onClick={() => handleViewProfile(emp)}
-                                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold bg-primary-50 text-primary-600 hover:bg-primary-100 transition-colors"
+                                    className="p-2 rounded-lg text-primary-600 bg-primary-50 hover:bg-primary-100 transition-colors"
+                                    title="View Profile"
                                 >
-                                    <HiOutlineEye className="w-3.5 h-3.5" />
-                                    View
+                                    <HiOutlineEye className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={() => openEditModal(emp)}
+                                    className="p-2 rounded-lg text-warning-600 bg-warning-50 hover:bg-warning-100 transition-colors"
+                                    title="Edit Employer"
+                                >
+                                    <HiOutlinePencilSquare className="w-4 h-4" />
                                 </button>
                                 <button
                                     onClick={() => handleToggleVerification(emp._id)}
-                                    className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-colors ${emp.verifiedByAdmin
-                                        ? 'bg-warning-50 text-warning-600 hover:bg-warning-100'
-                                        : 'bg-primary-50 text-primary-600 hover:bg-primary-100'
+                                    className={`p-2 rounded-lg transition-colors ${emp.verifiedByAdmin
+                                        ? 'text-danger-600 bg-danger-50 hover:bg-danger-100'
+                                        : 'text-success-600 bg-success-50 hover:bg-success-100'
                                         }`}
+                                    title={emp.verifiedByAdmin ? 'Unverify' : 'Verify'}
                                 >
-                                    {emp.verifiedByAdmin ? (
-                                        <>
-                                            <HiOutlineXCircle className="w-3.5 h-3.5" />
-                                            Unverify
-                                        </>
-                                    ) : (
-                                        <>
-                                            <HiOutlineShieldCheck className="w-3.5 h-3.5" />
-                                            Verify
-                                        </>
-                                    )}
+                                    {emp.verifiedByAdmin ? <HiOutlineXMark className="w-4 h-4" /> : <HiOutlineShieldCheck className="w-4 h-4" />}
                                 </button>
                                 <button
                                     onClick={() => handleToggleStatus(emp._id)}
-                                    className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-colors ${emp.isActive
-                                        ? 'bg-danger-50 text-danger-600 hover:bg-danger-100'
-                                        : 'bg-success-50 text-success-600 hover:bg-success-100'
+                                    className={`p-2 rounded-lg transition-colors ${emp.isActive
+                                        ? 'text-danger-600 bg-danger-50 hover:bg-danger-100'
+                                        : 'text-success-600 bg-success-50 hover:bg-success-100'
                                         }`}
+                                    title={emp.isActive ? 'Suspend' : 'Activate'}
                                 >
-                                    {emp.isActive ? (
-                                        <>
-                                            <HiOutlineNoSymbol className="w-3.5 h-3.5" />
-                                            Suspend
-                                        </>
-                                    ) : (
-                                        <>
-                                            <HiOutlineShieldCheck className="w-3.5 h-3.5" />
-                                            Activate
-                                        </>
-                                    )}
+                                    {emp.isActive ? <HiOutlineNoSymbol className="w-4 h-4" /> : <HiOutlineCheckCircle className="w-4 h-4" />}
+                                </button>
+                                <button
+                                    onClick={() => openDeleteModal(emp)}
+                                    className="p-2 rounded-lg text-danger-600 bg-danger-50 hover:bg-danger-100 transition-colors ml-auto"
+                                    title="Delete Employer"
+                                >
+                                    <HiOutlineTrash className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
@@ -609,6 +783,111 @@ const EmployerManagement = () => {
                                 Close
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Create Modal */}
+            {showCreateModal && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowCreateModal(false)} />
+                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-lg font-bold text-dark-900">Add New Employer</h3>
+                            <button onClick={() => setShowCreateModal(false)} className="p-1.5 rounded-lg hover:bg-dark-100 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
+                        </div>
+                        <form onSubmit={handleCreateEmployer} className="space-y-6">
+                            {/* Contact Person */}
+                            <div className="space-y-4">
+                                <h4 className="text-xs font-bold text-dark-400 uppercase tracking-widest border-b border-dark-100 pb-2">Contact Person</h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">First Name *</label><div className="relative"><HiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.firstName} onChange={(e) => handleFormChange('firstName', e.target.value)} placeholder="John" className={inputCls('firstName')} /></div>{formErrors.firstName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.firstName}</p>}</div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Last Name *</label><div className="relative"><HiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.lastName} onChange={(e) => handleFormChange('lastName', e.target.value)} placeholder="Doe" className={inputCls('lastName')} /></div>{formErrors.lastName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.lastName}</p>}</div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Email *</label><div className="relative"><HiOutlineEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="email" value={formData.email} onChange={(e) => handleFormChange('email', e.target.value)} placeholder="employer@example.com" className={inputCls('email')} /></div>{formErrors.email && <p className="mt-1 text-[11px] text-danger-600">{formErrors.email}</p>}</div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Phone</label><div className="relative"><HiOutlinePhone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="tel" value={formData.phone} onChange={(e) => handleFormChange('phone', e.target.value)} placeholder="+1234567890" className={inputCls('phone')} /></div></div>
+                                </div>
+                                <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Login Password *</label><div className="relative"><HiOutlineLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type={showPassword ? 'text' : 'password'} value={formData.password} onChange={(e) => handleFormChange('password', e.target.value)} className={inputCls('password')} /><button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400">{showPassword ? <HiOutlineEyeSlash className="w-4 h-4" /> : <HiOutlineEye className="w-4 h-4" />}</button></div>{formErrors.password && <p className="mt-1 text-[11px] text-danger-600">{formErrors.password}</p>}</div>
+                            </div>
+
+                            {/* Company Info */}
+                            <div className="space-y-4">
+                                <h4 className="text-xs font-bold text-dark-400 uppercase tracking-widest border-b border-dark-100 pb-2">Company Information</h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Name *</label><div className="relative"><HiOutlineBuildingOffice2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.companyName} onChange={(e) => handleFormChange('companyName', e.target.value)} placeholder="Acme Inc." className={inputCls('companyName')} /></div>{formErrors.companyName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.companyName}</p>}</div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Industry *</label><div className="relative"><HiOutlineBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.industry} onChange={(e) => handleFormChange('industry', e.target.value)} placeholder="Technology" className={inputCls('industry')} /></div>{formErrors.industry && <p className="mt-1 text-[11px] text-danger-600">{formErrors.industry}</p>}</div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Location *</label><div className="relative"><HiOutlineMapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.companyLocation} onChange={(e) => handleFormChange('companyLocation', e.target.value)} placeholder="San Francisco, CA" className={inputCls('companyLocation')} /></div>{formErrors.companyLocation && <p className="mt-1 text-[11px] text-danger-600">{formErrors.companyLocation}</p>}</div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Size</label><select value={formData.companySize} onChange={(e) => handleFormChange('companySize', e.target.value)} className="w-full px-4 py-2.5 rounded-lg border border-dark-200 text-sm appearance-none bg-white"><option value="1-10">1-10 employees</option><option value="11-50">11-50 employees</option><option value="51-200">51-200 employees</option><option value="201-500">201-500 employees</option><option value="501-1000">501-1000 employees</option><option value="1000+">1000+ employees</option></select></div>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3 pt-4"><button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 py-3 rounded-xl border border-dark-200 text-sm font-bold text-dark-600">Cancel</button><button type="submit" disabled={formLoading} className="flex-1 py-3 gradient-primary text-white text-sm font-bold rounded-xl shadow-lg disabled:opacity-70">{formLoading ? 'Creating...' : 'Create Employer Account'}</button></div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Modal */}
+            {showEditModal && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowEditModal(false)} />
+                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-lg font-bold text-dark-900">Edit Employer</h3>
+                            <button onClick={() => setShowEditModal(false)} className="p-1.5 rounded-lg hover:bg-dark-100 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
+                        </div>
+                        <form onSubmit={handleUpdateEmployer} className="space-y-6">
+                            {/* Contact Person */}
+                            <div className="space-y-4">
+                                <h4 className="text-xs font-bold text-dark-400 uppercase tracking-widest border-b border-dark-100 pb-2">Contact Person</h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">First Name *</label><div className="relative"><HiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.firstName} onChange={(e) => handleFormChange('firstName', e.target.value)} className={inputCls('firstName')} /></div>{formErrors.firstName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.firstName}</p>}</div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Last Name *</label><div className="relative"><HiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.lastName} onChange={(e) => handleFormChange('lastName', e.target.value)} className={inputCls('lastName')} /></div>{formErrors.lastName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.lastName}</p>}</div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Email *</label><div className="relative"><HiOutlineEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="email" value={formData.email} onChange={(e) => handleFormChange('email', e.target.value)} className={inputCls('email')} /></div>{formErrors.email && <p className="mt-1 text-[11px] text-danger-600">{formErrors.email}</p>}</div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Phone</label><div className="relative"><HiOutlinePhone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="tel" value={formData.phone} onChange={(e) => handleFormChange('phone', e.target.value)} className={inputCls('phone')} /></div></div>
+                                </div>
+                            </div>
+
+                            {/* Company Info */}
+                            <div className="space-y-4">
+                                <h4 className="text-xs font-bold text-dark-400 uppercase tracking-widest border-b border-dark-100 pb-2">Company Information</h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Name *</label><div className="relative"><HiOutlineBuildingOffice2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.companyName} onChange={(e) => handleFormChange('companyName', e.target.value)} className={inputCls('companyName')} /></div>{formErrors.companyName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.companyName}</p>}</div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Industry *</label><div className="relative"><HiOutlineBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.industry} onChange={(e) => handleFormChange('industry', e.target.value)} className={inputCls('industry')} /></div>{formErrors.industry && <p className="mt-1 text-[11px] text-danger-600">{formErrors.industry}</p>}</div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Location *</label><div className="relative"><HiOutlineMapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.companyLocation} onChange={(e) => handleFormChange('companyLocation', e.target.value)} className={inputCls('companyLocation')} /></div>{formErrors.companyLocation && <p className="mt-1 text-[11px] text-danger-600">{formErrors.companyLocation}</p>}</div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Size</label><select value={formData.companySize} onChange={(e) => handleFormChange('companySize', e.target.value)} className="w-full px-4 py-2.5 rounded-lg border border-dark-200 text-sm appearance-none bg-white"><option value="1-10">1-10 employees</option><option value="11-50">11-50 employees</option><option value="51-200">51-200 employees</option><option value="201-500">201-500 employees</option><option value="501-1000">501-1000 employees</option><option value="1000+">1000+ employees</option></select></div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Email</label><div className="relative"><HiOutlineEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="email" value={formData.companyEmail} onChange={(e) => handleFormChange('companyEmail', e.target.value)} className={inputCls('companyEmail')} /></div></div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Website</label><div className="relative"><HiOutlineGlobeAlt className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="url" value={formData.companyWebsite} onChange={(e) => handleFormChange('companyWebsite', e.target.value)} className={inputCls('companyWebsite')} /></div></div>
+                                </div>
+                                <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Description</label><textarea value={formData.companyDescription} onChange={(e) => handleFormChange('companyDescription', e.target.value)} rows="3" className="w-full px-4 py-2.5 rounded-lg border border-dark-200 text-sm focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all"></textarea></div>
+                            </div>
+
+                            <div className="flex items-center gap-3 pt-4"><button type="button" onClick={() => setShowEditModal(false)} className="flex-1 py-3 rounded-xl border border-dark-200 text-sm font-bold text-dark-600">Cancel</button><button type="submit" disabled={formLoading} className="flex-1 py-3 gradient-primary text-white text-sm font-bold rounded-xl shadow-lg disabled:opacity-70">{formLoading ? 'Saving...' : 'Save Changes'}</button></div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Modal */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)} />
+                    <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
+                        <div className="flex flex-col items-center text-center">
+                            <div className="w-12 h-12 rounded-full bg-danger-50 flex items-center justify-center mb-4"><HiOutlineExclamationTriangle className="w-6 h-6 text-danger-600" /></div>
+                            <h3 className="text-lg font-bold text-dark-900">Delete Employer</h3>
+                            <p className="text-sm text-dark-500 mt-2">Are you sure you want to delete <b>{selectedEmployer?.companyName || selectedEmployer?.firstName}</b>? This will permanently remove their account and all associated data.</p>
+                        </div>
+                        <div className="flex items-center gap-3 mt-8"><button type="button" onClick={() => setShowDeleteModal(false)} className="flex-1 py-2.5 rounded-lg border border-dark-200 text-sm font-semibold text-dark-600">Cancel</button><button type="button" onClick={handleDeleteEmployer} disabled={formLoading} className="flex-1 py-2.5 bg-danger-600 text-white text-sm font-semibold rounded-lg hover:bg-danger-700 shadow-md disabled:opacity-70">{formLoading ? 'Deleting...' : 'Yes, Delete'}</button></div>
                     </div>
                 </div>
             )}
