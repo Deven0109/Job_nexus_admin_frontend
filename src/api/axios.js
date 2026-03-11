@@ -94,7 +94,7 @@ api.interceptors.response.use(
                 // Clear auth state and redirect to login
                 localStorage.removeItem('jobnexus_admin_token');
                 localStorage.removeItem('jobnexus_admin_user');
-                window.location.href = '/signin';
+                window.location.href = '/#/signin';
 
                 return Promise.reject(refreshError);
             } finally {
