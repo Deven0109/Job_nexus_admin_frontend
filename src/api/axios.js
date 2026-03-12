@@ -102,6 +102,13 @@ api.interceptors.response.use(
             }
         }
 
+        // If it still fails with 401 after retry, securely redirect
+        if (error.response?.status === 401 && originalRequest._retry) {
+            localStorage.removeItem('jobnexus_admin_token');
+            localStorage.removeItem('jobnexus_admin_user');
+            window.location.href = '/#/signin';
+        }
+
         return Promise.reject(error);
     }
 );
