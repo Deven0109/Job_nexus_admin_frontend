@@ -80,29 +80,29 @@ const AdminSettings = () => {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h2 className="text-xl font-bold text-dark-900">System Settings</h2>
-                <p className="text-sm text-dark-500 mt-0.5">
+                <h2 className="text-2xl font-black text-black/80 tracking-tight">System Settings</h2>
+                <p className="text-sm text-slate-400 mt-1 font-bold">
                     Configure pipeline stages and platform settings
                 </p>
             </div>
 
             {/* Pipeline Stages */}
-            <div className="card p-6">
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center">
-                            <HiOutlineClipboardDocumentList className="w-5 h-5 text-primary-600" />
+            <div className="card p-6 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center">
+                            <HiOutlineClipboardDocumentList className="w-6 h-6 text-indigo-500" />
                         </div>
                         <div>
-                            <h3 className="text-base font-bold text-dark-900">Pipeline Stages</h3>
-                            <p className="text-xs text-dark-400">
+                            <h3 className="text-lg font-black text-black/80 tracking-tight">Pipeline Stages</h3>
+                            <p className="text-sm text-slate-400 font-bold">
                                 Configure the hiring pipeline stages for all jobs
                             </p>
                         </div>
                     </div>
                     <button
                         onClick={() => setShowAddForm(!showAddForm)}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 gradient-primary text-white text-xs font-semibold rounded-lg hover:opacity-90 transition-opacity shadow-md"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-[#5b4eff] text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-slate-900 transition-all shadow-lg shadow-[#5b4eff]/20 active:scale-95"
                     >
                         <HiOutlinePlusCircle className="w-4 h-4" />
                         Add Stage
@@ -110,9 +110,9 @@ const AdminSettings = () => {
                 </div>
 
                 {/* Info */}
-                <div className="mb-5 p-3 bg-info-50 border border-info-200 rounded-lg flex items-start gap-2">
-                    <HiOutlineInformationCircle className="w-4 h-4 text-info-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-info-700">
+                <div className="mb-6 p-4 bg-blue-50/50 border border-blue-100 rounded-2xl flex items-start gap-3">
+                    <HiOutlineInformationCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-blue-700 font-medium">
                         These stages define the hiring pipeline flow. Drag to reorder or use the arrows to
                         change the sequence. Changes will apply to all new jobs.
                     </p>
@@ -121,7 +121,7 @@ const AdminSettings = () => {
                 {/* Add Stage Form */}
                 {showAddForm && (
                     <div className="mb-5 p-4 bg-dark-50 rounded-xl border border-dark-200">
-                        <h4 className="text-sm font-semibold text-dark-800 mb-3">New Stage</h4>
+                        <h4 className="text-sm font-semibold text-black/80 mb-3">New Stage</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <input
                                 type="text"
@@ -230,7 +230,7 @@ const AdminSettings = () => {
                                 </div>
                             ) : (
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-dark-800">
+                                    <p className="text-sm font-semibold text-black/80">
                                         {stage.name}
                                     </p>
                                     {stage.description && (
@@ -282,14 +282,14 @@ const AdminSettings = () => {
             </div>
 
             {/* General Settings Section */}
-            <div className="card p-6">
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-secondary-50 flex items-center justify-center">
-                        <HiOutlineCog6Tooth className="w-5 h-5 text-secondary-600" />
+            <div className="card p-6 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                <div className="flex items-center gap-4 mb-8">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center">
+                        <HiOutlineCog6Tooth className="w-6 h-6 text-amber-500" />
                     </div>
                     <div>
-                        <h3 className="text-base font-bold text-dark-900">General Settings</h3>
-                        <p className="text-xs text-dark-400">
+                        <h3 className="text-lg font-black text-black/80 tracking-tight">General Settings</h3>
+                        <p className="text-sm text-slate-400 font-bold">
                             Platform-wide configuration options
                         </p>
                     </div>

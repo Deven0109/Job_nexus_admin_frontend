@@ -141,14 +141,14 @@ const ProfileSettings = () => {
                             <HiOutlineUser className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-900">Update Profile</h3>
+                            <h3 className="text-lg font-bold text-black/80">Update Profile</h3>
                             <p className="text-sm text-slate-500 font-medium">Update your personal information</p>
                         </div>
                     </div>
 
                     <form onSubmit={handleUpdateProfile} className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-[13px] font-bold text-slate-700 ml-1 flex items-center gap-1.5">
+                            <label className="text-[13px] font-bold text-black/80 ml-1 flex items-center gap-1.5">
                                 <HiOutlineUser className="w-4 h-4 text-slate-400" />
                                 Full Name <span className="text-red-500">*</span>
                             </label>
@@ -173,7 +173,7 @@ const ProfileSettings = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[13px] font-bold text-slate-700 ml-1 flex items-center gap-1.5">
+                            <label className="text-[13px] font-bold text-black/80 ml-1 flex items-center gap-1.5">
                                 <HiOutlineEnvelope className="w-4 h-4 text-slate-400" />
                                 Email Address <span className="text-red-500">*</span>
                             </label>
@@ -188,7 +188,7 @@ const ProfileSettings = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[13px] font-bold text-slate-700 ml-1 flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+                            <label className="text-[13px] font-bold text-black/80 ml-1 flex items-center gap-1.5 hover:opacity-80 transition-opacity">
                                 <HiOutlineEnvelope className="w-4 h-4 text-slate-400" />
                                 Current Email
                             </label>

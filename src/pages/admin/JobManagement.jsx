@@ -23,11 +23,11 @@ import {
 } from 'react-icons/hi2';
 
 const STATUS_COLORS = {
-    pending: 'bg-warning-50 text-warning-700',
-    approved: 'bg-blue-50 text-blue-700',
-    rejected: 'bg-danger-50 text-danger-700',
-    active: 'bg-success-50 text-success-700',
-    inactive: 'bg-slate-100 text-slate-600',
+    pending: 'bg-amber-50 text-amber-700 border border-amber-100',
+    approved: 'bg-blue-50 text-blue-700 border border-blue-100',
+    rejected: 'bg-rose-50 text-rose-600 border border-rose-100',
+    active: 'bg-emerald-50 text-emerald-700 border border-emerald-100',
+    inactive: 'bg-rose-50 text-rose-600 border border-rose-100',
 };
 
 const URGENCY_COLORS = {
@@ -46,7 +46,7 @@ const JobManagement = () => {
         search: '',
         status: '',
         page: 1,
-        limit: 10,
+        limit: 5,
     });
 
     // View Modal
@@ -90,16 +90,13 @@ const JobManagement = () => {
     }, [searchInput]);
 
     const handleToggleStatus = async (id, currentStatus) => {
-        const action = currentStatus === 'active' ? 'deactivate' : 'activate';
-        if (!window.confirm(`Are you sure you want to ${action} this job?`)) return;
-
         setActionLoading(true);
         try {
             await adminAPI.toggleJobStatus(id);
-            toast.success(`Job ${currentStatus === 'active' ? 'deactivated' : 'activated'} successfully!`);
+            toast.success(`Job ${currentStatus === 'active' ? 'rejected' : 'activated'} successfully!`);
             fetchJobRequests();
         } catch (error) {
-            toast.error(error.response?.data?.message || `Failed to ${action} job`);
+            toast.error(error.response?.data?.message || `Failed to toggle status`);
         } finally {
             setActionLoading(false);
         }
@@ -139,70 +136,78 @@ const JobManagement = () => {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h2 className="text-xl font-bold text-dark-900 flex items-center gap-2">
-                    <HiOutlineBriefcase className="w-6 h-6 text-primary-500" />
+                <h2 className="text-2xl font-black text-black/80 tracking-tight flex items-center gap-3">
+                    <HiOutlineBriefcase className="w-7 h-7 text-blue-600" />
                     Job Management
                 </h2>
-                <p className="text-sm text-dark-500 mt-0.5">Monitor and manage all job requests and live postings</p>
+                <p className="text-[13px] text-slate-500 mt-1 font-bold">Monitor and manage all job requests and live postings</p>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="card p-4 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-200">
-                        <HiOutlineBriefcase className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                        <p className="text-lg font-bold text-dark-900">{totalCount}</p>
-                        <p className="text-xs text-dark-400">Total Jobs</p>
-                    </div>
-                </div>
-                <div className="card p-4 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-success-500 to-success-600 flex items-center justify-center shadow-lg shadow-success-200">
-                        <HiOutlineCheckCircle className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                        <p className="text-lg font-bold text-dark-900">{activeCount}</p>
-                        <p className="text-xs text-dark-400">Live Active</p>
+                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center">
+                            <HiOutlineBriefcase className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <p className="text-xl font-black text-black/80 leading-none">{totalCount}</p>
+                            <p className="text-xs text-slate-400 font-bold mt-1">Total Jobs</p>
+                        </div>
                     </div>
                 </div>
-                <div className="card p-4 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center shadow-lg shadow-warning-200">
-                        <HiOutlineClock className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                        <p className="text-lg font-bold text-dark-900">{pendingCount}</p>
-                        <p className="text-xs text-dark-400">Pending Approval</p>
+                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                            <HiOutlineCheckCircle className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <p className="text-xl font-black text-black/80 leading-none">{activeCount}</p>
+                            <p className="text-xs text-slate-400 font-bold mt-1">Live Active</p>
+                        </div>
                     </div>
                 </div>
-                <div className="card p-4 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-danger-500 to-danger-600 flex items-center justify-center shadow-lg shadow-danger-200">
-                        <HiOutlineXCircle className="w-5 h-5 text-white" />
+                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                            <HiOutlineClock className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <p className="text-xl font-black text-black/80 leading-none">{pendingCount}</p>
+                            <p className="text-xs text-slate-400 font-bold mt-1">Pending</p>
+                        </div>
                     </div>
-                    <div>
-                        <p className="text-lg font-bold text-dark-900">{jobRequests.filter(j => j.status === 'rejected').length}</p>
-                        <p className="text-xs text-dark-400">Rejected</p>
+                </div>
+                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center">
+                            <HiOutlineXCircle className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <p className="text-xl font-black text-black/80 leading-none">{jobRequests.filter(j => j.status === 'rejected').length}</p>
+                            <p className="text-xs text-slate-400 font-bold mt-1">Rejected</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Filters */}
-            <div className="card p-4">
-                <div className="flex flex-col sm:flex-row gap-3">
+            <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                <div className="flex flex-col sm:flex-row gap-4">
                     <div className="flex-1 relative">
-                        <HiOutlineMagnifyingGlass className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
+                        <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input
                             type="text"
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
-                            placeholder="Search by job title or company..."
-                            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-200 text-sm text-dark-800 placeholder-dark-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all outline-none"
+                            placeholder="Search jobs..."
+                            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm text-slate-700 placeholder-slate-400 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none"
                         />
                     </div>
                     <select
                         value={filters.status}
                         onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value, page: 1 }))}
-                        className="px-4 py-2.5 rounded-lg border border-dark-200 text-sm text-dark-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 appearance-none bg-white cursor-pointer min-w-[140px] outline-none"
+                        className="px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-600 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none appearance-none cursor-pointer min-w-[150px]"
                     >
                         <option value="">All Status</option>
                         <option value="pending">Pending</option>
@@ -212,8 +217,8 @@ const JobManagement = () => {
                         <option value="rejected">Rejected</option>
                     </select>
                     <button
-                        onClick={() => { setSearchInput(''); setFilters({ search: '', status: '', page: 1, limit: 10 }); }}
-                        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg border border-dark-200 text-sm font-medium text-dark-600 hover:bg-dark-50 transition-colors"
+                        onClick={() => { setSearchInput(''); setFilters({ search: '', status: '', page: 1, limit: 5 }); }}
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-slate-50 text-slate-600 text-xs font-black uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-100"
                     >
                         <HiOutlineArrowPath className="w-4 h-4" />
                         Reset
@@ -222,18 +227,18 @@ const JobManagement = () => {
             </div>
 
             {/* Data Table */}
-            <div className="card overflow-hidden">
+            <div className="card rounded-3xl border-none ring-1 ring-slate-100 bg-white overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
-                            <tr className="bg-dark-50 border-b border-dark-100">
-                                <th className="text-left px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Job Details</th>
-                                <th className="text-left px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Company</th>
-                                <th className="text-left px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Experience</th>
-                                <th className="text-left px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Salary</th>
-                                <th className="text-left px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Recruiter</th>
-                                <th className="text-left px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Status</th>
-                                <th className="text-center px-5 py-4 text-xs font-bold text-dark-500 uppercase tracking-wider">Actions</th>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest">Job Details</th>
+                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest">Company</th>
+                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest hidden lg:table-cell">Experience</th>
+                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest hidden lg:table-cell">Salary</th>
+                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest hidden md:table-cell">Recruiter</th>
+                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest">Status</th>
+                                <th className="text-center px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-dark-50">
@@ -260,7 +265,7 @@ const JobManagement = () => {
                                     <tr key={job._id} className="hover:bg-dark-25 transition-colors">
                                         <td className="px-5 py-4">
                                             <div>
-                                                <p className="font-bold text-dark-900">{job.jobTitle || job.title || 'Untitled Job'}</p>
+                                                <p className="font-bold text-black/80">{job.jobTitle || job.title || 'Untitled Job'}</p>
                                                 <p className="text-[11px] text-dark-400 flex items-center gap-1 mt-0.5 leading-none">
                                                     <HiOutlineMapPin className="w-3 h-3" />
                                                     {[job.city, job.state, job.country].filter(Boolean).join(', ') || job.jobLocation || job.location || 'Location not specified'}
@@ -277,7 +282,7 @@ const JobManagement = () => {
                                                     )}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="font-medium text-dark-700 truncate">{job.companyId?.companyName || 'Unknown Company'}</p>
+                                                    <p className="font-medium text-black/80 truncate">{job.companyId?.companyName || 'Unknown Company'}</p>
                                                     <p className="text-[11px] text-dark-400 truncate">{job.companyId?.companyEmail || 'No Email'}</p>
                                                 </div>
                                             </div>
@@ -293,12 +298,14 @@ const JobManagement = () => {
                                                     onClick={() => handleToggleStatus(job._id, job.status)}
                                                     disabled={actionLoading}
                                                     title={job.status === 'active' ? 'Click to deactivate' : 'Click to activate'}
-                                                    className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase transition-all hover:scale-105 active:scale-95 disabled:opacity-50 ${STATUS_COLORS[job.status]}`}
+                                                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 ${STATUS_COLORS[job.status]}`}
                                                 >
-                                                    {job.status}
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${job.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
+                                                    {job.status === 'inactive' ? 'rejected' : job.status}
                                                 </button>
                                             ) : (
-                                                <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${STATUS_COLORS[job.status]}`}>
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${STATUS_COLORS[job.status]}`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${job.status === 'approved' ? 'bg-blue-500' : job.status === 'pending' ? 'bg-amber-500 animate-pulse' : 'bg-rose-500'}`}></span>
                                                     {job.status}
                                                 </span>
                                             )}
@@ -307,17 +314,17 @@ const JobManagement = () => {
                                             <div className="flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => handleView(job)}
-                                                    className="p-1.5 rounded-lg text-dark-400 hover:text-primary-600 hover:bg-primary-50 transition-all"
+                                                    className="p-2 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all"
                                                     title="View Full Details"
                                                 >
-                                                    <HiOutlineEye className="w-4 h-4" />
+                                                    <HiOutlineEye className="w-5 h-5" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleEdit(job._id)}
-                                                    className="p-1.5 rounded-lg text-dark-400 hover:text-primary-600 hover:bg-primary-50 transition-all"
+                                                    className="p-2 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all"
                                                     title="Edit Job Details"
                                                 >
-                                                    <HiOutlinePencilSquare className="w-4 h-4" />
+                                                    <HiOutlinePencilSquare className="w-5 h-5" />
                                                 </button>
                                             </div>
                                         </td>

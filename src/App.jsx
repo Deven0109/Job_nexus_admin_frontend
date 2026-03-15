@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 
 // Context
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 
 // Auth
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -21,7 +22,12 @@ import AdminSettings from './pages/admin/AdminSettings';
 import ProfileSettings from './pages/admin/ProfileSettings';
 import JobManagement from './pages/admin/JobManagement';
 import AdminEditJobRequest from './pages/admin/AdminEditJobRequest';
+import AdminFAQManagement from './pages/admin/AdminFAQManagement';
+import HiredCandidates from './pages/admin/HiredCandidates';
 import NotFoundPage from './pages/shared/NotFoundPage';
+
+import AdminApplicationManagement from './pages/admin/AdminApplicationManagement';
+import NotificationsPage from './pages/admin/NotificationsPage';
 
 // React Query Client
 const queryClient = new QueryClient({
@@ -38,39 +44,46 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router>
-          <Routes>
-            {/* Admin Login */}
-            <Route path="/signin" element={<AdminLoginPage />} />
-            <Route path="/login" element={<Navigate to="/signin" replace />} />
+        <NotificationProvider>
+          <Router>
+            <div className="admin-root text-slate-800">
+            <Routes>
+              {/* Admin Login */}
+              <Route path="/signin" element={<AdminLoginPage />} />
+              <Route path="/login" element={<Navigate to="/signin" replace />} />
 
-            {/* Redirect root to signin */}
-            <Route path="/" element={<Navigate to="/signin" replace />} />
+              {/* Redirect root to signin */}
+              <Route path="/" element={<Navigate to="/signin" replace />} />
 
-            {/* Protected Admin Routes */}
-            <Route
-              element={
-                <ProtectedRoute roles={['admin']}>
-                  <AdminLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route path="/dashboard" element={<AdminDashboard />} />
-              <Route path="/recruiters" element={<RecruiterManagement />} />
-              <Route path="/employers" element={<EmployerManagement />} />
-              <Route path="/candidates" element={<CandidateManagement />} />
-              <Route path="/jobs" element={<JobManagement />} />
-              <Route path="/jobs/:id" element={<AdminEditJobRequest />} />
-              <Route path="/applications" element={<div className="p-10 text-center font-bold text-slate-400">Applications Management Module Coming Soon</div>} />
-              <Route path="/shortlisted-candidates" element={<div className="p-10 text-center font-bold text-slate-400 text-2xl uppercase tracking-widest">Shortlisted Candidates Module Coming Soon</div>} />
-              <Route path="/settings" element={<AdminSettings />} />
-              <Route path="/profile" element={<ProfileSettings />} />
-            </Route>
+              {/* Protected Admin Routes */}
+              <Route
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="/dashboard" element={<AdminDashboard />} />
+                <Route path="/recruiters" element={<RecruiterManagement />} />
+                <Route path="/employers" element={<EmployerManagement />} />
+                <Route path="/candidates" element={<CandidateManagement />} />
+                <Route path="/jobs" element={<JobManagement />} />
+                <Route path="/jobs/:id" element={<AdminEditJobRequest />} />
+                <Route path="/faqs" element={<AdminFAQManagement />} />
+                <Route path="/applications" element={<AdminApplicationManagement />} />
+                <Route path="/admin/manage-jobs/applications" element={<AdminApplicationManagement />} />
+                <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/shortlisted-candidates" element={<HiredCandidates />} />
+                <Route path="/settings" element={<AdminSettings />} />
+                <Route path="/profile" element={<ProfileSettings />} />
+              </Route>
 
-            {/* Catch All */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Router>
+              {/* Catch All */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+            </div>
+          </Router>
+        </NotificationProvider>
 
         {/* Toast Notifications */}
         <Toaster

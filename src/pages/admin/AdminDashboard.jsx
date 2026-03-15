@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { adminAPI } from '../../api/admin.api';
 import toast from 'react-hot-toast';
+import { BASE_URL } from '../../api/axios';
 import {
     HiOutlineUsers,
     HiOutlineBriefcase,
@@ -24,6 +25,7 @@ const AdminDashboard = () => {
         jobs: true,
         applications: true
     });
+    const [imageErrors, setImageErrors] = useState({});
 
     const toggleSeries = (key) => {
         setVisibleSeries(prev => ({ ...prev, [key]: !prev[key] }));
@@ -62,95 +64,88 @@ const AdminDashboard = () => {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-4 mb-4 border-b border-slate-100">
                 <div>
-                    <h2 className="text-4xl font-black text-black tracking-tight">Dashboard Management</h2>
-                    <p className="text-slate-500 text-sm mt-1 font-bold">Platform performance and ecosystem oversight</p>
+                    <h2 className="text-[28px] font-black text-black/80 tracking-tight">Dashboard Management</h2>
+                    <p className="text-slate-500 text-[14px] mt-0.5 font-bold opacity-80">Platform performance and ecosystem oversight</p>
                 </div>
             </div>
-
             {/* Premium Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Total Candidates */}
-                <Link to="/candidates" className="group card p-7 border-none ring-1 ring-slate-200/80 hover:ring-[#5b4eff]/50 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-[#5b4eff]/5">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#5b4eff]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
-                    <div className="relative z-10 flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-[#5b4eff] text-white flex items-center justify-center shadow-lg shadow-[#5b4eff]/20 group-hover:rotate-6 transition-transform">
-                            <HiOutlineUserGroup className="w-8 h-8" />
+                <Link to="/candidates" className="group p-5 rounded-2xl border border-slate-100 hover:border-blue-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-blue-50/50">
+                    <div className="relative z-10 flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                            <HiOutlineUserGroup className="w-7 h-7" />
                         </div>
                         <div>
-                            <p className="text-3xl font-black text-slate-900 leading-none mb-1">{overview?.candidates || 0}</p>
-                            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Total Candidates</p>
+                            <p className="text-2xl font-black text-black/80 leading-none mb-1.5">{overview?.candidates || 0}</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Total Candidates</p>
                         </div>
                     </div>
                 </Link>
 
                 {/* Total Recruiters */}
-                <Link to="/recruiters" className="group card p-7 border-none ring-1 ring-slate-200/80 hover:ring-[#5b4eff]/50 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-[#5b4eff]/5">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#5b4eff]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
-                    <div className="relative z-10 flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-[#5b4eff] text-white flex items-center justify-center shadow-lg shadow-[#5b4eff]/20 group-hover:rotate-6 transition-transform">
-                            <HiOutlineUsers className="w-8 h-8" />
+                <Link to="/recruiters" className="group p-5 rounded-2xl border border-slate-100 hover:border-purple-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-purple-50/50">
+                    <div className="relative z-10 flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
+                            <HiOutlineUsers className="w-7 h-7" />
                         </div>
                         <div>
-                            <p className="text-3xl font-black text-slate-900 leading-none mb-1">{overview?.recruiters || 0}</p>
-                            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Total Recruiters</p>
+                            <p className="text-2xl font-black text-black/80 leading-none mb-1.5">{overview?.recruiters || 0}</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Total Recruiters</p>
                         </div>
                     </div>
                 </Link>
 
                 {/* Total Employers */}
-                <Link to="/employers" className="group card p-7 border-none ring-1 ring-slate-200/80 hover:ring-[#5b4eff]/50 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-[#5b4eff]/5">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#5b4eff]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
-                    <div className="relative z-10 flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-[#5b4eff] text-white flex items-center justify-center shadow-lg shadow-[#5b4eff]/20 group-hover:rotate-6 transition-transform">
-                            <HiOutlineBuildingOffice2 className="w-8 h-8" />
+                <Link to="/employers" className="group p-5 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-emerald-50/50">
+                    <div className="relative z-10 flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+                            <HiOutlineBuildingOffice2 className="w-7 h-7" />
                         </div>
                         <div>
-                            <p className="text-3xl font-black text-slate-900 leading-none mb-1">{overview?.employers || 0}</p>
-                            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Total Employers</p>
+                            <p className="text-2xl font-black text-black/80 leading-none mb-1.5">{overview?.employers || 0}</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Total Employers</p>
                         </div>
                     </div>
                 </Link>
 
                 {/* Total Jobs */}
-                <Link to="/jobs" className="group card p-7 border-none ring-1 ring-slate-200/80 hover:ring-[#5b4eff]/50 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-[#5b4eff]/5">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#5b4eff]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
-                    <div className="relative z-10 flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-[#5b4eff] text-white flex items-center justify-center shadow-lg shadow-[#5b4eff]/20 group-hover:rotate-6 transition-transform">
-                            <HiOutlineBriefcase className="w-8 h-8" />
+                <Link to="/jobs" className="group p-5 rounded-2xl border border-slate-100 hover:border-amber-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-amber-50/50">
+                    <div className="relative z-10 flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
+                            <HiOutlineBriefcase className="w-7 h-7" />
                         </div>
                         <div>
-                            <p className="text-3xl font-black text-slate-900 leading-none mb-1">{overview?.jobs || 0}</p>
-                            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Total Active Jobs</p>
+                            <p className="text-2xl font-black text-black/80 leading-none mb-1.5">{overview?.jobs || 0}</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Total Active Jobs</p>
                         </div>
                     </div>
                 </Link>
 
                 {/* Total Applications */}
-                <Link to="/applications" className="group card p-7 border-none ring-1 ring-slate-200/80 hover:ring-[#5b4eff]/50 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-[#5b4eff]/5">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#5b4eff]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
-                    <div className="relative z-10 flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-[#5b4eff] text-white flex items-center justify-center shadow-lg shadow-[#5b4eff]/20 group-hover:rotate-6 transition-transform">
-                            <HiOutlineDocumentText className="w-8 h-8" />
+                <Link to="/applications" className="group p-5 rounded-2xl border border-slate-100 hover:border-blue-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-blue-50/50">
+                    <div className="relative z-10 flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                            <HiOutlineDocumentText className="w-7 h-7" />
                         </div>
                         <div>
-                            <p className="text-3xl font-black text-slate-900 leading-none mb-1">{overview?.applications || 0}</p>
-                            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Total Applications</p>
+                            <p className="text-2xl font-black text-black/80 leading-none mb-1.5">{overview?.applications || 0}</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Total Applications</p>
                         </div>
                     </div>
                 </Link>
 
-                {/* Shortlisted Candidate */}
-                <Link to="/shortlisted-candidates" className="group card p-7 border-none ring-1 ring-slate-200/80 hover:ring-[#5b4eff]/50 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-[#5b4eff]/5">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#5b4eff]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
-                    <div className="relative z-10 flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-[#5b4eff] text-white flex items-center justify-center shadow-lg shadow-[#5b4eff]/20 group-hover:rotate-6 transition-transform">
-                            <HiOutlineCheckBadge className="w-8 h-8" />
+                {/* Hire Candidate */}
+                <Link to="/shortlisted-candidates" className="group p-5 rounded-2xl border border-slate-100 hover:border-rose-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-rose-50/50">
+                    <div className="relative z-10 flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-all duration-300">
+                            <HiOutlineCheckBadge className="w-7 h-7" />
                         </div>
                         <div>
-                            <p className="text-3xl font-black text-slate-900 leading-none mb-1">{overview?.shortlisted || 0}</p>
-                            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Shortlisted Candidate</p>
+                            <p className="text-2xl font-black text-black/80 leading-none mb-1.5">{overview?.shortlisted || 0}</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Hire Candidate</p>
                         </div>
                     </div>
                 </Link>
@@ -160,15 +155,15 @@ const AdminDashboard = () => {
             <div className="card p-8 border-none ring-1 ring-slate-200/80 bg-white relative z-20 shadow-sm">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-10">
                     <div>
-                        <h3 className="text-2xl font-black text-black">Activity Overview</h3>
-                        <p className="text-slate-400 text-[13px] mt-1 font-bold">Track updates across statistics for companies, candidates, jobs, and applications</p>
+                        <h3 className="text-2xl font-black text-black/80">Activity Overview</h3>
+                        <p className="text-slate-400 text-[13px] mt-1 font-bold">Real-time statistics for platform ecosystem</p>
                     </div>
-                    <div className="flex items-center p-1 bg-slate-100/50 rounded-xl overflow-hidden self-end md:self-auto">
+                    <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg self-end md:self-auto shadow-inner">
                         {['Week', 'Month', 'Year'].map((p) => (
                             <button
                                 key={p}
                                 onClick={() => setPeriod(p)}
-                                className={`px-5 py-2 text-xs font-black rounded-lg transition-all ${period === p ? 'bg-white text-black shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                className={`px-5 py-1.5 text-[11px] font-black rounded-md transition-all ${period === p ? 'bg-[#1E293B] text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                             >
                                 {p}
                             </button>
@@ -176,22 +171,22 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-end gap-6 text-[13px] font-bold mb-8">
-                    <button onClick={() => toggleSeries('employers')} className={`flex items-center gap-2 transition-all ${visibleSeries.employers ? 'opacity-100' : 'opacity-30'}`}>
-                        <div className="w-4 h-4 rounded-sm bg-[#5b4eff]"></div>
-                        <span className="text-slate-600">Companies</span>
+                <div className="flex flex-wrap items-center justify-end gap-5 text-[11px] font-black mb-6">
+                    <button onClick={() => toggleSeries('employers')} className={`flex items-center gap-2 transition-all ${visibleSeries.employers ? 'opacity-100' : 'opacity-20'}`}>
+                        <div className="w-3.5 h-3.5 rounded bg-blue-500"></div>
+                        <span className="text-slate-500 uppercase tracking-widest">Companies</span>
                     </button>
-                    <button onClick={() => toggleSeries('candidates')} className={`flex items-center gap-2 transition-all ${visibleSeries.candidates ? 'opacity-100' : 'opacity-30'}`}>
-                        <div className="w-4 h-4 rounded-sm bg-[#36f0b4]"></div>
-                        <span className="text-slate-600">Candidates</span>
+                    <button onClick={() => toggleSeries('candidates')} className={`flex items-center gap-2 transition-all ${visibleSeries.candidates ? 'opacity-100' : 'opacity-20'}`}>
+                        <div className="w-3.5 h-3.5 rounded bg-emerald-500"></div>
+                        <span className="text-slate-500 uppercase tracking-widest">Candidates</span>
                     </button>
-                    <button onClick={() => toggleSeries('jobs')} className={`flex items-center gap-2 transition-all ${visibleSeries.jobs ? 'opacity-100' : 'opacity-30'}`}>
-                        <div className="w-4 h-4 rounded-sm bg-[#f9a825]"></div>
-                        <span className="text-slate-600">Jobs</span>
+                    <button onClick={() => toggleSeries('jobs')} className={`flex items-center gap-2 transition-all ${visibleSeries.jobs ? 'opacity-100' : 'opacity-20'}`}>
+                        <div className="w-3.5 h-3.5 rounded bg-amber-500"></div>
+                        <span className="text-slate-500 uppercase tracking-widest">Jobs</span>
                     </button>
-                    <button onClick={() => toggleSeries('applications')} className={`flex items-center gap-2 transition-all ${visibleSeries.applications ? 'opacity-100' : 'opacity-30'}`}>
-                        <div className="w-4 h-4 rounded-sm bg-[#a855f7]"></div>
-                        <span className="text-slate-600">Applications</span>
+                    <button onClick={() => toggleSeries('applications')} className={`flex items-center gap-2 transition-all ${visibleSeries.applications ? 'opacity-100' : 'opacity-20'}`}>
+                        <div className="w-3.5 h-3.5 rounded bg-purple-500"></div>
+                        <span className="text-slate-500 uppercase tracking-widest">Applications</span>
                     </button>
                 </div>
 
@@ -220,64 +215,64 @@ const AdminDashboard = () => {
                                     <div className="absolute inset-x-1 -inset-y-4 bg-slate-50/80 rounded-2xl -z-10 animate-in fade-in duration-200 ring-1 ring-slate-100"></div>
                                 )}
 
-                                <div className="w-full flex items-end justify-center gap-[6px] h-[200px] relative">
+                                <div className="w-full flex items-end justify-center gap-[4px] h-[200px] relative">
                                     {visibleSeries.employers && (
-                                        <div className="w-[18px] md:w-[24px] bg-[#5b4eff] rounded-t-sm transition-all shadow-sm"
+                                        <div className="w-[14px] md:w-[20px] bg-blue-500/80 rounded-t-sm transition-all hover:bg-blue-600 shadow-sm"
                                             style={{ height: `${Math.min((item.employers / maxVal) * 100, 100)}%` }}></div>
                                     )}
                                     {visibleSeries.candidates && (
-                                        <div className="w-[18px] md:w-[24px] bg-[#36f0b4] rounded-t-sm transition-all shadow-sm"
+                                        <div className="w-[14px] md:w-[20px] bg-emerald-500/80 rounded-t-sm transition-all hover:bg-emerald-600 shadow-sm"
                                             style={{ height: `${Math.min((item.candidates / maxVal) * 100, 100)}%` }}></div>
                                     )}
                                     {visibleSeries.jobs && (
-                                        <div className="w-[18px] md:w-[24px] bg-[#f9a825] rounded-t-sm transition-all shadow-sm"
+                                        <div className="w-[14px] md:w-[20px] bg-amber-500/80 rounded-t-sm transition-all hover:bg-amber-600 shadow-sm"
                                             style={{ height: `${Math.min((item.jobs / maxVal) * 100, 100)}%` }}></div>
                                     )}
                                     {visibleSeries.applications && (
-                                        <div className="w-[18px] md:w-[24px] bg-[#a855f7] rounded-t-sm transition-all shadow-sm"
+                                        <div className="w-[14px] md:w-[20px] bg-purple-500/80 rounded-t-sm transition-all hover:bg-purple-600 shadow-sm"
                                             style={{ height: `${Math.min((item.applications / maxVal) * 100, 100)}%` }}></div>
                                     )}
 
                                     {/* Tooltip Overlay */}
                                     {hoveredIdx === idx && (
-                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 z-[100] w-48 bg-white/95 backdrop-blur-md shadow-[0_20px_50px_rgba(79,70,229,0.15)] rounded-2xl border border-slate-100 p-4 animate-in zoom-in-95 fade-in duration-200">
-                                            <p className="text-[10px] font-black text-slate-400 mb-3 border-b border-slate-50 pb-2 uppercase tracking-widest leading-none">{item.label}</p>
-                                            <div className="space-y-2.5">
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 z-[100] w-48 bg-white/90 backdrop-blur-xl shadow-2xl rounded-3xl border border-white/50 p-5 animate-in zoom-in-95 fade-in duration-300">
+                                            <p className="text-[10px] font-black text-slate-400 mb-4 border-b border-slate-50 pb-2 uppercase tracking-widest">{item.label}</p>
+                                            <div className="space-y-3">
                                                 <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full bg-[#5b4eff]"></div>
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-[#5b4eff]"></div>
                                                         <span className="text-[11px] font-bold text-slate-600">Companies</span>
                                                     </div>
-                                                    <span className="text-[11px] font-black text-slate-900 leading-none">{item.employers}</span>
+                                                    <span className="text-[12px] font-black text-black/80">{item.employers}</span>
                                                 </div>
                                                 <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full bg-[#36f0b4]"></div>
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-[#36f0b4]"></div>
                                                         <span className="text-[11px] font-bold text-slate-600">Candidates</span>
                                                     </div>
-                                                    <span className="text-[11px] font-black text-slate-900 leading-none">{item.candidates}</span>
+                                                    <span className="text-[12px] font-black text-slate-900">{item.candidates}</span>
                                                 </div>
                                                 <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full bg-[#f9a825]"></div>
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-[#f9a825]"></div>
                                                         <span className="text-[11px] font-bold text-slate-600">Jobs</span>
                                                     </div>
-                                                    <span className="text-[11px] font-black text-slate-900 leading-none">{item.jobs}</span>
+                                                    <span className="text-[12px] font-black text-slate-900">{item.jobs}</span>
                                                 </div>
                                                 <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full bg-[#a855f7]"></div>
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-[#a855f7]"></div>
                                                         <span className="text-[11px] font-bold text-slate-600">Applications</span>
                                                     </div>
-                                                    <span className="text-[11px] font-black text-slate-900 leading-none">{item.applications}</span>
+                                                    <span className="text-[12px] font-black text-slate-900">{item.applications}</span>
                                                 </div>
                                             </div>
                                             {/* Tooltip Arrow */}
-                                            <div className="absolute top-[99%] left-1/2 -translate-x-1/2 w-4 h-4 bg-white/95 border-r border-b border-slate-100 rotate-45"></div>
+                                            <div className="absolute top-[99%] left-1/2 -translate-x-1/2 w-4 h-4 bg-white/90 border-r border-b border-white rotate-45 shadow-sm"></div>
                                         </div>
                                     )}
                                 </div>
-                                <p className={`mt-5 text-[11px] font-black transition-colors ${hoveredIdx === idx ? 'text-[#5b4eff]' : 'text-slate-400'}`}>{item.label}</p>
+                                <p className={`mt-5 text-[11px] font-black transition-colors uppercase tracking-widest ${hoveredIdx === idx ? 'text-blue-600' : 'text-slate-300'}`}>{item.label}</p>
                             </div>
                         );
                     })}
@@ -293,24 +288,29 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Recent Activity */}
                 <div className="lg:col-span-2 card border-none ring-1 ring-slate-200/80 bg-white overflow-hidden shadow-sm">
-                    <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                        <h3 className="text-xl font-black text-black">Recent Activity</h3>
-                        <Link to="/applications" className="text-xs font-black text-[#5b4eff] hover:text-[#5b4eff]/80 bg-[#5b4eff]/5 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest">View All</Link>
+                    <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+                        <h3 className="text-lg font-black text-black/80">Recent Activity</h3>
+                        <Link to="/applications" className="text-[11px] font-black text-blue-600 hover:text-blue-700 bg-blue-50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest">View All</Link>
                     </div>
                     <div className="divide-y divide-slate-50">
                         {stats?.recentApplications?.length > 0 ? (
                             stats.recentApplications.map((app) => (
                                 <div key={app._id} className="p-6 hover:bg-slate-50/50 transition-colors flex items-center justify-between group">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold border-2 border-white shadow-sm overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform">
-                                            {app.candidate?.avatar ? (
-                                                <img src={app.candidate.avatar} alt="" className="w-full h-full object-cover" />
+                                        <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold border-2 border-white shadow-sm overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform relative">
+                                            {app.candidate?.avatar && !imageErrors[app._id] ? (
+                                                <img 
+                                                    src={app.candidate.avatar.startsWith('http') ? app.candidate.avatar : `${BASE_URL}${app.candidate.avatar}`} 
+                                                    alt="" 
+                                                    className="w-full h-full object-cover"
+                                                    onError={() => setImageErrors(prev => ({ ...prev, [app._id]: true }))}
+                                                />
                                             ) : (
                                                 <span>{app.candidate?.firstName?.[0]}{app.candidate?.lastName?.[0]}</span>
                                             )}
                                         </div>
                                         <div>
-                                            <p className="text-[15px] font-black text-black leading-none mb-1.5 group-hover:text-[#5b4eff] transition-colors">
+                                            <p className="text-[15px] font-black text-black/80 leading-none mb-1.5 group-hover:text-blue-600 transition-colors">
                                                 {app.candidate?.firstName} {app.candidate?.lastName}
                                             </p>
                                             <p className="text-xs font-bold text-slate-500">
@@ -319,8 +319,8 @@ const AdminDashboard = () => {
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[13px] font-black text-slate-900 mb-1">{formatDate(app.createdAt)}</p>
-                                        <span className={`inline-flex px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${app.status === 'applied' ? 'bg-amber-100 text-amber-700' : app.status === 'shortlisted' ? 'bg-[#5b4eff]/10 text-[#5b4eff]' : 'bg-slate-100 text-slate-700'}`}>
+                                        <p className="text-[13px] font-black text-black/80 mb-1">{formatDate(app.createdAt)}</p>
+                                        <span className={`inline-flex px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${app.status === 'applied' ? 'bg-amber-50 text-amber-600 border border-amber-100' : app.status === 'shortlisted' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
                                             {app.status}
                                         </span>
                                     </div>
@@ -339,14 +339,14 @@ const AdminDashboard = () => {
                 <div className="flex flex-col gap-6">
                     <div className="card p-8 border-none ring-1 ring-slate-200/80 bg-white shadow-sm">
                         <h3 className="text-xl font-black text-black mb-6">Quick Actions</h3>
-                        <div className="space-y-3">
-                            <Link to="/jobs" className="flex items-center justify-center w-full py-4 bg-[#5b4eff] text-white rounded-xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all shadow-lg shadow-[#5b4eff]/20 hover:-translate-y-0.5 active:translate-y-0">
+                        <div className="space-y-4">
+                            <Link to="/jobs" className="flex items-center justify-center w-full py-4 bg-blue-600 text-white rounded-xl font-black text-[11px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 hover:-translate-y-1 active:scale-95">
                                 Manage Jobs
                             </Link>
-                            <Link to="/applications" className="flex items-center justify-center w-full py-4 bg-white border border-slate-200 text-black rounded-xl font-black text-sm uppercase tracking-widest hover:bg-slate-50 transition-all hover:border-slate-300">
+                            <Link to="/applications" className="flex items-center justify-center w-full py-4 bg-white border-2 border-slate-100 text-slate-600 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-slate-50 transition-all hover:border-slate-200">
                                 Review Applications
                             </Link>
-                            <Link to="/recruiters" className="flex items-center justify-center w-full py-4 bg-white border border-slate-200 text-black rounded-xl font-black text-sm uppercase tracking-widest hover:bg-slate-50 transition-all hover:border-slate-300">
+                            <Link to="/recruiters" className="flex items-center justify-center w-full py-4 bg-white border-2 border-slate-100 text-slate-600 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-slate-50 transition-all hover:border-slate-200">
                                 Manage Recruiters
                             </Link>
                         </div>

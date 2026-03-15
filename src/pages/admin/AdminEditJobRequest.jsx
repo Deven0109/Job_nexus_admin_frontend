@@ -263,7 +263,7 @@ const AdminEditJobRequest = () => {
                         {!isEditing && (
                             <button
                                 onClick={handleEdit}
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-900 text-sm font-bold rounded-2xl shadow-xl transition-all hover:scale-105 active:scale-95"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black/80 text-sm font-bold rounded-2xl shadow-xl transition-all hover:scale-105 active:scale-95"
                             >
                                 <HiOutlinePencilSquare className="w-4 h-4" />
                                 Edit Job
@@ -303,7 +303,7 @@ const AdminEditJobRequest = () => {
                                 {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                             </select>
                         ) : (
-                            <p className="text-sm font-black text-slate-900">{data.jobCategory}</p>
+                            <p className="text-sm font-black text-black/80">{data.jobCategory}</p>
                         )}
                     </div>
 
@@ -313,7 +313,7 @@ const AdminEditJobRequest = () => {
                         {isEditing ? (
                             <input type="number" min="1" value={data.numberOfVacancies} onChange={e => handleChange('numberOfVacancies', e.target.value)} className={`${inputCls} border-none bg-white`} />
                         ) : (
-                            <p className="text-sm font-black text-slate-900">{data.numberOfVacancies} positions</p>
+                            <p className="text-sm font-black text-black/80">{data.numberOfVacancies} positions</p>
                         )}
                     </div>
 
@@ -323,7 +323,7 @@ const AdminEditJobRequest = () => {
                         {isEditing ? (
                             <input type="text" value={data.experienceRequired} onChange={e => handleChange('experienceRequired', e.target.value)} className={`${inputCls} border-none bg-white`} />
                         ) : (
-                            <p className="text-sm font-black text-slate-900">{data.experienceRequired}</p>
+                            <p className="text-sm font-black text-black/80">{data.experienceRequired}</p>
                         )}
                     </div>
 
@@ -336,7 +336,7 @@ const AdminEditJobRequest = () => {
                                 <input type="number" value={data.salaryMax} onChange={e => handleChange('salaryMax', e.target.value)} className={`${inputCls} border-none bg-white`} placeholder="Max" />
                             </div>
                         ) : (
-                            <p className="text-sm font-black text-slate-900">{formatSalary(data.salaryMin)} – {formatSalary(data.salaryMax)}</p>
+                            <p className="text-sm font-black text-black/80">{formatSalary(data.salaryMin)} – {formatSalary(data.salaryMax)}</p>
                         )}
                     </div>
 
@@ -348,7 +348,7 @@ const AdminEditJobRequest = () => {
                                 {WORK_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                             </select>
                         ) : (
-                            <p className="text-sm font-black text-slate-900">{data.workType}</p>
+                            <p className="text-sm font-black text-black/80">{data.workType}</p>
                         )}
                     </div>
 
@@ -421,7 +421,7 @@ const AdminEditJobRequest = () => {
                                 </div>
                             </div>
                         ) : (
-                            <p className="text-sm font-black text-slate-900 uppercase tracking-tight">
+                            <p className="text-sm font-black text-black/80 uppercase tracking-tight">
                                 {[data.city, data.state, data.country].filter(Boolean).join(', ')}
                                 {data.pincode ? ` - ${data.pincode}` : ''}
                             </p>
@@ -445,7 +445,7 @@ const AdminEditJobRequest = () => {
                     {/* Submitted Box */}
                     <div className="p-6 bg-slate-50/50 rounded-2xl border border-slate-100/50">
                         <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Submitted</label>
-                        <p className="text-sm font-black text-slate-900 uppercase">{formatDate(jobRequest.createdAt)}</p>
+                        <p className="text-sm font-black text-black/80 uppercase">{formatDate(jobRequest.createdAt)}</p>
                     </div>
 
                     {/* Skills */}
@@ -507,7 +507,7 @@ const AdminEditJobRequest = () => {
                 <div className="p-10 bg-white border-t border-slate-50 flex items-center justify-center">
                     <button
                         onClick={() => navigate('/jobs')}
-                        className="w-full max-w-md px-10 py-4 border-2 border-slate-100 text-slate-900 text-sm font-black rounded-2xl hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-95 shadow-sm"
+                        className="w-full max-w-md px-10 py-4 border-2 border-slate-100 text-black/80 text-sm font-black rounded-2xl hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-95 shadow-sm"
                     >
                         Close
                     </button>

@@ -29,4 +29,10 @@ export const adminAPI = {
     getJobRequestById: (id) => api.get(`/job-requests/${id}`),
     updateJobRequest: (id, data) => api.put(`/job-requests/${id}`, data),
     toggleJobStatus: (id) => api.patch(`/job-requests/${id}/toggle-status`),
+    deleteJobRequest: (id) => api.delete(`/job-requests/${id}`),
+    // Application Management
+    listApplications: (params) => api.get('/applications/admin/all', { params }),
+    getJobApplications: (jobId) => api.get(`/applications/recruiter/job/${jobId}`),
+    getJobPipeline: (jobId) => api.get(`/applications/recruiter/job/${jobId}/pipeline`),
+    updateApplicationStatus: (id, action, data = {}) => api.put(`/applications/recruiter/application/${id}/${action}`, data),
 };
