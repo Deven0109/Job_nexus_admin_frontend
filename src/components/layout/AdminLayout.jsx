@@ -66,12 +66,12 @@ const AdminLayout = () => {
                 <div className="flex flex-col h-full">
                     {/* Brand */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-slate-50 mb-2">
-                        <Link to="/dashboard" className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 bg-blue-600 rounded-md flex items-center justify-center shadow-lg shadow-blue-200">
+                        <Link to="/dashboard" className="flex items-center gap-2.5 group">
+                            <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-100 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
                                 <HiOutlineBriefcase className="w-5 h-5 text-white" />
                             </div>
-                            <span className="text-lg font-extrabold text-black/80 tracking-tight whitespace-nowrap">
-                                Job <span className="text-blue-600">Consultancy</span>
+                            <span className="text-xl font-black text-black/80 tracking-tight whitespace-nowrap">
+                                Job <span className="text-blue-600">Nexus</span>
                             </span>
                         </Link>
                         <button
@@ -161,13 +161,13 @@ const AdminLayout = () => {
                                     </div>
                                     <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-200 overflow-hidden border-2 border-white">
                                         {user?.avatar ? (
-                                            <img 
+                                            <img
                                                 src={user.avatar.startsWith('http') || user.avatar.startsWith('data:') || user.avatar.startsWith('blob:')
                                                     ? user.avatar
                                                     : `${BASE_URL}${user.avatar}`
-                                                } 
-                                                alt="Admin" 
-                                                className="w-full h-full object-cover" 
+                                                }
+                                                alt="Admin"
+                                                className="w-full h-full object-cover"
                                             />
                                         ) : (
                                             <span className="text-white font-black text-sm">

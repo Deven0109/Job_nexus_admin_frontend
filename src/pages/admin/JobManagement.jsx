@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { adminAPI } from '../../api/admin.api';
 import toast from 'react-hot-toast';
 import {
@@ -38,6 +38,7 @@ const URGENCY_COLORS = {
 
 const JobManagement = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [jobRequests, setJobRequests] = useState([]);
     const [pagination, setPagination] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -108,7 +109,7 @@ const JobManagement = () => {
     };
 
     const handleEdit = (jobId) => {
-        navigate(`/jobs/${jobId}?edit=true`);
+        navigate(`/jobs/${jobId}?edit=true`, { state: { from: location.pathname } });
     };
 
     const formatSalary = (min, max) => {
@@ -136,11 +137,11 @@ const JobManagement = () => {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h2 className="text-2xl font-black text-black/80 tracking-tight flex items-center gap-3">
+                <h2 className="text-2xl font-bold text-black tracking-tight flex items-center gap-3">
                     <HiOutlineBriefcase className="w-7 h-7 text-blue-600" />
                     Job Management
                 </h2>
-                <p className="text-[13px] text-slate-500 mt-1 font-bold">Monitor and manage all job requests and live postings</p>
+                <p className="text-sm text-slate-500 mt-1 font-medium">Monitor and manage all job requests and live postings</p>
             </div>
 
             {/* Stats */}
@@ -151,8 +152,8 @@ const JobManagement = () => {
                             <HiOutlineBriefcase className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-xl font-black text-black/80 leading-none">{totalCount}</p>
-                            <p className="text-xs text-slate-400 font-bold mt-1">Total Jobs</p>
+                            <p className="text-xl font-bold text-black leading-none">{totalCount}</p>
+                            <p className="text-xs text-slate-700 font-bold mt-1">Total Jobs</p>
                         </div>
                     </div>
                 </div>
@@ -162,8 +163,8 @@ const JobManagement = () => {
                             <HiOutlineCheckCircle className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-xl font-black text-black/80 leading-none">{activeCount}</p>
-                            <p className="text-xs text-slate-400 font-bold mt-1">Live Active</p>
+                            <p className="text-xl font-bold text-black leading-none">{activeCount}</p>
+                            <p className="text-xs text-slate-700 font-bold mt-1">Live Active</p>
                         </div>
                     </div>
                 </div>
@@ -173,8 +174,8 @@ const JobManagement = () => {
                             <HiOutlineClock className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-xl font-black text-black/80 leading-none">{pendingCount}</p>
-                            <p className="text-xs text-slate-400 font-bold mt-1">Pending</p>
+                            <p className="text-xl font-bold text-black leading-none">{pendingCount}</p>
+                            <p className="text-xs text-slate-700 font-bold mt-1">Pending</p>
                         </div>
                     </div>
                 </div>
@@ -184,8 +185,8 @@ const JobManagement = () => {
                             <HiOutlineXCircle className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-xl font-black text-black/80 leading-none">{jobRequests.filter(j => j.status === 'rejected').length}</p>
-                            <p className="text-xs text-slate-400 font-bold mt-1">Rejected</p>
+                            <p className="text-xl font-bold text-black leading-none">{jobRequests.filter(j => j.status === 'rejected').length}</p>
+                            <p className="text-xs text-slate-700 font-bold mt-1">Rejected</p>
                         </div>
                     </div>
                 </div>
@@ -207,7 +208,7 @@ const JobManagement = () => {
                     <select
                         value={filters.status}
                         onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value, page: 1 }))}
-                        className="px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-600 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none appearance-none cursor-pointer min-w-[150px]"
+                        className="px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-medium text-slate-600 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none appearance-none cursor-pointer min-w-[150px]"
                     >
                         <option value="">All Status</option>
                         <option value="pending">Pending</option>
@@ -218,7 +219,7 @@ const JobManagement = () => {
                     </select>
                     <button
                         onClick={() => { setSearchInput(''); setFilters({ search: '', status: '', page: 1, limit: 5 }); }}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-slate-50 text-slate-600 text-xs font-black uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-100"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-slate-50 text-slate-600 text-xs font-medium uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-100"
                     >
                         <HiOutlineArrowPath className="w-4 h-4" />
                         Reset
@@ -232,13 +233,13 @@ const JobManagement = () => {
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="bg-slate-50/50 border-b border-slate-100">
-                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest">Job Details</th>
-                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest">Company</th>
-                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest hidden lg:table-cell">Experience</th>
-                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest hidden lg:table-cell">Salary</th>
-                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest hidden md:table-cell">Recruiter</th>
-                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest">Status</th>
-                                <th className="text-center px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest">Actions</th>
+                                <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">Job Details</th>
+                                <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">Company</th>
+                                <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest hidden lg:table-cell">Experience</th>
+                                <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest hidden lg:table-cell">Salary</th>
+                                <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest hidden md:table-cell">Recruiter</th>
+                                <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">Status</th>
+                                <th className="text-center px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-dark-50">
@@ -256,8 +257,8 @@ const JobManagement = () => {
                             ) : jobRequests.length === 0 ? (
                                 <tr>
                                     <td colSpan="6" className="px-5 py-16 text-center">
-                                        <HiOutlineBriefcase className="w-12 h-12 mx-auto text-dark-300 mb-3" />
-                                        <p className="text-dark-500 font-semibold">No jobs found</p>
+                                        <HiOutlineBriefcase className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+                                        <p className="text-black/80 font-bold">No jobs found</p>
                                     </td>
                                 </tr>
                             ) : (
@@ -265,8 +266,8 @@ const JobManagement = () => {
                                     <tr key={job._id} className="hover:bg-dark-25 transition-colors">
                                         <td className="px-5 py-4">
                                             <div>
-                                                <p className="font-bold text-black/80">{job.jobTitle || job.title || 'Untitled Job'}</p>
-                                                <p className="text-[11px] text-dark-400 flex items-center gap-1 mt-0.5 leading-none">
+                                                <p className="font-bold text-black">{job.jobTitle || job.title || 'Untitled Job'}</p>
+                                                <p className="text-[11px] font-medium text-black/95 flex items-center gap-1 mt-0.5 leading-none">
                                                     <HiOutlineMapPin className="w-3 h-3" />
                                                     {[job.city, job.state, job.country].filter(Boolean).join(', ') || job.jobLocation || job.location || 'Location not specified'}
                                                 </p>
@@ -282,15 +283,15 @@ const JobManagement = () => {
                                                     )}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="font-medium text-black/80 truncate">{job.companyId?.companyName || 'Unknown Company'}</p>
-                                                    <p className="text-[11px] text-dark-400 truncate">{job.companyId?.companyEmail || 'No Email'}</p>
+                                                    <p className="font-bold text-black truncate">{job.companyId?.companyName || 'Unknown Company'}</p>
+                                                    <p className="text-[11px] font-medium text-black truncate">{job.companyId?.companyEmail || 'No Email'}</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-5 py-4 text-dark-600">{job.experienceRequired || job.experience || 'Not specified'}</td>
-                                        <td className="px-5 py-4 text-dark-600">{formatSalary(job.salaryMin, job.salaryMax)}</td>
+                                        <td className="px-5 py-4 font-bold text-black">{job.experienceRequired || job.experience || 'Not specified'}</td>
+                                        <td className="px-5 py-4 font-bold text-black">{formatSalary(job.salaryMin, job.salaryMax)}</td>
                                         <td className="px-5 py-4 whitespace-nowrap">
-                                            <p className="text-xs font-bold text-dark-700">{job.approvedByRecruiter ? `${job.approvedByRecruiter.firstName} ${job.approvedByRecruiter.lastName}` : 'N/A'}</p>
+                                            <p className="text-xs font-bold text-black">{job.approvedByRecruiter ? `${job.approvedByRecruiter.firstName} ${job.approvedByRecruiter.lastName}` : 'N/A'}</p>
                                         </td>
                                         <td className="px-5 py-4">
                                             {(job.status === 'active' || job.status === 'inactive') ? (
@@ -298,14 +299,14 @@ const JobManagement = () => {
                                                     onClick={() => handleToggleStatus(job._id, job.status)}
                                                     disabled={actionLoading}
                                                     title={job.status === 'active' ? 'Click to deactivate' : 'Click to activate'}
-                                                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 ${STATUS_COLORS[job.status]}`}
+                                                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 ${STATUS_COLORS[job.status]}`}
                                                 >
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${job.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${job.status === 'active' ? 'bg-emerald-900 animate-pulse' : 'bg-rose-900'}`}></span>
                                                     {job.status === 'inactive' ? 'rejected' : job.status}
                                                 </button>
                                             ) : (
-                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${STATUS_COLORS[job.status]}`}>
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${job.status === 'approved' ? 'bg-blue-500' : job.status === 'pending' ? 'bg-amber-500 animate-pulse' : 'bg-rose-500'}`}></span>
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest ${STATUS_COLORS[job.status]}`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${job.status === 'approved' ? 'bg-blue-700' : job.status === 'pending' ? 'bg-amber-700 animate-pulse' : 'bg-rose-700'}`}></span>
                                                     {job.status}
                                                 </span>
                                             )}
@@ -314,7 +315,7 @@ const JobManagement = () => {
                                             <div className="flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => handleView(job)}
-                                                    className="p-2 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all"
+                                                    className="p-2 rounded-xl text-slate-800 hover:text-blue-600 hover:bg-blue-50 transition-all"
                                                     title="View Full Details"
                                                 >
                                                     <HiOutlineEye className="w-5 h-5" />
@@ -380,14 +381,14 @@ const JobManagement = () => {
                             </button>
 
                             <div className="relative z-10 flex flex-col gap-4">
-                                <span className="inline-flex w-fit items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-white/20 text-white ring-1 ring-white/30 backdrop-blur-sm shadow-xl">
+                                <span className="inline-flex w-fit items-center px-3 py-1 rounded-lg text-[10px] font-medium uppercase tracking-widest bg-white/20 text-white ring-1 ring-white/30 backdrop-blur-sm shadow-xl">
                                     {selectedJob.status === 'active' ? 'Live Active' : selectedJob.status}
                                 </span>
                                 <div>
-                                    <h3 className="text-3xl font-black text-white leading-tight pr-12 tracking-tight uppercase">
+                                    <h3 className="text-3xl font-bold text-white leading-tight pr-12 tracking-tight uppercase">
                                         {selectedJob.jobTitle || selectedJob.title}
                                     </h3>
-                                    <p className="flex items-center gap-2 mt-2 text-white/90 font-bold text-sm">
+                                    <p className="flex items-center gap-2 mt-2 text-white/90 font-medium text-sm">
                                         <HiOutlineBuildingOffice2 className="w-4 h-4" />
                                         {selectedJob.companyId?.companyName || 'Unknown Company'}
                                         <span className="w-1.5 h-1.5 rounded-full bg-white/40"></span>
@@ -413,8 +414,8 @@ const JobManagement = () => {
                                             <item.icon className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">{item.label}</p>
-                                            <p className="text-sm font-black text-slate-900 leading-none">{item.value}</p>
+                                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest leading-none mb-1">{item.label}</p>
+                                            <p className="text-sm font-bold text-black leading-none">{item.value}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -424,12 +425,12 @@ const JobManagement = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-4">
                                     <div className="w-1.5 h-6 bg-primary-600 rounded-full"></div>
-                                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Required Expertise</h4>
+                                    <h4 className="text-sm font-bold text-black uppercase tracking-widest">Required Expertise</h4>
                                 </div>
                                 <div className="flex flex-wrap gap-2">
                                     {selectedJob.requiredSkills?.length > 0 ? (
                                         selectedJob.requiredSkills.map((skill, i) => (
-                                            <span key={i} className="px-4 py-2 bg-indigo-50 border border-indigo-100/50 text-indigo-700 text-xs font-black rounded-xl hover:bg-indigo-100 transition-colors uppercase tracking-wider">
+                                            <span key={i} className="px-4 py-2 bg-indigo-50 border border-indigo-100/50 text-indigo-700 text-xs font-medium rounded-xl hover:bg-indigo-100 transition-colors uppercase tracking-wider">
                                                 {skill}
                                             </span>
                                         ))
@@ -443,9 +444,9 @@ const JobManagement = () => {
                             <div className="bg-slate-50/50 rounded-3xl p-6 border border-slate-100 ring-4 ring-slate-50/30">
                                 <div className="flex items-center gap-2 mb-4">
                                     <div className="w-1.5 h-6 bg-indigo-600 rounded-full"></div>
-                                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Job Responsibilities</h4>
+                                    <h4 className="text-sm font-bold text-black uppercase tracking-widest">Job Responsibilities</h4>
                                 </div>
-                                <div className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap font-medium">
+                                <div className="text-sm text-slate-600/95 leading-relaxed whitespace-pre-wrap font-medium">
                                     {selectedJob.jobDescription || selectedJob.description || 'Detailed description not provided.'}
                                 </div>
                             </div>
@@ -456,12 +457,10 @@ const JobManagement = () => {
                                     <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
                                         <HiOutlineUserCircle className="w-5 h-5 text-slate-400" />
                                     </div>
-                                    <div>
-                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Hiring Manager</h4>
-                                        <p className="text-sm font-black text-slate-900 truncate">
-                                            {selectedJob.createdByEmployer?.firstName ? `${selectedJob.createdByEmployer.firstName} ${selectedJob.createdByEmployer.lastName || ''}` : (selectedJob.companyId?.companyName || 'Not Assigned')}
-                                        </p>
-                                        <p className="text-xs text-slate-500 font-medium truncate">{selectedJob.createdByEmployer?.email || selectedJob.companyId?.companyEmail || 'N/A'}</p>
+                                     <div>
+                                        <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Hiring Manager</h4>
+                                        <p className="font-bold text-black group-hover:text-blue-600 transition-colors uppercase text-[13px] tracking-tight">{selectedJob.companyId?.companyName || 'No Company Name'}</p>
+                                        <p className="text-xs font-medium text-black truncate">{selectedJob.createdByEmployer?.email || selectedJob.companyId?.companyEmail || 'N/A'}</p>
                                     </div>
                                 </div>
                                 <div className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-start gap-4 transition-all hover:border-indigo-100 hover:bg-indigo-50/10">
@@ -469,15 +468,21 @@ const JobManagement = () => {
                                         <HiOutlineCalendarDays className="w-5 h-5 text-slate-400" />
                                     </div>
                                     <div>
-                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Audit Details</h4>
-                                        <p className="text-sm font-black text-slate-900">Posted on {formatDate(selectedJob.createdAt)}</p>
-                                        <div className="flex items-center gap-1.5 mt-0.5">
-                                            <span className="text-xs text-slate-500 font-medium">Urgency:</span>
-                                            <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md ${URGENCY_COLORS[selectedJob.urgency] || 'text-slate-500'}`}>{selectedJob.urgency}</span>
+                                        <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Audit Details</h4>
+                                        <p className="text-sm font-bold text-black">Posted on {formatDate(selectedJob.createdAt)}</p>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-medium text-black/80">Urgency:</span>
+                                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md ${URGENCY_COLORS[selectedJob.urgency] || 'text-slate-400'}`}>{selectedJob.urgency}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-medium text-black/80">Posted:</span>
+                                            <p className="text-xs font-medium text-black/80 mt-1">
+                                                {formatDate(selectedJob.createdAt)}
+                                            </p>
                                         </div>
                                         {selectedJob.approvedByRecruiter && (
-                                            <p className="text-xs text-slate-500 font-medium mt-1">
-                                                Managed by: <span className="text-slate-900 font-black">{selectedJob.approvedByRecruiter.firstName} {selectedJob.approvedByRecruiter.lastName}</span>
+                                            <p className="text-xs text-black/80 font-medium mt-1">
+                                                Managed by: <span className="text-slate-900 font-bold">{selectedJob.approvedByRecruiter.firstName} {selectedJob.approvedByRecruiter.lastName}</span>
                                             </p>
                                         )}
                                     </div>
@@ -489,7 +494,7 @@ const JobManagement = () => {
                         <div className="px-8 py-6 bg-white border-t border-slate-100 flex items-center justify-end">
                             <button
                                 onClick={() => setShowViewModal(false)}
-                                className="w-full sm:w-auto px-12 py-3.5 rounded-2xl text-sm font-black text-white bg-primary-600 hover:bg-primary-700 transition-all shadow-xl shadow-primary-200 active:scale-95"
+                                className="w-full sm:w-auto px-12 py-3.5 rounded-2xl text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 transition-all shadow-xl shadow-primary-200 active:scale-95"
                             >
                                 Close View
                             </button>

@@ -18,6 +18,7 @@ const ProfileSettings = () => {
         firstName: '',
         lastName: '',
         email: '',
+        phone: '',
     });
 
     const [passwordData, setPasswordData] = useState({
@@ -41,6 +42,7 @@ const ProfileSettings = () => {
                 firstName: user.firstName || '',
                 lastName: user.lastName || '',
                 email: user.email || '',
+                phone: user.phone || '',
             });
         }
     }, [user]);
@@ -141,15 +143,15 @@ const ProfileSettings = () => {
                             <HiOutlineUser className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-black/80">Update Profile</h3>
+                            <h3 className="text-xl font-bold text-black">Update Profile</h3>
                             <p className="text-sm text-slate-500 font-medium">Update your personal information</p>
                         </div>
                     </div>
 
                     <form onSubmit={handleUpdateProfile} className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-[13px] font-bold text-black/80 ml-1 flex items-center gap-1.5">
-                                <HiOutlineUser className="w-4 h-4 text-slate-400" />
+                            <label className="text-[13px] font-bold text-black ml-1 flex items-center gap-1.5">
+                                <HiOutlineUser className="w-4 h-4 text-slate-500" />
                                 Full Name <span className="text-red-500">*</span>
                             </label>
                             <div className="grid grid-cols-2 gap-4">
@@ -159,7 +161,7 @@ const ProfileSettings = () => {
                                     value={profileData.firstName}
                                     onChange={handleProfileChange}
                                     placeholder="First Name"
-                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-semibold outline-none text-slate-700 placeholder:text-slate-300"
+                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium outline-none text-black/80 placeholder:text-slate-300"
                                 />
                                 <input
                                     type="text"
@@ -167,14 +169,14 @@ const ProfileSettings = () => {
                                     value={profileData.lastName}
                                     onChange={handleProfileChange}
                                     placeholder="Last Name"
-                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-semibold outline-none text-slate-700 placeholder:text-slate-300"
+                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium outline-none text-black/80 placeholder:text-slate-300"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[13px] font-bold text-black/80 ml-1 flex items-center gap-1.5">
-                                <HiOutlineEnvelope className="w-4 h-4 text-slate-400" />
+                            <label className="text-[13px] font-bold text-black ml-1 flex items-center gap-1.5">
+                                <HiOutlineEnvelope className="w-4 h-4 text-slate-500" />
                                 Email Address <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -183,13 +185,28 @@ const ProfileSettings = () => {
                                 value={profileData.email}
                                 onChange={handleProfileChange}
                                 placeholder="Email Address"
+                                className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium outline-none text-black/80 placeholder:text-slate-300"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[13px] font-bold text-black ml-1 flex items-center gap-1.5">
+                                <HiOutlineCalendar className="w-4 h-4 text-slate-500" />
+                                Phone Number <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="phone"
+                                value={profileData.phone}
+                                onChange={handleProfileChange}
+                                placeholder="Phone Number (e.g. +919012345678)"
                                 className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-semibold outline-none text-slate-700 placeholder:text-slate-300"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[13px] font-bold text-black/80 ml-1 flex items-center gap-1.5 hover:opacity-80 transition-opacity">
-                                <HiOutlineEnvelope className="w-4 h-4 text-slate-400" />
+                            <label className="text-[13px] font-medium text-black/80 ml-1 flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+                                <HiOutlineEnvelope className="w-4 h-4 text-slate-400/95" />
                                 Current Email
                             </label>
                             <input
@@ -203,7 +220,7 @@ const ProfileSettings = () => {
                         <button
                             type="submit"
                             disabled={isUpdatingProfile}
-                            className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.98] transition-all disabled:opacity-70"
+                            className="w-full py-4 bg-indigo-600 text-white rounded-xl font-medium flex items-center justify-center gap-3 shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.98] transition-all disabled:opacity-70"
                         >
                             {isUpdatingProfile ? 'Updating...' : (
                                 <>
@@ -222,15 +239,15 @@ const ProfileSettings = () => {
                             <HiOutlineLockClosed className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-900">Change Password</h3>
-                            <p className="text-sm text-slate-500 font-medium">Update your account password</p>
+                            <h3 className="text-xl font-bold text-black">Update Password</h3>
+                            <p className="text-sm text-slate-500 font-medium">Keep your account secure with a strong password</p>
                         </div>
                     </div>
 
                     <form onSubmit={handleChangePassword} className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-[13px] font-bold text-slate-700 ml-1 flex items-center gap-1.5">
-                                <HiOutlineLockClosed className="w-4 h-4 text-slate-400" />
+                            <label className="text-[13px] font-bold text-black ml-1 flex items-center gap-1.5">
+                                <HiOutlineLockClosed className="w-4 h-4 text-slate-500" />
                                 Current Password <span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
@@ -240,7 +257,7 @@ const ProfileSettings = () => {
                                     value={passwordData.currentPassword}
                                     onChange={handlePasswordChange}
                                     placeholder="Enter your current password"
-                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-semibold outline-none text-slate-700 placeholder:text-slate-300 pr-12"
+                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium outline-none text-black/80 placeholder:text-slate-300 pr-12"
                                 />
                                 <button
                                     type="button"
@@ -253,8 +270,8 @@ const ProfileSettings = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[13px] font-bold text-slate-700 ml-1 flex items-center gap-1.5">
-                                <HiOutlineLockClosed className="w-4 h-4 text-slate-400" />
+                            <label className="text-[13px] font-bold text-black ml-1 flex items-center gap-1.5">
+                                <HiOutlineLockClosed className="w-4 h-4 text-slate-500" />
                                 New Password <span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
@@ -264,7 +281,7 @@ const ProfileSettings = () => {
                                     value={passwordData.newPassword}
                                     onChange={handlePasswordChange}
                                     placeholder="Enter your new password"
-                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-semibold outline-none text-slate-700 placeholder:text-slate-300 pr-12"
+                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium outline-none text-black/80 placeholder:text-slate-300 pr-12"
                                 />
                                 <button
                                     type="button"
@@ -277,8 +294,8 @@ const ProfileSettings = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[13px] font-bold text-slate-700 ml-1 flex items-center gap-1.5">
-                                <HiOutlineLockClosed className="w-4 h-4 text-slate-400" />
+                            <label className="text-[13px] font-medium text-black/80 ml-1 flex items-center gap-1.5">
+                                <HiOutlineLockClosed className="w-4 h-4 text-slate-400/95" />
                                 Confirm New Password <span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
@@ -288,7 +305,7 @@ const ProfileSettings = () => {
                                     value={passwordData.confirmPassword}
                                     onChange={handlePasswordChange}
                                     placeholder="Confirm your new password"
-                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-semibold outline-none text-slate-700 placeholder:text-slate-300 pr-12"
+                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium outline-none text-black/80 placeholder:text-slate-300 pr-12"
                                 />
                                 <button
                                     type="button"
@@ -303,7 +320,7 @@ const ProfileSettings = () => {
                         <button
                             type="submit"
                             disabled={isChangingPassword}
-                            className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.98] transition-all disabled:opacity-70"
+                            className="w-full py-4 bg-indigo-600 text-white rounded-xl font-medium flex items-center justify-center gap-3 shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.98] transition-all disabled:opacity-70"
                         >
                             {isChangingPassword ? 'Changing...' : (
                                 <>

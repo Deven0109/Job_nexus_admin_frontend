@@ -159,12 +159,12 @@ const AdminFAQManagement = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-black text-black/80 tracking-tight">FAQ Management</h2>
-                    <p className="text-sm text-slate-400 mt-1 font-bold">Manage frequently asked questions for candidates</p>
+                    <h2 className="text-2xl font-bold text-black tracking-tight">FAQ Management</h2>
+                    <p className="text-sm text-slate-500 mt-1 font-medium">Manage frequently asked questions for candidates</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#5b4eff] text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-slate-900 transition-all shadow-lg shadow-[#5b4eff]/20 active:scale-95"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#5b4eff] text-white text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-slate-900 transition-all shadow-lg shadow-[#5b4eff]/20 active:scale-95"
                 >
                     <HiOutlinePlus className="w-4 h-4" />
                     Add FAQ
@@ -179,10 +179,10 @@ const AdminFAQManagement = () => {
                             <HiOutlineQuestionMarkCircle className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-xl font-black text-slate-900 leading-none">
+                            <p className="text-xl font-bold text-black leading-none">
                                 {faqs.length}
                             </p>
-                            <p className="text-xs text-slate-400 font-bold mt-1 uppercase tracking-wider">Total</p>
+                            <p className="text-xs text-slate-700 font-bold mt-1 uppercase tracking-wider">Total</p>
                         </div>
                     </div>
                 </div>
@@ -192,8 +192,8 @@ const AdminFAQManagement = () => {
                             <HiOutlineCheckCircle className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-xl font-black text-slate-900 leading-none">{activeCount}</p>
-                            <p className="text-xs text-slate-400 font-bold mt-1 uppercase tracking-wider">Active</p>
+                            <p className="text-xl font-bold text-black leading-none">{activeCount}</p>
+                            <p className="text-xs text-slate-700 font-bold mt-1 uppercase tracking-wider">Active</p>
                         </div>
                     </div>
                 </div>
@@ -203,8 +203,8 @@ const AdminFAQManagement = () => {
                             <HiOutlineXMark className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-xl font-black text-slate-900 leading-none">{inactiveCount}</p>
-                            <p className="text-xs text-slate-400 font-bold mt-1 uppercase tracking-wider">Rejected</p>
+                            <p className="text-xl font-bold text-black leading-none">{inactiveCount}</p>
+                            <p className="text-xs text-slate-700/95 font-bold mt-1 uppercase tracking-wider">inactive</p>
                         </div>
                     </div>
                 </div>
@@ -226,7 +226,7 @@ const AdminFAQManagement = () => {
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-600 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none appearance-none cursor-pointer min-w-[150px]"
+                        className="px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-medium text-slate-600 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none appearance-none cursor-pointer min-w-[150px]"
                     >
                         <option value="">All Status</option>
                         <option value="active">Active</option>
@@ -234,7 +234,7 @@ const AdminFAQManagement = () => {
                     </select>
                     <button
                         onClick={() => { setSearchTerm(''); setStatusFilter(''); }}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-slate-50 text-slate-600 text-xs font-black uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-100"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-100"
                     >
                         <HiOutlineArrowPath className="w-4 h-4" />
                         Reset
@@ -248,11 +248,11 @@ const AdminFAQManagement = () => {
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="bg-slate-50/50 border-b border-slate-100">
-                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest">Question</th>
-                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest hidden md:table-cell">Answer Preview</th>
-                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest text-center">Status</th>
-                                <th className="text-left px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest hidden lg:table-cell text-center">Created</th>
-                                <th className="text-center px-6 py-4 font-black text-black/80 text-[10px] uppercase tracking-widest">Actions</th>
+                                <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">Question</th>
+                                <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest hidden md:table-cell">Answer Preview</th>
+                                <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest text-center">Status</th>
+                                <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest hidden lg:table-cell text-center">Created</th>
+                                <th className="text-center px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-dark-100">
@@ -274,18 +274,18 @@ const AdminFAQManagement = () => {
                                 paginatedFaqs.map((faq) => (
                                     <tr key={faq._id} className="hover:bg-slate-50/50 transition-colors group">
                                         <td className="px-6 py-5 max-w-xs transition-colors group">
-                                            <p className="font-black text-slate-900 line-clamp-2 group-hover:text-blue-600 transition-colors uppercase text-[13px] tracking-tight">{faq.question}</p>
+                                            <p className="font-bold text-black line-clamp-2 group-hover:text-blue-600 transition-colors uppercase text-[13px] tracking-tight">{faq.question}</p>
                                         </td>
                                         <td className="px-6 py-5 hidden md:table-cell max-w-sm">
-                                            <p className="text-slate-500 font-bold line-clamp-1 text-[12px] cursor-help" title={faq.answer}>{faq.answer}</p>
+                                            <p className="text-black font-bold line-clamp-1 text-[12px] cursor-help" title={faq.answer}>{faq.answer}</p>
                                         </td>
                                         <td className="px-6 py-5 text-center">
                                             <button
                                                 onClick={() => handleToggleStatus(faq)}
                                                 title={faq.status === 'active' ? 'Click to deactivate' : 'Click to activate'}
-                                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 border ${faq.status === 'active'
-                                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-sm shadow-emerald-50'
-                                                        : 'bg-rose-50 text-rose-600 border border-rose-100'
+                                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 border ${faq.status === 'active'
+                                                    ? 'bg-emerald-50 text-emerald-900 border border-emerald-100 shadow-sm shadow-emerald-50'
+                                                    : 'bg-rose-50 text-rose-600 border border-rose-100'
                                                     }`}
                                             >
                                                 <span className={`w-1.5 h-1.5 rounded-full ${faq.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
@@ -293,11 +293,10 @@ const AdminFAQManagement = () => {
                                             </button>
                                         </td>
                                         <td className="px-6 py-5 hidden lg:table-cell text-center">
-                                            <p className="text-slate-900 font-black text-[12px] uppercase tracking-tight">{formatDate(faq.createdAt)}</p>
+                                            <p className="text-slate-700 font-bold text-[12px] uppercase tracking-tight">{formatDate(faq.createdAt)}</p>
                                         </td>
                                         <td className="px-6 py-5 text-center">
                                             <div className="flex items-center justify-center gap-3">
-                                                <button onClick={() => handleOpenViewModal(faq)} className="text-slate-700 hover:text-blue-600 transition-all" title="View Details"><HiOutlineEye className="w-5 h-5" /></button>
                                                 <button onClick={() => handleOpenModal(faq)} className="text-slate-700 hover:text-blue-600 transition-all" title="Edit FAQ"><HiOutlinePencilSquare className="w-5 h-5" /></button>
                                                 <button onClick={() => handleDelete(faq._id)} className="text-slate-700 hover:text-red-600 transition-all" title="Delete FAQ"><HiOutlineTrash className="w-5 h-5" /></button>
                                             </div>
@@ -312,14 +311,14 @@ const AdminFAQManagement = () => {
                 {/* Pagination */}
                 {filteredFaqs.length > 0 && (
                     <div className="px-6 py-4 border-t border-slate-50 flex items-center justify-between bg-white">
-                        <p className="text-[12px] font-bold text-slate-400">
-                            Showing <span className="text-slate-900">{Math.min(filteredFaqs.length, (currentPage - 1) * itemsPerPage + 1)}</span> to <span className="text-slate-900">{Math.min(filteredFaqs.length, currentPage * itemsPerPage)}</span> of <span className="text-slate-900">{filteredFaqs.length}</span> entries
+                        <p className="text-[12px] font-medium text-slate-400/95">
+                            Showing <span className="text-slate-900 font-bold">{Math.min(filteredFaqs.length, (currentPage - 1) * itemsPerPage + 1)}</span> to <span className="text-slate-900 font-bold">{Math.min(filteredFaqs.length, currentPage * itemsPerPage)}</span> of <span className="text-slate-900 font-bold">{filteredFaqs.length}</span> entries
                         </p>
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                                 disabled={currentPage === 1}
-                                className="p-2 rounded-xl border border-slate-100 text-slate-400 hover:text-[#5b4eff] hover:bg-slate-50 disabled:opacity-50 transition-all"
+                                className="p-2 rounded-xl border border-slate-100 text-slate-400/95 hover:text-[#5b4eff] hover:bg-slate-50 disabled:opacity-50 transition-all"
                             >
                                 <HiOutlineChevronLeft className="w-4 h-4" />
                             </button>
@@ -327,9 +326,9 @@ const AdminFAQManagement = () => {
                                 <button
                                     key={i + 1}
                                     onClick={() => setCurrentPage(i + 1)}
-                                    className={`w-9 h-9 rounded-xl text-xs font-black transition-all ${currentPage === i + 1
-                                            ? 'bg-[#5b4eff] text-white shadow-lg shadow-[#5b4eff]/20'
-                                            : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600 border border-transparent hover:border-slate-100'
+                                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${currentPage === i + 1
+                                        ? 'bg-[#5b4eff] text-white shadow-lg shadow-[#5b4eff]/20'
+                                        : 'text-slate-400/95 hover:bg-slate-50 hover:text-slate-600 border border-transparent hover:border-slate-100'
                                         }`}
                                 >
                                     {i + 1}
@@ -338,7 +337,7 @@ const AdminFAQManagement = () => {
                             <button
                                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                                 disabled={currentPage === totalPages}
-                                className="p-2 rounded-xl border border-slate-100 text-slate-400 hover:text-[#5b4eff] hover:bg-slate-50 disabled:opacity-50 transition-all"
+                                className="p-2 rounded-xl border border-slate-100 text-slate-400/95 hover:text-[#5b4eff] hover:bg-slate-50 disabled:opacity-50 transition-all"
                             >
                                 <HiOutlineChevronRight className="w-4 h-4" />
                             </button>
@@ -349,16 +348,16 @@ const AdminFAQManagement = () => {
 
             {/* Create/Edit Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm shadow-2xl transition-all" onClick={() => !formLoading && setShowModal(false)} />
                     <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
                         <div className="px-6 py-4 border-b border-dark-50 flex items-center justify-between">
-                            <h3 className="text-lg font-bold text-dark-900">{editingFaq ? 'Edit FAQ' : 'Add New FAQ'}</h3>
+                            <h3 className="text-lg font-medium text-dark-900">{editingFaq ? 'Edit FAQ' : 'Add New FAQ'}</h3>
                             <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-dark-50 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
                         </div>
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
                             <div>
-                                <label className="block text-xs font-bold text-dark-500 uppercase tracking-widest mb-1.5">Question *</label>
+                                <label className="block text-xs font-medium text-dark-500 uppercase tracking-widest mb-1.5">Question *</label>
                                 <textarea
                                     value={formData.question}
                                     onChange={(e) => setFormData({ ...formData, question: e.target.value })}
@@ -368,7 +367,7 @@ const AdminFAQManagement = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-dark-500 uppercase tracking-widest mb-1.5">Answer *</label>
+                                <label className="block text-xs font-medium text-dark-500 uppercase tracking-widest mb-1.5">Answer *</label>
                                 <textarea
                                     value={formData.answer}
                                     onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
@@ -390,7 +389,7 @@ const AdminFAQManagement = () => {
                             </div>
                             <div className="flex gap-3 pt-4">
                                 <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-3 rounded-xl border border-dark-200 text-sm font-bold text-dark-600 hover:bg-dark-50 transition-all">Cancel</button>
-                                <button type="submit" disabled={formLoading} className="flex-1 py-3 gradient-primary text-white text-sm font-bold rounded-xl shadow-lg shadow-primary-500/20 disabled:opacity-70">
+                                <button type="submit" disabled={formLoading} className="flex-1 py-3 gradient-primary text-white text-sm font-medium rounded-xl shadow-lg shadow-primary-500/20 disabled:opacity-70">
                                     {formLoading ? 'Saving...' : editingFaq ? 'Update FAQ' : 'Create FAQ'}
                                 </button>
                             </div>
@@ -401,7 +400,7 @@ const AdminFAQManagement = () => {
 
             {/* View Modal */}
             {showViewModal && viewingFaq && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm pointer-events-none" />
                     <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in duration-200">
                         <div className="px-8 py-6 border-b border-dark-50 flex items-center justify-between bg-dark-50/30">
@@ -413,36 +412,36 @@ const AdminFAQManagement = () => {
                         </div>
                         <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto">
                             <div className="space-y-3">
-                                <p className="text-xs font-black text-dark-400 uppercase tracking-widest flex items-center gap-2">
+                                <p className="text-xs font-bold text-dark-400/95 uppercase tracking-widest flex items-center gap-2">
                                     <HiOutlineChatBubbleLeftRight className="w-3.5 h-3.5" />
                                     Question
                                 </p>
-                                <h4 className="text-xl font-bold text-dark-900 leading-snug">{viewingFaq.question}</h4>
+                                <h4 className="text-xl font-medium text-dark-900 leading-snug">{viewingFaq.question}</h4>
                             </div>
                             <div className="space-y-3">
-                                <p className="text-xs font-black text-dark-400 uppercase tracking-widest">Answer</p>
+                                <p className="text-xs font-bold text-dark-400/95 uppercase tracking-widest">Answer</p>
                                 <div className="bg-dark-50/50 rounded-2xl p-6 border border-dark-100 shadow-inner">
-                                    <p className="text-dark-600 text-base leading-relaxed whitespace-pre-wrap">{viewingFaq.answer}</p>
+                                    <p className="text-dark-600 text-base leading-relaxed whitespace-pre-wrap font-medium">{viewingFaq.answer}</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-8 pt-4 border-t border-dark-50">
                                 <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-dark-400 uppercase tracking-widest">Status</p>
-                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${viewingFaq.status === 'active'
-                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                            : 'bg-rose-50 text-rose-600 border-rose-100'
+                                    <p className="text-[10px] font-bold text-dark-400/95 uppercase tracking-widest">Status</p>
+                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${viewingFaq.status === 'active'
+                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                        : 'bg-rose-50 text-rose-600 border-rose-100'
                                         }`}>
                                         {viewingFaq.status === 'inactive' ? 'inactive' : viewingFaq.status}
                                     </span>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-dark-400 uppercase tracking-widest">Created Date</p>
-                                    <p className="font-bold text-dark-700">{formatDate(viewingFaq.createdAt)}</p>
+                                    <p className="text-[10px] font-bold text-dark-400/95 uppercase tracking-widest">Created Date</p>
+                                    <p className="font-medium text-dark-700">{formatDate(viewingFaq.createdAt)}</p>
                                 </div>
                             </div>
                         </div>
                         <div className="p-8 pt-0">
-                            <button onClick={() => setShowViewModal(false)} className="w-full py-4 rounded-2xl bg-dark-900 text-white font-bold hover:bg-black transition-all shadow-xl shadow-dark-900/10">Close Details</button>
+                            <button onClick={() => setShowViewModal(false)} className="w-full py-4 rounded-2xl bg-dark-900 text-white font-medium hover:bg-black transition-all shadow-xl shadow-dark-900/10">Close Details</button>
                         </div>
                     </div>
                 </div>

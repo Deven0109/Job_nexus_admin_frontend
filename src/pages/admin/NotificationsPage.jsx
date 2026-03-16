@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-    HiOutlineBell, 
-    HiOutlineCheckCircle, 
-    HiOutlineClock, 
+import {
+    HiOutlineBell,
+    HiOutlineCheckCircle,
+    HiOutlineClock,
     HiOutlineXMark,
     HiOutlineTrash,
     HiOutlineCheck
@@ -14,11 +14,11 @@ import toast from 'react-hot-toast';
 
 const NotificationsPage = () => {
     const navigate = useNavigate();
-    const { 
-        notifications, 
-        unreadCount, 
-        markAsRead, 
-        markAllAsRead, 
+    const {
+        notifications,
+        unreadCount,
+        markAsRead,
+        markAllAsRead,
         deleteNotification,
         refreshNotifications,
         setNotifications
@@ -29,7 +29,7 @@ const NotificationsPage = () => {
         refreshNotifications();
     }, []);
 
-    const filteredNotifications = filter === 'unread' 
+    const filteredNotifications = filter === 'unread'
         ? notifications.filter(n => !n.isRead)
         : notifications;
 
@@ -53,8 +53,8 @@ const NotificationsPage = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Notifications</h1>
-                    <p className="text-slate-500 text-sm font-medium mt-1">
+                    <h1 className="text-2xl font-bold text-black tracking-tight">Notifications</h1>
+                    <p className="text-sm text-slate-500 mt-1 font-medium">
                         Stay updated with the latest activities on the platform.
                     </p>
                 </div>
@@ -62,7 +62,7 @@ const NotificationsPage = () => {
                     {unreadCount > 0 && (
                         <button
                             onClick={markAllAsRead}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-xl text-sm font-bold transition-all shadow-sm shadow-blue-100/50"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-xl text-sm font-medium transition-all shadow-sm shadow-blue-100/50"
                         >
                             <HiOutlineCheckCircle className="w-5 h-5" />
                             Mark all read
@@ -77,11 +77,10 @@ const NotificationsPage = () => {
                 <div className="px-6 py-4 border-b border-slate-50 flex items-center gap-6">
                     <button
                         onClick={() => setFilter('all')}
-                        className={`text-sm font-bold pb-4 -mb-4 transition-all relative ${
-                            filter === 'all' 
-                            ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' 
-                            : 'text-slate-400 hover:text-slate-600'
-                        }`}
+                        className={`text-sm font-medium pb-4 -mb-4 transition-all relative ${filter === 'all'
+                                ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600'
+                                : 'text-slate-500 hover:text-slate-700'
+                            }`}
                     >
                         All Notifications
                         <span className="ml-2 bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[10px]">
@@ -90,16 +89,14 @@ const NotificationsPage = () => {
                     </button>
                     <button
                         onClick={() => setFilter('unread')}
-                        className={`text-sm font-bold pb-4 -mb-4 transition-all relative ${
-                            filter === 'unread' 
-                            ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' 
-                            : 'text-slate-400 hover:text-slate-600'
-                        }`}
+                        className={`text-sm font-medium pb-4 -mb-4 transition-all relative ${filter === 'unread'
+                                ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600'
+                                : 'text-slate-500 hover:text-slate-700'
+                            }`}
                     >
                         Unread
-                        <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${
-                            unreadCount > 0 ? 'bg-red-50 text-red-500' : 'bg-slate-100 text-slate-500'
-                        }`}>
+                        <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${unreadCount > 0 ? 'bg-red-50 text-red-500' : 'bg-slate-100 text-slate-500'
+                            }`}>
                             {unreadCount}
                         </span>
                     </button>
@@ -112,23 +109,20 @@ const NotificationsPage = () => {
                             <div
                                 key={notification._id}
                                 onClick={() => handleNotificationClick(notification)}
-                                className={`group px-6 py-6 cursor-pointer hover:bg-slate-50/80 transition-all flex gap-5 items-start ${
-                                    !notification.isRead ? 'bg-blue-50/10' : ''
-                                }`}
+                                className={`group px-6 py-6 cursor-pointer hover:bg-slate-50/80 transition-all flex gap-5 items-start ${!notification.isRead ? 'bg-blue-50/10' : ''
+                                    }`}
                             >
-                                <div className={`w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center border transition-all ${
-                                    !notification.isRead 
-                                        ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100' 
+                                <div className={`w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center border transition-all ${!notification.isRead
+                                        ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100'
                                         : 'bg-slate-50 text-slate-400 border-slate-100 group-hover:bg-white group-hover:text-slate-600'
-                                }`}>
+                                    }`}>
                                     <HiOutlineBell className="w-6 h-6" />
                                 </div>
 
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between mb-1.5">
-                                        <h3 className={`text-[15px] font-bold tracking-tight ${
-                                            !notification.isRead ? 'text-slate-900' : 'text-slate-600'
-                                        }`}>
+                                        <h3 className={`text-[15px] font-bold tracking-tight ${!notification.isRead ? 'text-black/80' : 'text-slate-600'
+                                            }`}>
                                             {notification.title}
                                         </h3>
                                         <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -153,15 +147,14 @@ const NotificationsPage = () => {
                                             </button>
                                         </div>
                                     </div>
-                                    
-                                    <p className={`text-[14px] leading-relaxed mb-3 ${
-                                        !notification.isRead ? 'text-slate-800' : 'text-slate-500'
-                                    }`}>
+
+                                    <p className={`text-[14px] leading-relaxed mb-3 font-medium ${!notification.isRead ? 'text-black/80' : 'text-slate-500'
+                                        }`}>
                                         {notification.message}
                                     </p>
 
                                     <div className="flex items-center gap-2">
-                                        <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                        <span className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400/95 uppercase tracking-wider">
                                             <HiOutlineClock className="w-3.5 h-3.5" />
                                             {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                                         </span>
@@ -179,7 +172,7 @@ const NotificationsPage = () => {
                             </div>
                             <h3 className="text-lg font-bold text-slate-900 mb-1">No notifications found</h3>
                             <p className="text-slate-500 font-medium">
-                                {filter === 'unread' 
+                                {filter === 'unread'
                                     ? "Perfect! You've caught up with everything."
                                     : "We'll let you know when something important happens."
                                 }
@@ -187,7 +180,7 @@ const NotificationsPage = () => {
                             {filter === 'unread' && notifications.length > 0 && (
                                 <button
                                     onClick={() => setFilter('all')}
-                                    className="mt-6 text-sm font-bold text-blue-600 hover:underline"
+                                    className="mt-6 text-sm font-medium text-blue-600 hover:underline"
                                 >
                                     View all notifications
                                 </button>

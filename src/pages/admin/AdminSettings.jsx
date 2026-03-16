@@ -121,7 +121,7 @@ const AdminSettings = () => {
                 {/* Add Stage Form */}
                 {showAddForm && (
                     <div className="mb-5 p-4 bg-dark-50 rounded-xl border border-dark-200">
-                        <h4 className="text-sm font-semibold text-black/80 mb-3">New Stage</h4>
+                        <h4 className="text-sm font-black text-black/80 mb-3">New Stage</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <input
                                 type="text"
@@ -130,7 +130,7 @@ const AdminSettings = () => {
                                     setNewStage((prev) => ({ ...prev, name: e.target.value }))
                                 }
                                 placeholder="Stage name"
-                                className="px-3 py-2 rounded-lg border border-dark-200 text-sm text-dark-800 placeholder-dark-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
+                                className="px-3 py-2 rounded-lg border border-slate-200 text-sm font-bold text-black/80 placeholder-slate-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
                             />
                             <input
                                 type="text"
@@ -173,8 +173,8 @@ const AdminSettings = () => {
                         <div
                             key={stage.id}
                             className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${editingStage?.id === stage.id
-                                    ? 'border-primary-300 bg-primary-50/30 shadow-sm'
-                                    : 'border-dark-100 bg-white hover:border-dark-200 hover:shadow-sm'
+                                ? 'border-primary-300 bg-primary-50/30 shadow-sm'
+                                : 'border-dark-100 bg-white hover:border-dark-200 hover:shadow-sm'
                                 }`}
                         >
                             {/* Order Number */}
@@ -230,11 +230,11 @@ const AdminSettings = () => {
                                 </div>
                             ) : (
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-black/80">
+                                    <p className="text-sm font-black text-black/80">
                                         {stage.name}
                                     </p>
                                     {stage.description && (
-                                        <p className="text-xs text-dark-400 truncate">
+                                        <p className="text-xs font-bold text-black/80 truncate">
                                             {stage.description}
                                         </p>
                                     )}

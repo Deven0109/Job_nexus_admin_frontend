@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Country, State, City } from 'country-state-city';
 import { adminAPI } from '../../api/admin.api';
 import toast from 'react-hot-toast';
@@ -45,8 +45,11 @@ const URGENCY_LEVELS = ['Low', 'Medium', 'High'];
 const AdminEditJobRequest = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const [searchParams] = useSearchParams();
     const editMode = searchParams.get('edit') === 'true';
+
+    const backPath = location.state?.from || '/jobs';
 
     const [jobRequest, setJobRequest] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -224,7 +227,7 @@ const AdminEditJobRequest = () => {
 
                 <div className="relative px-8 py-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <button
-                        onClick={() => navigate('/jobs')}
+                        onClick={() => navigate(backPath)}
                         className="absolute top-6 right-6 p-2 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all border border-white/10 z-10"
                     >
                         <HiOutlineXMark className="w-5 h-5" />
@@ -232,7 +235,7 @@ const AdminEditJobRequest = () => {
 
                     <div className="flex items-start gap-5">
                         <button
-                            onClick={() => navigate('/jobs')}
+                            onClick={() => navigate(backPath)}
                             className="p-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-all border border-white/10"
                         >
                             <HiOutlineArrowLeft className="w-5 h-5" />
@@ -506,7 +509,7 @@ const AdminEditJobRequest = () => {
                 {/* Footer Action */}
                 <div className="p-10 bg-white border-t border-slate-50 flex items-center justify-center">
                     <button
-                        onClick={() => navigate('/jobs')}
+                        onClick={() => navigate(backPath)}
                         className="w-full max-w-md px-10 py-4 border-2 border-slate-100 text-black/80 text-sm font-black rounded-2xl hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-95 shadow-sm"
                     >
                         Close
