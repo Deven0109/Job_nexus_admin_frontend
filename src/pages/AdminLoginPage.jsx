@@ -95,11 +95,11 @@ const AdminLoginPage = () => {
                         </div>
                         <div className="mb-2">
                             <span className="text-xl font-bold text-dark-900">
-                                Job<span className="text-primary-600">Consult</span>
+                                Job<span className="text-primary-600">Nexus</span>
                             </span>
                         </div>
                         <h1 className="text-2xl font-bold text-dark-900 mb-1">
-                            Welcome to JobConsult Admin Panel
+                            Welcome to Job Nexus Admin Panel
                         </h1>
                         <p className="text-dark-500 text-sm">
                             Securely access your admin dashboard
@@ -121,7 +121,7 @@ const AdminLoginPage = () => {
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    placeholder="admin@jobconsult.com"
+                                    placeholder="admin@jobnexus.com"
                                     autoComplete="email"
                                     className={`w-full pl-11 pr-4 py-2.5 rounded-lg border text-sm text-dark-800 placeholder-dark-400 transition-all focus:ring-2 focus:ring-primary-100 ${errors.email
                                         ? 'border-danger-400 focus:border-danger-500'
@@ -212,7 +212,7 @@ const AdminLoginPage = () => {
 
                 {/* Footer */}
                 <p className="text-center text-xs text-dark-400 mt-6">
-                    © {new Date().getFullYear()} JobConsult Admin Panel. All rights reserved.
+                    © {new Date().getFullYear()} Job Nexus Admin Panel. All rights reserved.
                 </p>
             </div>
         </div>
