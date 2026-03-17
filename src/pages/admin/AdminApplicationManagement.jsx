@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { adminAPI } from '../../api/admin.api';
 import toast from 'react-hot-toast';
 import { BASE_URL } from '../../api/axios';
-import { Skeleton, Box, Stack, Paper, Button, IconButton, Typography, Divider, Avatar } from '@mui/material';
+import { Skeleton, Box, Stack, Paper, Button, IconButton, Typography, Avatar, TextField, Pagination, Link } from '@mui/material';
 import {
     HiOutlineClipboardDocumentList,
     HiOutlineMagnifyingGlass,
@@ -30,10 +31,9 @@ import {
     HiOutlineClock,
     HiOutlineAcademicCap,
     HiOutlineCheckBadge,
-    HiOutlineAdjustmentsVertical,
-    HiOutlineArrowsUpDown,
     HiOutlineChevronDoubleRight,
-    HiOutlineUserGroup
+    HiOutlineUserGroup,
+    HiOutlineArrowsUpDown
 } from 'react-icons/hi2';
 
 const COLUMN_CONFIG = [
@@ -64,10 +64,11 @@ const COLUMN_CONFIG = [
         color: 'bg-red-500 shadow-red-100',
         text: 'text-red-700',
         bg: 'bg-red-50',
-        action: null,
+        action: 'reject',
         include: ['Final Rejected', 'Recruiter Rejected', 'Employer Rejected']
     }
 ];
+
 const STATUS_THEMES = {
     'Applied': { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-100', label: 'New Applied' },
     'Under Review': { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-100', label: 'Reviewing' },
@@ -90,21 +91,13 @@ const STEPS = [
 ];
 
 const WorkflowStepper = ({ currentStatus }) => {
-    // Determine progress depth based on current status
     const statusLevels = {
-        'Applied': 0,
-        'Recruiter Rejected': 0,
+        'Applied': 0, 'Recruiter Rejected': 0,
         'Under Review': 1,
-        'Recruiter Shortlisted': 2,
-        'Employer Shortlisted': 2,
-        'Employer Rejected': 2,
-        'Interview Scheduled': 3,
-        'Interview Completed': 3,
-        'Selected Next Round': 3,
-        'Final Selected': 4,
-        'Final Rejected': 4
+        'Recruiter Shortlisted': 2, 'Employer Shortlisted': 2, 'Employer Rejected': 2,
+        'Interview Scheduled': 3, 'Interview Completed': 3, 'Selected Next Round': 3,
+        'Final Selected': 4, 'Final Rejected': 4
     };
-
     const currentLevel = statusLevels[currentStatus] ?? 0;
     const isCurrentlyRejected = currentStatus.includes('Rejected');
 
@@ -114,50 +107,20 @@ const WorkflowStepper = ({ currentStatus }) => {
                 const isPassed = index < currentLevel;
                 const isCurrent = index === currentLevel;
                 const isNodeRejected = isCurrent && isCurrentlyRejected;
-
-                // State for node visual
-                const state = (isPassed || (index === 4 && currentStatus === 'Final Selected'))
-                    ? 'completed'
-                    : isNodeRejected ? 'rejected' : isCurrent ? 'active' : 'pending';
+                const state = (isPassed || (index === 4 && currentStatus === 'Final Selected')) ? 'completed' : isNodeRejected ? 'rejected' : isCurrent ? 'active' : 'pending';
 
                 return (
                     <div key={index} className="flex flex-col items-center relative flex-1">
-                        {/* Connecting Line (from previous to current) */}
                         {index !== 0 && (
                             <div
                                 style={{ width: '100%', left: '-50%', top: '12px' }}
-                                className={`absolute h-[3px] -translate-y-1/2 z-0 transition-all duration-500
-                                ${index <= currentLevel
-                                        ? (isCurrentlyRejected && index === currentLevel ? 'bg-red-500' : 'bg-emerald-500')
-                                        : 'bg-slate-300'}`}
+                                className={`absolute h-[3px] -translate-y-1/2 z-0 transition-all duration-500 ${index <= currentLevel ? (isCurrentlyRejected && index === currentLevel ? 'bg-red-500' : 'bg-emerald-500') : 'bg-slate-300'}`}
                             />
                         )}
-
-                        {/* Status Node */}
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-500 z-10
-                            ${state === 'completed' ? 'bg-emerald-600 border-emerald-600' :
-                                state === 'rejected' ? 'bg-red-600 border-red-600' :
-                                    state === 'active' ? 'bg-blue-600 border-blue-600 ring-4 ring-blue-50' :
-                                        'bg-white border-slate-200'}`}
-                        >
-                            {state === 'completed' ? (
-                                <HiOutlineCheckCircle className="w-4 h-4 text-white" />
-                            ) : state === 'rejected' ? (
-                                <HiOutlineXMark className="w-4 h-4 text-white" />
-                            ) : (
-                                <span className={`text-[10px] font-bold leading-none ${state === 'active' ? 'text-white' : 'text-slate-300'}`}>
-                                    {index + 1}
-                                </span>
-                            )}
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-500 z-10 ${state === 'completed' ? 'bg-emerald-600 border-emerald-600' : state === 'rejected' ? 'bg-red-600 border-red-600' : state === 'active' ? 'bg-blue-600 border-blue-600 ring-4 ring-blue-50' : 'bg-white border-slate-200'}`}>
+                            {state === 'completed' ? <HiOutlineCheckCircle className="w-4 h-4 text-white" /> : state === 'rejected' ? <HiOutlineXMark className="w-4 h-4 text-white" /> : <span className={`text-[10px] font-bold leading-none ${state === 'active' ? 'text-white' : 'text-slate-300'}`}>{index + 1}</span>}
                         </div>
-
-                        {/* Step Label */}
-                        <span className={`mt-1 text-[7px] font-bold uppercase text-center transition-colors px-0.5
-                            ${state === 'active' ? 'text-blue-600' :
-                                state === 'completed' ? 'text-slate-900' :
-                                    state === 'rejected' ? 'text-red-500' :
-                                        'text-slate-300'}`}
-                        >
+                        <span className={`mt-1 text-[7px] font-bold uppercase text-center transition-colors px-0.5 ${state === 'active' ? 'text-blue-600' : state === 'completed' ? 'text-slate-900' : state === 'rejected' ? 'text-red-500' : 'text-slate-300'}`}>
                             {step.label}
                         </span>
                     </div>
@@ -175,12 +138,10 @@ const AdminApplicationManagement = () => {
     const [prevViewState, setPrevViewState] = useState(null);
     const [selectedJob, setSelectedJob] = useState(null);
 
-    // Pipeline States
     const [pipeline, setPipeline] = useState({});
     const [viewingProfile, setViewingProfile] = useState(null);
     const [pipelineLoading, setPipelineLoading] = useState(false);
 
-    // Jobs View States
     const [jobs, setJobs] = useState([]);
     const [jobsLoading, setJobsLoading] = useState(true);
     const [jobsTotal, setJobsTotal] = useState(0);
@@ -189,78 +150,46 @@ const AdminApplicationManagement = () => {
     const [jobsStatusFilter, setJobsStatusFilter] = useState('active');
     const [globalStats, setGlobalStats] = useState({ totalActive: 0, totalOverall: 0 });
 
-    // Applicants View States
     const [applicants, setApplicants] = useState([]);
     const [applicantsLoading, setApplicantsLoading] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isScheduling, setIsScheduling] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [actionLoading, setActionLoading] = useState(false);
     const [imageErrors, setImageErrors] = useState({});
 
-    // View/Edit Modal States
-    const [showViewModal, setShowViewModal] = useState(false);
-    const [selectedJobDetail, setSelectedJobDetail] = useState(null);
+    const [interviewData, setInterviewData] = useState({ roundNumber: 1, meetLink: '', meetCode: '', scheduledAt: '' });
+    const limit = 10;
 
-    const [interviewData, setInterviewData] = useState({
-        roundNumber: 1,
-        meetLink: '',
-        meetCode: '',
-        scheduledAt: ''
-    });
-
-    const limit = 5;
-
-    // --- FETCH JOBS ---
     const fetchJobs = useCallback(async () => {
         setJobsLoading(true);
         try {
-            const params = {
-                page: jobsPage,
-                limit,
-                search: jobsSearch,
-                status: jobsStatusFilter
-            };
+            const params = { page: jobsPage, limit, search: jobsSearch, status: jobsStatusFilter };
             const res = await adminAPI.listJobRequests(params);
             if (res.data?.success) {
                 setJobs(res.data.data.jobRequests);
                 setJobsTotal(res.data.data.pagination.total);
-                if (res.data.data.stats) {
-                    setGlobalStats(res.data.data.stats);
-                }
+                if (res.data.data.stats) setGlobalStats(res.data.data.stats);
             }
-        } catch (error) {
-            toast.error('Failed to load jobs');
-        } finally {
-            setJobsLoading(false);
-        }
+        } catch (error) { toast.error('Failed to load jobs'); }
+        finally { setJobsLoading(false); }
     }, [jobsPage, jobsSearch, jobsStatusFilter]);
 
     useEffect(() => {
         if (view === 'jobs') {
-            const timer = setTimeout(() => {
-                fetchJobs();
-            }, jobsSearch ? 400 : 0);
+            const timer = setTimeout(() => { fetchJobs(); }, jobsSearch ? 400 : 0);
             return () => clearTimeout(timer);
         }
     }, [fetchJobs, view]);
 
-    // --- FETCH APPLICANTS ---
     const fetchApplicants = async (jobId) => {
         setApplicantsLoading(true);
         try {
             const res = await adminAPI.getJobApplications(jobId);
-            if (res.data?.success) {
-                setApplicants(res.data.data);
-            }
-        } catch (error) {
-            toast.error('Failed to load applicants');
-        } finally {
-            setApplicantsLoading(false);
-        }
+            if (res.data?.success) setApplicants(res.data.data);
+        } catch (error) { toast.error('Failed to load applicants'); }
+        finally { setApplicantsLoading(false); }
     };
 
-    // Filter by jobId from URL (Notification redirection)
     useEffect(() => {
         const jobIdParam = searchParams.get('jobId');
         if (jobIdParam) {
@@ -273,9 +202,7 @@ const AdminApplicationManagement = () => {
                         setView('applicants');
                         fetchApplicants(jobIdParam);
                     }
-                } catch (error) {
-                    console.error('Failed to load job from URL param', error);
-                }
+                } catch (error) { console.error('Failed to load job from URL param', error); }
             };
             loadJobFromUrl();
         }
@@ -285,16 +212,11 @@ const AdminApplicationManagement = () => {
         setPrevViewState('jobs');
         setSelectedJob(job);
         setView('applicants');
-        // We need the actual Job ID (from the Job model) to fetch applications
-        const actualJobId = job.jobId || job._id;
-        fetchApplicants(actualJobId);
+        fetchApplicants(job.jobId || job._id);
     };
 
     const handleAllApplicationsClick = () => {
-        if (selectedJob) {
-            const actualJobId = selectedJob.jobId || selectedJob._id;
-            fetchApplicants(actualJobId);
-        }
+        if (selectedJob) fetchApplicants(selectedJob.jobId || selectedJob._id);
         setView('applicants');
     };
 
@@ -310,7 +232,6 @@ const AdminApplicationManagement = () => {
         setApplicants([]);
     };
 
-    // --- HIRE WORKFLOW ACTIONS ---
     const handleStatusUpdate = async (id, action, successMsg) => {
         const loadingToast = toast.loading('Updating status...');
         setIsUpdating(true);
@@ -323,10 +244,9 @@ const AdminApplicationManagement = () => {
         } catch (error) {
             toast.dismiss(loadingToast);
             toast.error(error.response?.data?.message || 'Update failed');
-        } finally {
-            setIsUpdating(false);
-        }
+        } finally { setIsUpdating(false); }
     };
+
     const handleOpenSchedule = (app) => {
         setIsScheduling(app._id);
         if (app.status === 'Interview Scheduled' && app.interviewRounds?.length > 0) {
@@ -338,12 +258,7 @@ const AdminApplicationManagement = () => {
                 scheduledAt: lastRound.scheduledAt ? new Date(lastRound.scheduledAt).toISOString().slice(0, 16) : ''
             });
         } else {
-            setInterviewData({
-                roundNumber: (app.interviewRounds?.length || 0) + 1,
-                meetLink: '',
-                meetCode: '',
-                scheduledAt: ''
-            });
+            setInterviewData({ roundNumber: (app.interviewRounds?.length || 0) + 1, meetLink: '', meetCode: '', scheduledAt: '' });
         }
     };
 
@@ -356,45 +271,29 @@ const AdminApplicationManagement = () => {
             setIsScheduling(null);
             if (view === 'applicants') fetchApplicants(selectedJob.jobId || selectedJob._id);
             if (view === 'pipeline') fetchPipeline(selectedJob.jobId || selectedJob._id);
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Scheduling failed');
-        } finally {
-            setIsSubmitting(false);
-        }
+            fetchJobs(); // Update counts in the main list
+        } catch (error) { toast.error(error.response?.data?.message || 'Scheduling failed'); }
+        finally { setIsSubmitting(false); }
     };
 
-    const handleEditJob = (job) => {
-        navigate(`/jobs/${job._id}`, { state: { from: location.pathname } });
-    };
+    const handleEditJob = (job) => navigate(`/jobs/${job._id}`, { state: { from: location.pathname } });
 
     const handleDeleteJob = async (jobId) => {
-        if (!window.confirm('Are you sure you want to delete this job posting? This action cannot be undone.')) return;
-
-        setActionLoading(true);
+        if (!window.confirm('Are you sure you want to delete this job posting?')) return;
         try {
             await adminAPI.deleteJobRequest(jobId);
             toast.success('Job posting deleted successfully');
             fetchJobs();
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to delete job');
-        } finally {
-            setActionLoading(false);
-        }
+        } catch (error) { toast.error(error.response?.data?.message || 'Failed to delete job'); }
     };
 
-    // --- PIPELINE ACTIONS ---
     const fetchPipeline = async (jobId) => {
         setPipelineLoading(true);
         try {
             const res = await adminAPI.getJobPipeline(jobId);
-            if (res.data?.success) {
-                setPipeline(res.data.data);
-            }
-        } catch (error) {
-            toast.error('Failed to load hiring pipeline');
-        } finally {
-            setPipelineLoading(false);
-        }
+            if (res.data?.success) setPipeline(res.data.data);
+        } catch (error) { toast.error('Failed to load hiring pipeline'); }
+        finally { setPipelineLoading(false); }
     };
 
     const handleAction = async (id, action) => {
@@ -404,14 +303,48 @@ const AdminApplicationManagement = () => {
             toast.dismiss(loadToast);
             toast.success('Candidate moved forward');
             fetchPipeline(selectedJob.jobId || selectedJob._id);
-        } catch (error) {
-            toast.error('Failed to move candidate');
+        } catch (error) { toast.error('Failed to move candidate'); }
+    };
+
+    const onDragEnd = async (result) => {
+        const { destination, source, draggableId } = result;
+        if (!destination) return;
+        if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+
+        const findCandidate = (id) => {
+            for (const key in pipeline) {
+                const list = pipeline[key];
+                if (Array.isArray(list)) {
+                    const found = list.find(c => c._id === id);
+                    if (found) return found;
+                }
+            }
+            return null;
+        };
+
+        if (destination.droppableId === 'Interview Scheduled') {
+            const candidate = findCandidate(draggableId);
+            if (candidate) {
+                handleOpenSchedule(candidate);
+                return;
+            }
+        }
+
+        const actionMap = {
+            'Under Review': 'review',
+            'Employer Shortlisted': 'shortlist',
+            'Final Selected': 'final-select'
+        };
+
+        const action = actionMap[destination.droppableId];
+        if (action) {
+            await handleAction(draggableId, action);
         }
     };
 
     const handlePipeline = (jobId) => {
         const job = jobs.find(j => j._id === jobId) || selectedJob;
-        setPrevViewState(view); // Save current view (either 'jobs' or 'applicants')
+        setPrevViewState(view);
         setSelectedJob(job);
         setView('pipeline');
         fetchPipeline(jobId);
@@ -428,9 +361,7 @@ const AdminApplicationManagement = () => {
         return Array.isArray(list) ? list : [];
     };
 
-    const totalPipelineCandidates = COLUMN_CONFIG.reduce((sum, col) => {
-        return sum + getCandidatesForColumn(col).length;
-    }, 0);
+    const totalPipelineCandidates = COLUMN_CONFIG.reduce((sum, col) => sum + getCandidatesForColumn(col).length, 0);
 
     const formatSalary = (min, max) => {
         const fmt = (n) => {
@@ -443,881 +374,324 @@ const AdminApplicationManagement = () => {
 
     const renderJobCards = () => (
         <div className="space-y-6 pt-6">
-            {/* Header */}
             <div>
-                <h2 className="text-2xl font-bold text-black tracking-tight">
-                    Manage Job Postings
-                </h2>
-                <p className="text-sm text-slate-500 mt-1 font-medium">
-                    Track and manage all your active and closed job listings
-                </p>
+                <h2 className="text-2xl font-bold text-black tracking-tight">Manage Job Postings</h2>
+                <p className="text-sm text-slate-500 mt-1 font-medium">Track and manage all your active and closed job listings</p>
             </div>
-
-            {/* Stats Summary */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                 <div className="bg-white p-5 rounded-md shadow-[0_2px_10px_rgb(0,0,0,0.04)] border border-slate-100 flex items-center gap-4 transition-transform hover:-translate-y-1">
-                    <div className="w-12 h-12 rounded-md bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
-                        <HiOutlineBriefcase className="w-6 h-6 text-indigo-600" />
-                    </div>
-                    <div>
-                        <p className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Total Postings</p>
-                        <p className="text-2xl font-bold text-black leading-none">{globalStats.totalOverall}</p>
-                    </div>
+                    <div className="w-12 h-12 rounded-md bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0"><HiOutlineBriefcase className="w-6 h-6 text-indigo-600" /></div>
+                    <div><p className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Total Postings</p><p className="text-2xl font-bold text-black leading-none">{globalStats.totalOverall}</p></div>
                 </div>
                 <div className="bg-white p-5 rounded-md shadow-[0_2px_10px_rgb(0,0,0,0.04)] border border-slate-100 flex items-center gap-4 transition-transform hover:-translate-y-1">
-                    <div className="w-12 h-12 rounded-md bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
-                        <HiOutlineBolt className="w-6 h-6 text-emerald-600" />
-                    </div>
-                    <div>
-                        <p className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Active Jobs</p>
-                        <p className="text-2xl font-bold text-black leading-none">
-                            {globalStats.totalActive}
-                        </p>
-                    </div>
+                    <div className="w-12 h-12 rounded-md bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0"><HiOutlineBolt className="w-6 h-6 text-emerald-600" /></div>
+                    <div><p className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Active Jobs</p><p className="text-2xl font-bold text-black leading-none">{globalStats.totalActive}</p></div>
                 </div>
             </div>
-
-            {/* Filters */}
             <div className="bg-white p-4 rounded-md shadow-[0_2px_10px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
                     <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400/95" />
-                    <input
-                        type="text"
-                        value={jobsSearch}
-                        onChange={(e) => { setJobsSearch(e.target.value); setJobsPage(1); }}
-                        placeholder="Search by title, city or location..."
-                        className="w-full pl-11 pr-4 py-3 rounded-md border border-slate-200 text-sm font-medium text-slate-800 placeholder-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900 bg-slate-50 focus:bg-white transition-all outline-none"
-                    />
+                    <input type="text" value={jobsSearch} onChange={(e) => { setJobsSearch(e.target.value); setJobsPage(1); }} placeholder="Search by title, city or location..." className="w-full pl-11 pr-4 py-3 rounded-md border border-slate-200 text-sm font-medium text-slate-800 placeholder-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900 bg-slate-50 focus:bg-white transition-all outline-none" />
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative">
-                        <HiOutlineAdjustmentsVertical className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400/95" />
-                        <select
-                            value={jobsStatusFilter}
-                            onChange={(e) => { setJobsStatusFilter(e.target.value); setJobsPage(1); }}
-                            className="pl-9 pr-8 py-3 rounded-md border border-slate-200 text-sm font-medium text-slate-900 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-1 focus:ring-slate-900 outline-none appearance-none cursor-pointer min-w-[140px] transition-all"
-                        >
-                            <option value="">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="pending">Pending</option>
+                        <HiOutlineClock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400/95" />
+                        <select value={jobsStatusFilter} onChange={(e) => { setJobsStatusFilter(e.target.value); setJobsPage(1); }} className="pl-9 pr-8 py-3 rounded-md border border-slate-200 text-sm font-medium text-slate-700 bg-white hover:border-slate-900 transition-all outline-none appearance-none min-w-[140px]">
+                            <option value="active">Active Only</option>
+                            <option value="closed">Closed Only</option>
+                            <option value="all">All Jobs</option>
                         </select>
-                    </div>
-                    <div className="relative">
-                        <HiOutlineArrowsUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400/95" />
-                        <select
-                            className="pl-9 pr-8 py-3 rounded-md border border-slate-200 text-sm font-medium text-slate-900 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-1 focus:ring-slate-900 outline-none appearance-none cursor-pointer min-w-[140px] transition-all"
-                        >
-                            <option value="">Latest First</option>
-                            <option value="oldest">Oldest First</option>
-                        </select>
+                        <HiOutlineArrowsUpDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400/95 pointer-events-none" />
                     </div>
                 </div>
             </div>
-
-            {/* Job List Area */}
-            <Stack spacing={1.5}>
-                {jobsLoading ? (
-                    Array(limit).fill(0).map((_, i) => (
-                        <Paper key={i} elevation={0} sx={{ p: 2.5, borderRadius: 1, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 3 }}>
-                            <Skeleton variant="circular" width={40} height={40} />
-                            <Box sx={{ flex: 1 }}>
-                                <Skeleton variant="text" width="30%" height={24} />
-                                <Skeleton variant="text" width="20%" height={16} sx={{ mt: 0.5 }} />
-                            </Box>
-                        </Paper>
-                    ))
-                ) : jobs.length === 0 ? (
-                    <Paper sx={{ py: 12, textAlign: 'center', borderRadius: 1, border: '1px dashed', borderColor: 'divider', bgcolor: 'slate.50/50' }}>
-                        <HiOutlineBriefcase className="w-12 h-12 text-slate-400/95 mx-auto mb-3" />
-                        <Typography variant="body1" fontWeight={500} color="text.secondary">No jobs found</Typography>
+            <Stack spacing={2}>
+                {jobsLoading ? Array(limit).fill(0).map((_, i) => (
+                    <Paper key={i} elevation={0} sx={{ p: 4, borderRadius: 1.5, border: '1px solid #f1f5f9', bgcolor: 'white' }}>
+                        <div className="flex gap-6 animate-pulse"><Skeleton variant="circular" width={48} height={48} /><div className="flex-1"><Skeleton variant="text" width="40%" height={28} /><Skeleton variant="text" width="20%" height={16} sx={{ mt: 1 }} /></div></div>
                     </Paper>
-                ) : (
-                    jobs.map((job) => (
-                        <Paper
-                            key={job._id}
-                            elevation={0}
-                            sx={{
-                                p: { xs: 1.5, sm: 2 },
-                                borderRadius: 1,
-                                border: '1px solid',
-                                borderColor: 'divider',
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                alignItems: 'center',
-                                gap: { xs: 2, sm: 4 },
-                                transition: 'all 0.2s',
-                                '&:hover': {
-                                    bgcolor: '#f8fafc',
-                                    borderColor: 'primary.200',
-                                    boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
-                                }
-                            }}
-                        >
-                            {/* Job Info */}
-                            <Box sx={{ flex: 1, minWidth: { xs: '100%', sm: 240 } }}>
-                                <Typography
-                                    onClick={() => handleEditJob(job)}
-                                    variant="h6"
-                                    fontWeight={700}
-                                    sx={{
-                                        color: 'text.primary',
-                                        mb: 0.5,
-                                        tracking: '-0.02em',
-                                        fontSize: '18px',
-                                        cursor: 'pointer',
-                                        '&:hover': { color: 'primary.main' }
-                                    }}
-                                >
-                                    {job.jobTitle || job.title}
-                                </Typography>
-                                <Stack direction="row" spacing={2} alignItems="center">
-                                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 800, color: 'text.secondary' }}>
-                                        <HiOutlineMapPin className="w-3.5 h-3.5" />
-                                        {[job.city, job.state].filter(Boolean).join(', ') || job.location || 'Remote'}
-                                    </Typography>
-                                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 700, color: 'primary.main', bgcolor: 'primary.50', px: 1, py: 0.2, borderRadius: 0.5, whiteSpace: 'nowrap' }}>
-                                        {formatSalary(job.salaryMin, job.salaryMax)}
-                                    </Typography>
-                                    <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.disabled' }}>•</Typography>
-                                    <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.secondary', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                        Posted {new Date(job.createdAt).toLocaleDateString()}
-                                    </Typography>
+                )) : jobs.map((job) => (
+                    <Paper key={job._id} elevation={0} sx={{ p: { xs: 2.5, sm: 3 }, borderRadius: 1.5, border: '1px solid', borderColor: '#f1f5f9', bgcolor: 'white', transition: 'all 0.3s' }}>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, alignItems: 'center' }}>
+                            <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0"><HiOutlineBuildingOffice2 className="w-7 h-7 text-slate-400/95" /></div>
+                            <Box sx={{ flex: 1, minWidth: { xs: '100%', sm: '200px' } }}>
+                                <div className="flex items-center gap-2 mb-1"><Typography variant="h6" fontWeight={800} sx={{ color: 'black' }}>{job.jobTitle || job.title}</Typography><span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${job.jobType?.toLowerCase() === 'full-time' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>{job.jobType}</span></div>
+                                <Stack direction="row" spacing={2} sx={{ color: 'text.secondary', flexWrap: 'wrap' }}>
+                                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 700 }}><HiOutlineMapPin className="w-3.5 h-3.5" /> {job.city || job.location}</Typography>
+                                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 700 }}><HiOutlineCurrencyRupee className="w-3.5 h-3.5" /> {formatSalary(job.salaryRange?.min, job.salaryRange?.max)}</Typography>
+                                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 700 }}><HiOutlineCalendarDays className="w-3.5 h-3.5" /> {new Date(job.createdAt).toLocaleDateString()}</Typography>
                                 </Stack>
                             </Box>
-
-                            {/* Stats */}
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, px: { sm: 3 }, borderLeft: { sm: '1px solid' }, borderRight: { sm: '1px solid' }, borderColor: 'divider' }}>
-                                <Box sx={{ textAlign: 'center', minWidth: 60 }}>
-                                    <Typography variant="h6" fontWeight={700} color="text.primary" sx={{ fontSize: '18px', lineHeight: 1 }}>{job.numberOfVacancies || 0}</Typography>
-                                    <Typography variant="caption" fontWeight={800} color="text.disabled" sx={{ textTransform: 'uppercase', tracking: '0.05em', fontSize: '10px' }}>Positions</Typography>
-                                </Box>
-                                <Box sx={{ textAlign: 'center', minWidth: 60 }}>
-                                    <Box
-                                        sx={{
-                                            px: 1,
-                                            py: 0.2,
-                                            borderRadius: 0.5,
-                                            fontSize: '9px',
-                                            fontWeight: 700,
-                                            textTransform: 'uppercase',
-                                            mb: 0.4,
-                                            display: 'inline-block',
-                                            bgcolor: (job.urgency?.toUpperCase() === 'HIGH') ? '#FEF2F2' : (job.urgency?.toUpperCase() === 'MEDIUM') ? '#FFFBEB' : '#F3F4F6',
-                                            color: (job.urgency?.toUpperCase() === 'HIGH') ? '#DC2626' : (job.urgency?.toUpperCase() === 'MEDIUM') ? '#D97706' : '#4B5563',
-                                            border: '1px solid',
-                                            borderColor: (job.urgency?.toUpperCase() === 'HIGH') ? '#FEE2E2' : (job.urgency?.toUpperCase() === 'MEDIUM') ? '#FEF3C7' : '#E5E7EB'
-                                        }}
-                                    >
-                                        {job.urgency || 'Normal'}
-                                    </Box>
-                                    <Typography variant="caption" fontWeight={800} color="text.disabled" sx={{ textTransform: 'uppercase', tracking: '0.05em', fontSize: '10px', display: 'block' }}>Priority</Typography>
-                                </Box>
-                                <Box sx={{ textAlign: 'center', minWidth: 70 }}>
-                                    <Box
-                                        sx={{
-                                            px: 1.5,
-                                            py: 0.5,
-                                            borderRadius: 0.5,
-                                            fontSize: '10px',
-                                            fontWeight: 800,
-                                            textTransform: 'uppercase',
-                                            bgcolor: job.status === 'active' ? '#ECFDF5' : '#F1F5F9',
-                                            color: job.status === 'active' ? '#059669' : '#475569',
-                                            border: '1px solid',
-                                            borderColor: job.status === 'active' ? '#D1FAE5' : '#E2E8F0'
-                                        }}
-                                    >
-                                        {job.status}
-                                    </Box>
-                                </Box>
+                            <Box sx={{ display: 'flex', gap: 4, px: 3 }}>
+                                <Box sx={{ textAlign: 'center', minWidth: 60 }}><Typography variant="h6" fontWeight={800} color="primary">{job.applicantCount || 0}</Typography><Typography variant="caption" fontWeight={800} color="text.disabled" sx={{ fontSize: '10px' }}>Applicants</Typography></Box>
+                                <Box sx={{ textAlign: 'center', minWidth: 60 }}><Typography variant="h6" fontWeight={800} color="black">{job.vacancies || 0}</Typography><Typography variant="caption" fontWeight={800} color="text.disabled" sx={{ fontSize: '10px' }}>Positions</Typography></Box>
                             </Box>
-
-                            {/* Actions */}
-                            <Stack direction="row" spacing={1.5} sx={{ ml: { sm: 'auto' }, width: { xs: '100%', sm: 'auto' }, justifyContent: 'flex-end' }}>
-                                <Button
-                                    onClick={() => handlePipeline(job._id)}
-                                    size="small"
-                                    variant="contained"
-                                    startIcon={<HiOutlineBolt />}
-                                    sx={{
-                                        borderRadius: '14px',
-                                        fontWeight: 700,
-                                        textTransform: 'none',
-                                        px: 3,
-                                        height: 38,
-                                        bgcolor: '#22c55e',
-                                        color: '#000',
-                                        '&:hover': { bgcolor: '#16a34a' },
-                                        boxShadow: '0 4px 12px rgba(34, 197, 94, 0.25)',
-                                        '& .MuiButton-startIcon': { color: '#000' }
-                                    }}
-                                >
-                                    Pipeline
-                                </Button>
-                                <Button
-                                    onClick={() => handleViewApplicants(job)}
-                                    size="small"
-                                    variant="contained"
-                                    startIcon={<HiOutlineUsers />}
-                                    sx={{
-                                        borderRadius: '14px',
-                                        fontWeight: 700,
-                                        textTransform: 'none',
-                                        px: 2.5,
-                                        height: 38,
-                                        bgcolor: '#5b4eff',
-                                        color: '#fff',
-                                        '&:hover': { bgcolor: '#4a3fed' },
-                                        boxShadow: '0 4px 12px rgba(91, 78, 255, 0.25)',
-                                        minWidth: 'unset',
-                                        '& .MuiButton-startIcon': { color: '#fff' }
-                                    }}
-                                >
-                                    Applicants
-                                </Button>
-                                <Stack direction="row" spacing={0.4}>
-                                    <IconButton
-                                        size="small"
-                                        onClick={() => handleEditJob(job)}
-                                        sx={{ color: '#d97706', bgcolor: '#fffbeb', border: '1px solid', borderColor: '#fef3c7', '&:hover': { bgcolor: '#fef3c7' } }}
-                                    >
-                                        <HiOutlinePencilSquare className="w-4 h-4" />
-                                    </IconButton>
-                                    <IconButton
-                                        size="small"
-                                        onClick={() => handleDeleteJob(job._id)}
-                                        sx={{ color: '#dc2626', bgcolor: '#fef2f2', border: '1px solid', borderColor: '#fee2e2', '&:hover': { bgcolor: '#fee2e2' } }}
-                                    >
-                                        <HiOutlineTrash className="w-4 h-4" />
-                                    </IconButton>
-                                </Stack>
+                            <Stack direction="row" spacing={1.5} sx={{ ml: 'auto' }}>
+                                <Button onClick={() => handlePipeline(job._id)} size="small" variant="contained" startIcon={<HiOutlineBolt />} sx={{ borderRadius: '14px', bgcolor: '#22c55e', color: '#000', '&:hover': { bgcolor: '#16a34a' } }}>Pipeline</Button>
+                                <Button onClick={() => handleViewApplicants(job)} size="small" variant="contained" startIcon={<HiOutlineUsers />} sx={{ borderRadius: '14px', bgcolor: '#5b4eff', color: '#fff' }}>Applicants</Button>
+                                <IconButton size="small" onClick={() => handleEditJob(job)} sx={{ color: '#d97706', bgcolor: '#fffbeb' }}><HiOutlinePencilSquare /></IconButton>
+                                <IconButton size="small" onClick={() => handleDeleteJob(job._id)} sx={{ color: '#dc2626', bgcolor: '#fef2f2' }}><HiOutlineTrash /></IconButton>
                             </Stack>
-                        </Paper>
-                    ))
-                )}
+                        </Box>
+                    </Paper>
+                ))}
             </Stack>
-
-            {/* Pagination */}
-            {!jobsLoading && Math.ceil(jobsTotal / limit) > 1 && (
-                <div className="flex items-center justify-between mt-6 px-2">
-                    <button
-                        onClick={() => setJobsPage(prev => Math.max(1, prev - 1))}
-                        disabled={jobsPage === 1}
-                        className="flex items-center gap-2 px-6 py-2.5 text-[11px] font-medium uppercase tracking-widest text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-30 disabled:hover:bg-white transition-all shadow-sm active:scale-95"
-                    >
-                        <HiOutlineChevronLeft className="w-4 h-4" />
-                        Previous
-                    </button>
-                    <span className="text-[11px] font-medium text-slate-400/95 uppercase tracking-widest bg-slate-50 px-4 py-2 rounded-lg">
-                        Page {jobsPage} / {Math.ceil(jobsTotal / limit)}
-                    </span>
-                    <button
-                        onClick={() => setJobsPage(prev => Math.min(Math.ceil(jobsTotal / limit), prev + 1))}
-                        disabled={jobsPage === Math.ceil(jobsTotal / limit)}
-                        className="flex items-center gap-2 px-6 py-2.5 text-[11px] font-medium uppercase tracking-widest text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-30 disabled:hover:bg-white transition-all shadow-sm active:scale-95"
-                    >
-                        Next
-                        <HiOutlineChevronRight className="w-4 h-4" />
-                    </button>
-                </div>
+            {!jobsLoading && jobsTotal > limit && (
+                <Box sx={{ mt: 6, display: 'flex', justifyContent: 'center' }}>
+                    <Pagination 
+                        count={Math.ceil(jobsTotal / limit)} 
+                        page={jobsPage} 
+                        onChange={(e, p) => setJobsPage(p)} 
+                        color="primary" 
+                        size="large"
+                        sx={{
+                            '& .MuiPaginationItem-root': { fontWeight: 700 },
+                            '& .Mui-selected': { bgcolor: 'primary.main', color: 'white', '&:hover': { bgcolor: 'primary.dark' } }
+                        }}
+                    />
+                </Box>
             )}
         </div>
     );
 
     const renderApplicantsList = () => (
         <div className="space-y-3 pt-6">
-            {/* Header */}
             <Paper elevation={0} sx={{ p: 1, px: 2, borderRadius: 1.25, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 3 }}>
-                <IconButton
-                    onClick={handleBackToJobs}
-                    sx={{ bgcolor: '#f8fafc', border: '1px solid', borderColor: 'divider', '&:hover': { bgcolor: '#f1f5f9' } }}
-                >
-                    <HiOutlineArrowLeft className="w-5 h-5 text-slate-600" />
-                </IconButton>
-                <Box sx={{ flex: 1 }}>
-                    <Typography variant="h6" fontWeight={500} color="text.primary">Candidates & Applications</Typography>
-                    <Typography variant="caption" fontWeight={500} color="primary.main" sx={{ textTransform: 'uppercase', tracking: '0.1em' }}>
-                        {selectedJob?.jobTitle || selectedJob?.title}
-                    </Typography>
-                </Box>
-                <Button
-                    onClick={() => handlePipeline(selectedJob?._id)}
-                    size="small"
-                    variant="contained"
-                    color="success"
-                    startIcon={<HiOutlineBolt />}
-                    sx={{ borderRadius: 1.5, fontWeight: 500, textTransform: 'none', px: 2, bgcolor: '#22c55e', '&:hover': { bgcolor: '#1eb054' }, boxShadow: '0 4px 12px rgba(34, 197, 94, 0.2)' }}
-                >
-                    Pipeline
-                </Button>
+                <IconButton onClick={handleBackToJobs} sx={{ bgcolor: '#f8fafc' }}><HiOutlineArrowLeft /></IconButton>
+                <Box sx={{ flex: 1 }}><Typography variant="h6" fontWeight={500}>Candidates & Applications</Typography><Typography variant="caption" color="primary.main">{selectedJob?.jobTitle || selectedJob?.title}</Typography></Box>
+                <Button onClick={() => handlePipeline(selectedJob?._id)} size="small" variant="contained" color="success" startIcon={<HiOutlineBolt />}>Pipeline</Button>
             </Paper>
-
-            {/* Application List */}
             <Stack spacing={1}>
-                {applicantsLoading ? (
-                    Array(3).fill(0).map((_, i) => (
-                        <Paper key={i} elevation={0} sx={{ p: 3, borderRadius: 1, border: '1px solid', borderColor: 'divider', animate: 'pulse' }}>
-                            <Skeleton variant="text" width="40%" height={24} />
-                            <Skeleton variant="text" width="20%" height={16} sx={{ mt: 1 }} />
-                        </Paper>
-                    ))
-                ) : applicants.length === 0 ? (
-                    <Paper sx={{ py: 12, textAlign: 'center', borderRadius: 1, border: '1px dashed', borderColor: 'divider', bgcolor: '#f8fafc' }}>
-                        <HiOutlineUser className="w-12 h-12 text-slate-200 mx-auto mb-3" />
-                        <Typography variant="body1" fontWeight={500} color="text.secondary">No candidates found for this job</Typography>
-                    </Paper>
-                ) : (
-                    (applicants || []).map((app) => (
-                        <Paper
-                            key={app._id}
-                            elevation={0}
-                            sx={{
-                                p: 0.75, // Reduced padding
-                                px: 2,
-                                borderRadius: 1.5,
-                                border: '1px solid',
-                                borderColor: 'divider',
-                                display: 'flex',
-                                flexWrap: 'nowrap',
-                                alignItems: 'center',
-                                gap: 1.5, // Reduced gap
-                                transition: 'all 0.2s',
-                                overflow: 'hidden', // Prevent internal overflow
-                                '&:hover': {
-                                    bgcolor: '#f8fafc',
-                                    borderColor: 'primary.100',
-                                    boxShadow: '0 4px 12px rgba(0,0,0,0.02)'
-                                }
-                            }}
-                        >
-                            {/* Profile Info */}
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 160, flexShrink: 0 }}>
-                                <Avatar
-                                    src={app.candidate?.avatar && !imageErrors[app._id]
-                                        ? (app.candidate.avatar.startsWith('http') || app.candidate.avatar.startsWith('data:')
-                                            ? app.candidate.avatar
-                                            : `${BASE_URL.replace(/\/$/, '')}/${app.candidate.avatar.replace(/^\//, '')}`)
-                                        : null}
-                                    imgProps={{
-                                        onError: () => setImageErrors(prev => ({ ...prev, [app._id]: true }))
-                                    }}
-                                    sx={{
-                                        width: 40,
-                                        height: 40,
-                                        bgcolor: '#f1f5f9',
-                                        fontSize: '12px',
-                                        fontWeight: 500,
-                                        color: 'primary.main',
-                                        border: '2px solid white',
-                                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
-                                    }}
-                                >
-                                    {app.candidate?.firstName?.[0]}
-                                    {app.candidate?.lastName?.[0]}
-                                </Avatar>
-                                <Box sx={{ minWidth: 0 }}>
-                                    <Typography variant="subtitle2" fontWeight={500} sx={{ color: 'text.primary', lineHeight: 1.2, mb: 0.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                        {app.candidate?.firstName} {app.candidate?.lastName}
-                                    </Typography>
-                                    <div
-                                        className={`inline-flex items-center px-2 py-0.5 rounded text-[8px] font-medium uppercase border mt-1 tracking-wider ${STATUS_THEMES[app.status]?.bg || 'bg-slate-50'} ${STATUS_THEMES[app.status]?.text || 'text-slate-600'} ${STATUS_THEMES[app.status]?.border || 'border-slate-200'}`}
-                                    >
-                                        {STATUS_THEMES[app.status]?.label || app.status}
-                                    </div>
+                {applicantsLoading ? Array(3).fill(0).map((_, i) => (
+                    <Paper key={i} sx={{ p: 3, animate: 'pulse' }}><Skeleton width="40%" /><Skeleton width="20%" /></Paper>
+                )) : applicants.length === 0 ? (
+                    <Paper sx={{ py: 12, textAlign: 'center', bgcolor: '#f8fafc' }}><HiOutlineUser className="w-12 h-12 mx-auto" /><Typography>No candidates found</Typography></Paper>
+                ) : applicants.map((app) => (
+                    <Paper key={app._id} elevation={0} sx={{ p: 1, px: 2, borderRadius: 1.5, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Avatar src={app.candidate?.avatar && !imageErrors[app._id] ? (app.candidate.avatar.startsWith('http') ? app.candidate.avatar : `${BASE_URL}/${app.candidate.avatar}`) : null} imgProps={{ onError: () => setImageErrors(prev => ({ ...prev, [app._id]: true })) }}>{app.candidate?.firstName?.[0]}</Avatar>
+                        <Box sx={{ minWidth: 160 }}>
+                            <Typography variant="subtitle2">{app.candidate?.firstName} {app.candidate?.lastName}</Typography>
+                            <div className={`inline-flex px-2 py-0.5 rounded text-[8px] border ${STATUS_THEMES[app.status]?.bg || 'bg-slate-50'} ${STATUS_THEMES[app.status]?.text || 'text-slate-600'}`}>
+                                {STATUS_THEMES[app.status]?.label || app.status}
+                            </div>
+                        </Box>
+                        <Box sx={{ flex: 1 }}><WorkflowStepper currentStatus={app.status} /></Box>
+                        {app.status === 'Interview Scheduled' && app.interviewRounds?.length > 0 && (
+                            <Box sx={{ 
+                                minWidth: 200, 
+                                bgcolor: '#FAF5FF', 
+                                border: '1px solid #E9D5FF', 
+                                borderRadius: '12px', 
+                                p: '6px 10px',
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: 1,
+                            }}>
+                                <Box sx={{ 
+                                    width: 32, 
+                                    height: 32, 
+                                    bgcolor: '#9333EA', 
+                                    borderRadius: '10px', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    shrink: 0
+                                }}>
+                                    <HiOutlineVideoCamera className="w-4 h-4" />
                                 </Box>
-                            </Box>
-
-                            {/* Contact Box */}
-                            <Box sx={{ minWidth: 120, borderLeft: '1px solid', borderColor: 'divider', pl: 1.5, flexShrink: 0 }}>
-                                <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary', fontWeight: 500 }}>
-                                    <HiOutlineEnvelope className="w-3 h-3" /> {app.candidate?.email || 'N/A'}
-                                </Typography>
-                                <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary', fontWeight: 500, mt: 0.5 }}>
-                                    <HiOutlinePhone className="w-3 h-3" /> {app.candidate?.phone || 'N/A'}
-                                </Typography>
-                            </Box>
-
-                            {/* Pipeline Step */}
-                            <Box sx={{ flex: 1, minWidth: 200, borderLeft: '1px solid', borderColor: 'divider', px: 1, flexShrink: 1 }}>
-                                <WorkflowStepper currentStatus={app.status} />
-                            </Box>
-
-                            {/* Actions & Interview Info Row */}
-                            <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 0.5, borderLeft: '1px solid', borderColor: 'divider', pl: 1.5, flexShrink: 0 }}>
-                                {/* Join / Meeting Info */}
-                                {app.status === 'Interview Scheduled' && app.interviewRounds?.length > 0 && (
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, bgcolor: 'primary.50', p: 0.5, px: 1, borderRadius: 1, border: '1px solid', borderColor: 'primary.100' }}>
-                                        <div className="flex flex-col text-left mr-0.5">
-                                            <span className="text-[7px] font-medium text-primary-main uppercase leading-none">RD {app.interviewRounds[app.interviewRounds.length - 1].roundNumber}</span>
-                                            <span className="text-[9px] font-medium text-slate-700 leading-tight">
-                                                {new Date(app.interviewRounds[app.interviewRounds.length - 1].scheduledAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                                            </span>
-                                        </div>
-                                        <Button
-                                            href={app.interviewRounds[app.interviewRounds.length - 1].meetLink}
-                                            target="_blank"
-                                            size="small"
-                                            variant="contained"
-                                            sx={{ height: 24, fontSize: '9px', fontWeight: 500, px: 1, borderRadius: 0.75, minWidth: 'unset', textTransform: 'none' }}
-                                        >
-                                            Join
-                                        </Button>
-                                    </Box>
-                                )}
-
-                                <Button
-                                    href={app.resumeUrl?.startsWith('http') ? app.resumeUrl : `${BASE_URL}${app.resumeUrl}`}
+                                <Box sx={{ flex: 1 }}>
+                                    {app.interviewRounds.slice(-1).map((round, idx) => {
+                                        const d = new Date(round.scheduledAt);
+                                        const dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }).toUpperCase() + ' ' + d.getFullYear().toString().slice(-2);
+                                        return (
+                                            <div key={idx}>
+                                                <Typography sx={{ 
+                                                    color: '#A855F7', 
+                                                    fontWeight: 800, 
+                                                    fontSize: '8px', 
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: '0.5px',
+                                                    lineHeight: 1.1
+                                                }}>
+                                                    INTERVIEW
+                                                </Typography>
+                                                <Typography sx={{ 
+                                                    color: '#0F172A', 
+                                                    fontWeight: 800, 
+                                                    fontSize: '10px',
+                                                    lineHeight: 1.1
+                                                }}>
+                                                    {dateStr}, {d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </Typography>
+                                            </div>
+                                        );
+                                    })}
+                                </Box>
+                                <Button 
+                                    href={app.interviewRounds[app.interviewRounds.length - 1].meetLink} 
                                     target="_blank"
-                                    size="small"
-                                    variant="outlined"
-                                    startIcon={<HiOutlineClipboardDocumentList className="w-3.5 h-3.5" />}
-                                    sx={{ borderRadius: 1, fontWeight: 500, textTransform: 'none', height: 28, borderColor: '#e2e8f0', color: '#64748b', fontSize: '10px' }}
-                                >
-                                    Resume
-                                </Button>
-
-                                {app.status === 'Applied' && (
-                                    <Button onClick={() => handleStatusUpdate(app._id, 'review', 'Review')} variant="contained" color="warning" size="small" sx={{ borderRadius: 1, fontWeight: 500, height: 28, fontSize: '10px', textTransform: 'none' }}>Review</Button>
-                                )}
-                                {app.status === 'Under Review' && (
-                                    <Button onClick={() => handleStatusUpdate(app._id, 'shortlist', 'Shortlist')} variant="contained" color="primary" size="small" sx={{ borderRadius: 1, fontWeight: 500, height: 28, fontSize: '10px', textTransform: 'none' }}>Shortlist</Button>
-                                )}
-                                {app.status === 'Interview Scheduled' ? (
-                                    <>
-                                        <Button onClick={() => handleStatusUpdate(app._id, 'next-round', 'Selected for Next Round')} variant="contained" color="primary" size="small" sx={{ borderRadius: 1, fontWeight: 500, height: 28, fontSize: '10px', textTransform: 'none' }}>Next Round</Button>
-                                        <Button onClick={() => handleStatusUpdate(app._id, 'final-select', 'Hire')} variant="contained" color="success" size="small" sx={{ borderRadius: 1, fontWeight: 500, height: 28, fontSize: '10px', textTransform: 'none' }}>Hire</Button>
-                                        <IconButton onClick={() => handleOpenSchedule(app)} size="small" sx={{ bgcolor: '#f1f5f9', border: '1px solid', borderColor: '#e2e8f0', height: 28, width: 28, borderRadius: 1 }}>
-                                            <HiOutlineCalendarDays className="w-3.5 h-3.5" />
-                                        </IconButton>
-                                    </>
-                                ) : (['Employer Shortlisted', 'Selected Next Round'].includes(app.status)) && (
-                                    <Button onClick={() => handleOpenSchedule(app)} variant="contained" color="success" size="small" sx={{ borderRadius: 1, fontWeight: 500, height: 28, fontSize: '10px', textTransform: 'none' }}>Schedule</Button>
-                                )}
-                                  {app.status !== 'Final Selected' && app.status !== 'Final Rejected' && (
-                                    <Button
-                                        onClick={() => handleStatusUpdate(app._id, 'reject', 'Reject')}
-                                        variant="contained"
-                                        size="small"
-                                        sx={{
-                                            borderRadius: 1,
-                                            fontWeight: 600,
-                                            height: 28,
-                                            fontSize: '10px',
-                                            textTransform: 'none',
-                                            bgcolor: '#be123c', // Distinct red
-                                            '&:hover': { bgcolor: '#9f1239' }
-                                        }}
-                                    >
-                                        Reject
-                                    </Button>
-                                )}
-                                 <Button
-                                    size="small"
-                                    variant="outlined"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        const resumeUrl = (app.resumeUrl || app.candidateProfile?.resumeUrl)?.startsWith('http')
-                                            ? (app.resumeUrl || app.candidateProfile?.resumeUrl)
-                                            : `${BASE_URL}/${(app.resumeUrl || app.candidateProfile?.resumeUrl || '').replace(/^\//, '')}`;
-                                        window.open(resumeUrl, '_blank');
-                                    }}
-                                    sx={{
-                                        borderRadius: 1,
-                                        fontWeight: 500,
-                                        textTransform: 'none',
+                                    variant="contained" 
+                                    sx={{ 
+                                        bgcolor: '#9333EA', 
+                                        color: 'white', 
+                                        borderRadius: '8px', 
+                                        fontWeight: 900, 
+                                        fontSize: '9px',
+                                        px: 1,
                                         height: 28,
-                                        fontSize: '10px',
-                                        // Blue theme for Resume button
-                                        bgcolor: '#eff6ff',
-                                        color: '#2563eb',
-                                        borderColor: 'transparent',
-                                        '&:hover': {
-                                            bgcolor: '#2563eb',
-                                            color: '#fff',
-                                            borderColor: 'transparent'
-                                        }
+                                        minWidth: 'auto',
+                                        '&:hover': { bgcolor: '#7E22CE' }
                                     }}
                                 >
-                                    Resume
+                                    JOIN
                                 </Button>
                             </Box>
-                        </Paper>
-                    ))
-                )}
-            </Stack>
-
-            {/* Schedule Modal */}
-            {isScheduling && (
-                <div className="fixed inset-0 z-[500] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-                    <Paper elevation={24} sx={{ width: '100%', maxWidth: 500, borderRadius: 2, overflow: 'hidden' }}>
-                        <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Typography variant="h6" fontWeight={500}>Schedule Interview</Typography>
-                            <IconButton onClick={() => setIsScheduling(null)}><HiOutlineXMark /></IconButton>
-                        </Box>
-                        <Box component="form" onSubmit={handleScheduleSubmit} sx={{ p: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            <Stack direction="row" spacing={2}>
-                                <div className="flex-1 space-y-1">
-                                    <Typography variant="caption" fontWeight={700} color="text.disabled" sx={{ textTransform: 'uppercase', ml: 0.5 }}>Round No.</Typography>
-                                    <input type="number" required value={interviewData.roundNumber} onChange={(e) => setInterviewData({ ...interviewData, roundNumber: e.target.value })} className="w-full h-11 px-4 rounded-xl bg-slate-50 border border-slate-200 font-medium text-sm focus:bg-white focus:border-primary-500 outline-none transition-all" />
-                                </div>
-                                <div className="flex-1 space-y-1">
-                                    <Typography variant="caption" fontWeight={700} color="text.disabled" sx={{ textTransform: 'uppercase', ml: 0.5 }}>Room Code</Typography>
-                                    <input type="text" required placeholder="abc-def" value={interviewData.meetCode} onChange={(e) => setInterviewData({ ...interviewData, meetCode: e.target.value })} className="w-full h-11 px-4 rounded-xl bg-slate-50 border border-slate-200 font-medium text-sm focus:bg-white focus:border-primary-500 outline-none transition-all" />
-                                </div>
-                            </Stack>
-                            <div className="space-y-1">
-                                <Typography variant="caption" fontWeight={700} color="text.disabled" sx={{ textTransform: 'uppercase', ml: 0.5 }}>Meeting Link</Typography>
-                                <input type="url" required placeholder="https://meet.google.com/..." value={interviewData.meetLink} onChange={(e) => setInterviewData({ ...interviewData, meetLink: e.target.value })} className="w-full h-11 px-4 rounded-xl bg-slate-50 border border-slate-200 font-medium text-sm focus:bg-white focus:border-primary-500 outline-none transition-all" />
-                            </div>
-                            <div className="space-y-1">
-                                <Typography variant="caption" fontWeight={700} color="text.disabled" sx={{ textTransform: 'uppercase', ml: 0.5 }}>Date & Time</Typography>
-                                <input type="datetime-local" required value={interviewData.scheduledAt} onChange={(e) => setInterviewData({ ...interviewData, scheduledAt: e.target.value })} className="w-full h-11 px-4 rounded-xl bg-slate-50 border border-slate-200 font-medium text-sm focus:bg-white focus:border-primary-500 outline-none transition-all" />
-                            </div>
-                            <Stack direction="row" spacing={2} sx={{ pt: 2 }}>
-                                <Button fullWidth onClick={() => setIsScheduling(null)} sx={{ height: 48, borderRadius: 1.5, fontWeight: 500, color: 'text.secondary' }}>Cancel</Button>
-                                <Button fullWidth type="submit" variant="contained" disabled={isSubmitting} sx={{ height: 48, borderRadius: 1.5, fontWeight: 500 }}>
-                                    {isSubmitting ? 'Scheduling...' : 'Confirm'}
-                                </Button>
-                            </Stack>
-                        </Box>
+                        )}
+                        <Button href={`${BASE_URL}${app.resumeUrl}`} target="_blank" size="small" variant="outlined" sx={{ height: 28, fontSize: '10px' }}>Resume</Button>
+                        <Stack direction="row" spacing={1}>
+                            {app.status === 'Applied' && <Button onClick={() => handleStatusUpdate(app._id, 'review', 'Review')} variant="contained" color="warning" size="small">Review</Button>}
+                            {app.status === 'Under Review' && <Button onClick={() => handleStatusUpdate(app._id, 'shortlist', 'Shortlist')} variant="contained" color="primary" size="small">Shortlist</Button>}
+                            {app.status === 'Interview Scheduled' && (
+                                <>
+                                    <Button onClick={() => handleStatusUpdate(app._id, 'next-round', 'Next Round')} variant="contained" color="primary" size="small">Next</Button>
+                                    <Button onClick={() => handleStatusUpdate(app._id, 'final-select', 'Hire')} variant="contained" color="success" size="small">Hire</Button>
+                                    <IconButton onClick={() => handleOpenSchedule(app)} size="small"><HiOutlineCalendarDays /></IconButton>
+                                </>
+                            )}
+                            {app.status !== 'Final Selected' && app.status !== 'Final Rejected' && <Button onClick={() => handleStatusUpdate(app._id, 'reject', 'Reject')} variant="contained" size="small" sx={{ bgcolor: '#be123c', color: 'white' }}>Reject</Button>}
+                        </Stack>
                     </Paper>
-                </div>
-            )}
+                ))}
+            </Stack>
         </div>
     );
 
     const renderPipelineView = () => (
         <div className="h-[calc(100vh-64px)] flex flex-col pt-6 bg-slate-50 overflow-hidden -mx-4 -mb-6">
-            {/* Header */}
-            <div className="shrink-0 px-3 sm:px-6 py-3 bg-white border-b border-slate-100 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="shrink-0 px-3 sm:px-6 py-3 bg-white border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <button
-                        onClick={handleBackToJobs}
-                        className="p-2.5 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 transition-all active:scale-90"
-                    >
-                        <HiOutlineArrowLeft className="w-6 h-5" />
-                    </button>
-                    <div>
-                        <div className="flex flex-col">
-                            <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-tight">
-                                Hiring Pipeline
-                            </h1>
-                            <div className="flex items-center gap-2 mt-0.5">
-                                <span className="text-[12px] font-medium text-primary-800 uppercase tracking-widest">
-                                    {selectedJob?.jobTitle || selectedJob?.title}
-                                </span>
-                                <span className="text-slate-500">•</span>
-                                <span className="text-[10px] font-medium text-slate-700 uppercase tracking-widest">
-                                    {selectedJob?.jobCategory || selectedJob?.category}
-                                </span>
-                                <span className="text-slate-500">•</span>
-                                <p className="text-[10px] font-medium text-slate-700 uppercase tracking-widest">
-                                    <span className="text-primary-800">{totalPipelineCandidates}</span> Active Candidates
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    <button onClick={handleBackToJobs} className="p-2.5 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50"><HiOutlineArrowLeft className="w-5 h-5" /></button>
+                    <div><h1 className="text-xl font-bold text-slate-900">Hiring Pipeline</h1><p className="text-[12px] font-medium text-primary-800 uppercase tracking-widest">{selectedJob?.jobTitle || selectedJob?.title}</p></div>
                 </div>
-
                 <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => fetchPipeline(selectedJob?._id)}
-                        className="p-2 text-slate-500 hover:text-slate-900 transition-colors"
-                        title="Refresh Board"
-                    >
-                        <HiOutlineArrowPath className={`w-5 h-5 ${pipelineLoading ? 'animate-spin' : ''}`} />
-                    </button>
-                    <button
-                        onClick={handleAllApplicationsClick}
-                        className="px-5 py-2.5 bg-[#0f172a] text-white text-[12px] font-medium uppercase tracking-wider rounded-xl hover:bg-black transition-all active:scale-95 shadow-lg shadow-slate-900/20"
-                    >
-                        All Applications
-                    </button>
+                    <button onClick={() => fetchPipeline(selectedJob?._id)} className="p-2 text-slate-500 hover:text-slate-900"><HiOutlineArrowPath className={pipelineLoading ? 'animate-spin' : ''} /></button>
+                    <button onClick={handleAllApplicationsClick} className="px-5 py-2.5 bg-[#0f172a] text-white text-[12px] font-medium uppercase rounded-xl">All Applications</button>
                 </div>
             </div>
-
-            {/* Kanban Board */}
-            <div className="flex-1 flex gap-4 p-6 overflow-x-auto overflow-y-hidden select-none scrollbar-hide pb-8">
-                {COLUMN_CONFIG.map((col) => {
-                    const candidates = getCandidatesForColumn(col);
-                    return (
-                        <div
-                            key={col.key}
-                            className="w-[320px] min-w-[320px] max-w-[320px] flex flex-col bg-slate-100/30 rounded-[32px] border border-slate-200/50 p-3"
-                        >
-                            {/* Column Header */}
-                            <div className="flex items-center justify-between px-3 py-3 mb-3 shrink-0">
-                                <div className="flex items-center gap-2.5">
-                                    <div className={`w-2 h-2 rounded-full ${col.color} shadow-sm ring-4 ring-white`} />
-                                    <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-[0.1em]">
-                                        {col.title}
-                                    </h3>
-                                </div>
-                                <span className={`px-2.5 py-1 rounded-lg text-[11px] font-black tracking-tighter ${col.bg} ${col.text} border border-current/10 shadow-sm`}>
-                                    {candidates.length}
-                                </span>
-                            </div>
-
-                            {/* Cards List */}
-                            <div className="flex-1 overflow-y-auto space-y-3 pr-1 scrollbar-thin scrollbar-thumb-slate-200 custom-scrollbar">
-                                {candidates.length === 0 ? (
-                                    <div className="flex flex-col items-center justify-center py-12 opacity-20 grayscale scale-90">
-                                        <HiOutlineUserGroup className="w-12 h-12 mb-2" />
-                                        <p className="text-[10px] font-medium uppercase tracking-tighter">Empty</p>
-                                    </div>
-                                ) : (
-                                    candidates.map((app) => (
-                                        <div
-                                            key={app._id}
-                                            className="bg-white p-3 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgb(0,0,0,0.02)] transition-all hover:shadow-xl hover:border-slate-300 group"
-                                        >
-                                            <div className="flex items-center gap-3 mb-2.5">
-                                                <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 relative">
-                                                    {app.candidate?.avatar && !imageErrors[app._id] ? (
-                                                        <img
-                                                            onClick={(e) => { e.stopPropagation(); handleAllApplicationsClick(); }}
-                                                            src={
-                                                                app.candidate.avatar.startsWith('http') || app.candidate.avatar.startsWith('data:')
-                                                                    ? app.candidate.avatar
-                                                                    : `${BASE_URL.replace(/\/$/, '')}/${app.candidate.avatar.replace(/^\//, '')}`
-                                                            }
-                                                            alt="Avatar"
-                                                            className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform"
-                                                            onError={() => {
-                                                                setImageErrors(prev => ({ ...prev, [app._id]: true }));
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <span className={`text-[12px] font-medium uppercase ${col.text}`}>
-                                                            {app.candidate?.firstName?.[0]}
-                                                            {app.candidate?.lastName?.[0]}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <div className="min-w-0">
-                                                    <h4
-                                                        onClick={(e) => { e.stopPropagation(); handleAllApplicationsClick(); }}
-                                                        className="text-sm font-medium text-black truncate capitalize cursor-pointer hover:text-primary-600"
-                                                    >
-                                                        {app.candidate?.firstName} {app.candidate?.lastName}
-                                                    </h4>
-                                                    <div className="flex flex-col gap-0.5 mt-1">
-                                                        <p className="text-[9px] font-medium text-black truncate flex items-center gap-1">
-                                                            <HiOutlineEnvelope className="w-3 h-3" />
-                                                            {app.candidate?.email}
-                                                        </p>
-                                                        <p className="text-[9px] font-medium text-black truncate flex items-center gap-1">
-                                                            <HiOutlinePhone className="w-3 h-3" />
-                                                            {app.candidate?.phone || app.candidateProfile?.phone || 'N/A'}
-                                                        </p>
-                                                        {app.candidate?.phone && app.candidateProfile?.phone && app.candidate.phone !== app.candidateProfile.phone && (
-                                                            <p className="text-[9px] font-medium text-slate-400/95 truncate flex items-center gap-1">
-                                                                <HiOutlinePhone className="w-3 h-3" />
-                                                                {app.candidateProfile.phone}
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Info Pills */}
-                                            {app.candidateProfile && (
-                                                <div className="flex flex-wrap gap-1.5 mb-2.5">
-                                                    <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-50 text-[9px] font-medium text-slate-500 rounded-md border border-slate-100">
-                                                        <HiOutlineBriefcase className="w-3 h-3 text-slate-400/95" />
-                                                        {app.candidateProfile.experience?.[0]?.companyName ? "Experienced" : "Fresher"}
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            <div className="flex items-center gap-2">
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); handleAllApplicationsClick(); }}
-                                                    className={`flex-1 text-center py-2 ${col.bg} text-[10px] font-medium ${col.text} uppercase tracking-wider rounded-lg hover:brightness-95 transition-all border border-transparent shadow-sm`}
-                                                >
-                                                    View Details
-                                                </button>
-                                                {col.action && (
-                                                    <button
-                                                        onClick={() => handleAction(app._id, col.action)}
-                                                        className={`p-2 rounded-lg ${col.bg} ${col.text} hover:scale-110 active:scale-90 transition-all shadow-sm flex items-center justify-center`}
-                                                        title="Move to Next Stage"
-                                                    >
-                                                        <HiOutlineChevronDoubleRight className="w-3.5 h-3.5" />
-                                                    </button>
-                                                )}
-                                                {col.key !== 'Final Rejected' && (
-                                                    <button
-                                                        onClick={() => handleStatusUpdate(app._id, 'reject', 'Candidate Rejected')}
-                                                        className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:scale-110 active:scale-90 transition-all shadow-sm flex items-center justify-center"
-                                                        title="Reject Candidate"
-                                                    >
-                                                        <HiOutlineXMark className="w-3.5 h-3.5" />
-                                                    </button>
-                                                )}
-                                            </div>
+            <DragDropContext onDragEnd={onDragEnd}>
+                <div className="flex-1 flex gap-4 p-6 overflow-x-auto overflow-y-hidden select-none scrollbar-hide pb-8">
+                    {COLUMN_CONFIG.map((col) => (
+                        <Droppable key={col.key} droppableId={col.key}>
+                            {(provided) => (
+                                <div className="w-[320px] min-w-[320px] flex flex-col bg-slate-100/30 rounded-[32px] border border-slate-200/50 p-3">
+                                    <div className="flex items-center justify-between px-3 py-3 mb-3 shrink-0">
+                                        <div className="flex items-center gap-2.5">
+                                            <div className={`w-2 h-2 rounded-full ${col.color} shadow-sm ring-4 ring-white`} />
+                                            <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-[0.1em]">{col.title}</h3>
                                         </div>
-                                    ))
-                                )}
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
+                                        <span className={`px-2.5 py-1 rounded-lg text-[11px] font-black tracking-tighter ${col.bg} ${col.text} border border-current/10 shadow-sm`}>{getCandidatesForColumn(col).length}</span>
+                                    </div>
+                                    <div 
+                                        {...provided.droppableProps}
+                                        ref={provided.innerRef}
+                                        className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar min-h-[150px]"
+                                    >
+                                        {getCandidatesForColumn(col).map((app, index) => (
+                                            <Draggable key={app._id} draggableId={app._id} index={index}>
+                                                {(provided) => (
+                                                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="bg-white p-3 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgb(0,0,0,0.02)] transition-all hover:shadow-xl hover:border-slate-300">
+                                                        <div className="flex items-center gap-3 mb-2.5">
+                                                            <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                                                                {app.candidate?.avatar && !imageErrors[app._id] ? <img src={app.candidate.avatar.startsWith('http') ? app.candidate.avatar : `${BASE_URL}/${app.candidate.avatar}`} alt="Avatar" className="w-full h-full object-cover" onError={() => setImageErrors(prev => ({ ...prev, [app._id]: true }))} /> : <span className={`text-[12px] font-medium uppercase ${col.text}`}>{app.candidate?.firstName?.[0]}{app.candidate?.lastName?.[0]}</span>}
+                                                            </div>
+                                                            <div className="min-w-0">
+                                                                <h4 className="text-sm font-medium text-black truncate capitalize">{app.candidate?.firstName} {app.candidate?.lastName}</h4>
+                                                                <p className="text-[9px] font-medium text-black truncate">{app.candidate?.email}</p>
+                                                                {app.status === 'Interview Scheduled' && app.interviewRounds?.length > 0 && (
+                                                                    <div className="mt-2.5 p-2 bg-[#FAF5FF] border border-[#E9D5FF] rounded-xl flex items-center gap-2">
+                                                                        <div className="w-8 h-8 bg-[#9333EA] rounded-lg flex items-center justify-center text-white shrink-0">
+                                                                            <HiOutlineVideoCamera className="w-4 h-4" />
+                                                                        </div>
+                                                                        <div className="flex-1 min-w-0">
+                                                                            {app.interviewRounds.slice(-1).map((round, idx) => (
+                                                                                <div key={idx}>
+                                                                                    <p className="text-[8px] font-black text-[#A855F7] uppercase tracking-tighter leading-none">R-{round.roundNumber} INTERVIEW</p>
+                                                                                    <p className="text-[9px] font-bold text-[#0F172A] leading-tight truncate">
+                                                                                        {new Date(round.scheduledAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }).toUpperCase()} • {new Date(round.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                                    </p>
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                        <a href={app.interviewRounds[app.interviewRounds.length - 1].meetLink} target="_blank" rel="noreferrer" className="px-2 py-1 bg-[#9333EA] text-white text-[8px] font-black uppercase rounded-lg hover:bg-[#7E22CE] transition-colors shrink-0">JOIN</a>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <button onClick={() => setViewingProfile(app)} className={`flex-1 text-center py-2 ${col.bg} text-[10px] font-medium ${col.text} uppercase rounded-lg hover:brightness-95`}>View Details</button>
+                                                            {col.action && <button onClick={() => handleAction(app._id, col.action)} className={`p-2 rounded-lg ${col.bg} ${col.text} hover:scale-110`} title="Move Forward"><HiOutlineChevronDoubleRight className="w-3.5 h-3.5" /></button>}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                    </div>
+                                </div>
+                            )}
+                        </Droppable>
+                    ))}
+                </div>
+            </DragDropContext>
         </div>
     );
-
-
 
     return (
         <div className="w-full h-full overflow-hidden">
             {view === 'jobs' ? renderJobCards() : view === 'applicants' ? renderApplicantsList() : renderPipelineView()}
-
-            {/* Global Candidate Profile Modal */}
             {viewingProfile && (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 select-text">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
-                        {/* Modal Header */}
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
                         <div className="px-8 py-6 bg-slate-900 text-white flex items-center justify-between shrink-0">
                             <div className="flex items-center gap-4">
-                                <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
-                                    {viewingProfile.candidate?.avatar ? (
-                                        <img
-                                            src={viewingProfile.candidate.avatar.startsWith('http') ? viewingProfile.candidate.avatar : `${BASE_URL.replace(/\/$/, '')}/${viewingProfile.candidate.avatar.replace(/^\//, '')}`}
-                                            className="w-full h-full object-cover"
-                                            alt="Candidate"
-                                            onError={(e) => e.target.style.display = 'none'}
-                                        />
-                                    ) : (
-                                        <span className="text-2xl font-medium text-white/40">
-                                            {(viewingProfile.candidate?.firstName?.[0] || '') + (viewingProfile.candidate?.lastName?.[0] || '')}
-                                        </span>
-                                    )}
-                                </div>
-                                <div>
-                                    <h3 className="text-2xl font-medium tracking-tight leading-none mb-1">
-                                        {viewingProfile.candidate?.firstName} {viewingProfile.candidate?.lastName}
-                                    </h3>
-                                    <div className="flex items-center gap-3 text-slate-400/95 text-xs font-medium uppercase tracking-wider">
-                                        <span className="flex items-center gap-1.5"><HiOutlineEnvelope className="w-3.5 h-3.5" />{viewingProfile.candidate?.email}</span>
-                                        <span className="flex items-center gap-1.5"><HiOutlinePhone className="w-3.5 h-3.5" />{viewingProfile.candidate?.phone || viewingProfile.candidateProfile?.mobileNumber || 'N/A'}</span>
-                                    </div>
-                                </div>
+                                <Avatar src={viewingProfile.candidate?.avatar && !imageErrors[viewingProfile._id] ? (viewingProfile.candidate.avatar.startsWith('http') ? viewingProfile.candidate.avatar : `${BASE_URL}/${viewingProfile.candidate.avatar}`) : null} sx={{ width: 64, height: 64, border: '2px solid white' }}>{viewingProfile.candidate?.firstName?.[0]}</Avatar>
+                                <div><h3 className="text-2xl font-medium leading-none mb-1">{viewingProfile.candidate?.firstName} {viewingProfile.candidate?.lastName}</h3><p className="text-xs text-slate-400">{viewingProfile.candidate?.email}</p></div>
                             </div>
-                            <button
-                                onClick={() => setViewingProfile(null)}
-                                className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all active:scale-90"
-                            >
-                                <HiOutlineXMark className="w-6 h-6" />
-                            </button>
+                            <button onClick={() => setViewingProfile(null)} className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20"><HiOutlineXMark className="w-6 h-6" /></button>
                         </div>
-
-                        {/* Modal Body */}
                         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-slate-50/50">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                {/* Left Column: Basic Info */}
                                 <div className="space-y-6">
-                                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                                        <h4 className="text-[11px] font-medium text-slate-400/95 uppercase tracking-widest mb-4">Professional Skills</h4>
-                                        <div className="flex flex-wrap gap-2">
-                                            {(viewingProfile.candidateProfile?.skills || viewingProfile.candidate?.skills || []).length > 0 ? (
-                                                (viewingProfile.candidateProfile?.skills || viewingProfile.candidate?.skills).map((skill, idx) => (
-                                                    <span key={idx} className="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-[10px] font-medium uppercase rounded-lg shadow-sm border border-indigo-100">
-                                                        {skill}
-                                                    </span>
-                                                ))
-                                            ) : <p className="text-xs font-medium text-slate-300">No skills listed</p>}
-                                        </div>
-                                    </div>
-
-                                    {(viewingProfile.candidateProfile?.city || viewingProfile.candidate?.city) && (
-                                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                                            <h4 className="text-[11px] font-medium text-slate-400/95 uppercase tracking-widest mb-2">Location</h4>
-                                            <p className="text-sm font-medium text-slate-700">
-                                                {[
-                                                    viewingProfile.candidateProfile?.city || viewingProfile.candidate?.city,
-                                                    viewingProfile.candidateProfile?.state || viewingProfile.candidate?.state,
-                                                    viewingProfile.candidateProfile?.country || viewingProfile.candidate?.country
-                                                ].filter(Boolean).join(', ')}
-                                            </p>
-                                        </div>
-                                    )}
+                                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm"><h4 className="text-[11px] font-medium text-slate-400/95 uppercase mb-4">Professional Skills</h4><div className="flex flex-wrap gap-2">{(viewingProfile.candidateProfile?.skills || []).map((skill, idx) => <span key={idx} className="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-[10px] uppercase rounded-lg">{skill}</span>)}</div></div>
                                 </div>
-
-                                {/* Main Column: Summary, Experience, Education */}
                                 <div className="md:col-span-2 space-y-8">
-                                    <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
-                                        <h4 className="text-[11px] font-medium text-primary-600 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                                            <HiOutlineUser className="w-4 h-4" /> Professional Summary
-                                        </h4>
-                                        <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                                            {viewingProfile.candidateProfile?.summary || viewingProfile.candidate?.summary || "No professional summary provided."}
-                                        </p>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <h4 className="text-[11px] font-medium text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2 ml-1">
-                                            <HiOutlineBriefcase className="w-4 h-4 text-slate-400/95" /> Work Experience
-                                        </h4>
-                                        {(viewingProfile.candidateProfile?.experience || []).length > 0 ? (
-                                            <div className="space-y-4">
-                                                {viewingProfile.candidateProfile.experience.map((exp, idx) => (
-                                                    <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group">
-                                                        <div className="absolute top-0 left-0 w-1.5 h-full bg-slate-100 group-hover:bg-primary-500 transition-all" />
-                                                        <div className="flex justify-between items-start mb-2">
-                                                            <h5 className="font-medium text-black">{exp.jobTitle || exp.role || 'Role'}</h5>
-                                                            <span className="text-[10px] font-medium bg-slate-50 px-2.5 py-1 rounded-lg text-slate-500 border border-slate-100">{exp.startDate} - {exp.endDate || 'Present'}</span>
-                                                        </div>
-                                                        <p className="text-xs font-medium text-black mb-2">{exp.company || exp.companyName}</p>
-                                                        <p className="text-xs text-slate-500 leading-relaxed font-medium">{exp.description}</p>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : <div className="bg-white/40 p-6 rounded-2xl border border-dashed border-slate-200 text-center text-xs font-medium text-slate-400/95">Not provided</div>}
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <h4 className="text-[11px] font-medium text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2 ml-1">
-                                            <HiOutlineAcademicCap className="w-4 h-4 text-slate-400/95" /> Education Background
-                                        </h4>
-                                        {(viewingProfile.candidateProfile?.education || []).length > 0 ? (
-                                            <div className="space-y-4">
-                                                {viewingProfile.candidateProfile.education.map((edu, idx) => (
-                                                    <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                                                        <div className="flex justify-between items-start mb-1">
-                                                            <h5 className="font-medium text-slate-900">{edu.degree || 'Degree'}</h5>
-                                                            <span className="text-[10px] font-medium text-slate-400/95">{edu.year || edu.passOutYear}</span>
-                                                        </div>
-                                                        <p className="text-xs font-medium text-slate-600">{edu.school || edu.college || edu.university}</p>
-                                                        {edu.fieldOfStudy && <p className="text-[10px] text-slate-400/95 mt-1 uppercase font-medium">{edu.fieldOfStudy}</p>}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : <div className="bg-white/40 p-6 rounded-2xl border border-dashed border-slate-200 text-center text-xs font-medium text-slate-400/95">Not provided</div>}
-                                    </div>
+                                    <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm"><h4 className="text-[11px] font-medium text-primary-600 uppercase mb-4">Professional Summary</h4><p className="text-sm text-slate-600 leading-relaxed font-medium">{viewingProfile.candidateProfile?.summary || "No summary provided."}</p></div>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Modal Footer */}
-                        <div className="p-6 bg-white border-t border-slate-100 flex items-center justify-end gap-3 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
-                            <button
-                                onClick={() => setViewingProfile(null)}
-                                className="px-8 py-3 bg-slate-50 text-slate-600 text-[11px] font-medium uppercase tracking-widest rounded-xl hover:bg-slate-100 transition-all active:scale-95"
-                            >
-                                Close
-                            </button>
-                            <a
-                                href={(viewingProfile.resumeUrl || viewingProfile.candidateProfile?.resumeUrl)?.startsWith('http') ? (viewingProfile.resumeUrl || viewingProfile.candidateProfile?.resumeUrl) : `${BASE_URL}/${(viewingProfile.resumeUrl || viewingProfile.candidateProfile?.resumeUrl || '').replace(/^\//, '')}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="px-8 py-3 bg-primary-600 text-white text-[11px] font-medium uppercase tracking-widest rounded-xl hover:bg-primary-700 shadow-lg shadow-primary-200 transition-all active:scale-95"
-                            >
-                                Download Resume
-                            </a>
-                        </div>
+                        <div className="p-6 bg-white border-t border-slate-100 flex items-center justify-end gap-3"><button onClick={() => setViewingProfile(null)} className="px-8 py-3 bg-slate-50 text-slate-600 text-[11px] font-medium uppercase rounded-xl">Close</button><a href={`${BASE_URL}${viewingProfile.resumeUrl}`} target="_blank" className="px-8 py-3 bg-primary-600 text-white text-[11px] font-medium uppercase rounded-xl">Download Resume</a></div>
                     </div>
+                </div>
+            )}
+            {isScheduling && (
+                <div className="fixed inset-0 z-[500] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+                    <Paper elevation={24} sx={{ width: '100%', maxWidth: 500, borderRadius: 2, overflow: 'hidden' }}>
+                        <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Typography variant="h6">Schedule Interview</Typography>
+                            <IconButton onClick={() => setIsScheduling(null)}><HiOutlineXMark /></IconButton>
+                        </Box>
+                        <Box component="form" onSubmit={handleScheduleSubmit} sx={{ p: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            <TextField fullWidth label="Round Number" type="number" required value={interviewData.roundNumber} onChange={(e) => setInterviewData({ ...interviewData, roundNumber: e.target.value })} />
+                            <TextField fullWidth label="Meeting Code" required placeholder="abc-def" value={interviewData.meetCode} onChange={(e) => setInterviewData({ ...interviewData, meetCode: e.target.value })} />
+                            <TextField fullWidth label="Meeting Link" type="url" required placeholder="https://meet.google.com/..." value={interviewData.meetLink} onChange={(e) => setInterviewData({ ...interviewData, meetLink: e.target.value })} />
+                            <TextField fullWidth label="Date & Time" type="datetime-local" required InputLabelProps={{ shrink: true }} value={interviewData.scheduledAt} onChange={(e) => setInterviewData({ ...interviewData, scheduledAt: e.target.value })} />
+                            <Stack direction="row" spacing={2} sx={{ pt: 2 }}>
+                                <Button fullWidth onClick={() => setIsScheduling(null)}>Cancel</Button>
+                                <Button fullWidth type="submit" variant="contained" disabled={isSubmitting}>{isSubmitting ? 'Scheduling...' : 'Confirm'}</Button>
+                            </Stack>
+                        </Box>
+                    </Paper>
                 </div>
             )}
         </div>

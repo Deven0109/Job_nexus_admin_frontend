@@ -47,7 +47,7 @@ const JobManagement = () => {
         search: '',
         status: '',
         page: 1,
-        limit: 5,
+        limit: 10,
     });
 
     // View Modal
@@ -239,6 +239,7 @@ const JobManagement = () => {
                                 <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest hidden lg:table-cell">Salary</th>
                                 <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest hidden md:table-cell">Recruiter</th>
                                 <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">Status</th>
+                                <th className="text-center px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">Applicants</th>
                                 <th className="text-center px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">Actions</th>
                             </tr>
                         </thead>
@@ -310,6 +311,11 @@ const JobManagement = () => {
                                                     {job.status}
                                                 </span>
                                             )}
+                                        </td>
+                                        <td className="px-5 py-4 text-center">
+                                            <span className="text-sm font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">
+                                                {job.applicantCount || 0}
+                                            </span>
                                         </td>
                                         <td className="px-5 py-4 text-center">
                                             <div className="flex items-center justify-center gap-2">
