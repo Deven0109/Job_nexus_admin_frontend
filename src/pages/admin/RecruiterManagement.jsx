@@ -291,7 +291,7 @@ const RecruiterManagement = () => {
     const inactiveCount = users.filter((u) => !u.isActive).length;
 
     const inputCls = (field) =>
-        `w-full pl-10 pr-4 py-2.5 rounded-lg border text-sm text-dark-800 placeholder-dark-400 transition-all focus:ring-2 focus:ring-primary-100 ${formErrors[field]
+        `w-full pl-10 pr-4 py-2.5 rounded-md border text-sm text-dark-800 placeholder-dark-400 transition-all focus:ring-2 focus:ring-primary-100 ${formErrors[field]
             ? 'border-danger-400 focus:border-danger-500'
             : 'border-dark-200 focus:border-primary-500'
         }`;
@@ -307,7 +307,7 @@ const RecruiterManagement = () => {
                 </div>
                 <button
                     onClick={openCreateModal}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-[11px] font-bold uppercase tracking-widest rounded-2xl hover:bg-slate-900 transition-all shadow-lg shadow-blue-100 active:scale-95"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-weight-700 text-[12px] font-bold uppercase tracking-widest rounded-md hover:bg-slate-900 transition-all shadow-lg shadow-blue-100 active:scale-95"
                 >
                     <HiOutlineUserPlus className="w-4 h-4" />
                     Add Recruiter
@@ -316,9 +316,9 @@ const RecruiterManagement = () => {
 
             {/* Stats Row */}
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-md bg-amber-50 text-amber-500 flex items-center justify-center">
                             <HiOutlineUsers className="w-6 h-6" />
                         </div>
                         <div>
@@ -329,9 +329,9 @@ const RecruiterManagement = () => {
                         </div>
                     </div>
                 </div>
-                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-md bg-emerald-50 text-emerald-500 flex items-center justify-center">
                             <HiOutlineCheckCircle className="w-6 h-6" />
                         </div>
                         <div>
@@ -340,9 +340,9 @@ const RecruiterManagement = () => {
                         </div>
                     </div>
                 </div>
-                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-md bg-rose-50 text-rose-500 flex items-center justify-center">
                             <HiOutlineXMark className="w-6 h-6" />
                         </div>
                         <div>
@@ -353,7 +353,7 @@ const RecruiterManagement = () => {
                 </div>
             </div>
 
-            <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+            <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white">
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="flex-1 relative">
                         <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -362,13 +362,13 @@ const RecruiterManagement = () => {
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                             placeholder="Search name or email..."
-                            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm text-slate-700 placeholder-slate-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all outline-none"
+                            className="w-full pl-11 pr-4 py-3 rounded-md bg-slate-50 border border-slate-300 text-sm text-slate-700 placeholder-slate-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all outline-none"
                         />
                     </div>
                     <select
                         value={filters.isActive}
                         onChange={(e) => handleFilterChange('isActive', e.target.value)}
-                        className="px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all outline-none appearance-none cursor-pointer min-w-[150px]"
+                        className="px-5 py-3 rounded-md bg-slate-50 border border-slate-300 text-sm font-bold text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all outline-none appearance-none cursor-pointer min-w-[150px]"
                     >
                         <option value="">All Status</option>
                         <option value="true">Active</option>
@@ -376,7 +376,7 @@ const RecruiterManagement = () => {
                     </select>
                     <button
                         onClick={resetFilters}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-slate-50 text-slate-800 text-xs font-bold uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-100"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md bg-slate-50 text-slate-800 text-xs font-bold uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-300"
                     >
                         <HiOutlineArrowPath className="w-4 h-4" />
                         Reset
@@ -384,10 +384,10 @@ const RecruiterManagement = () => {
                 </div>
             </div>
 
-            <div className="card rounded-3xl border-none ring-1 ring-slate-100 bg-white overflow-hidden shadow-sm">
+            <div className="card rounded-md border-slate-300 ring-1 ring-slate-100 bg-white overflow-hidden shadow-sm">
                 <div className="overflow-x-auto scrollbar-hide">
                     <table className="w-full text-sm">
-                        <thead>                             <tr className="bg-slate-50/50 border-b border-slate-100">
+                        <thead>                             <tr className="bg-slate-50/50 border-b border-slate-300">
                                 <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">
                                     Recruiter
                                 </th>
@@ -410,14 +410,14 @@ const RecruiterManagement = () => {
                             {fetchError && users.length === 0 ? (
                                 <tr>
                                     <td colSpan="5" className="px-5 py-12 text-center">
-                                        <div className="w-12 h-12 rounded-full bg-danger-50 text-danger-500 flex items-center justify-center mx-auto mb-3">
+                                        <div className="w-12 h-12 rounded-md bg-danger-50 text-danger-500 flex items-center justify-center mx-auto mb-3">
                                             <HiOutlineExclamationTriangle className="w-6 h-6" />
                                         </div>
                                         <p className="text-black font-medium mb-1">Failed to load recruiters</p>
                                         <p className="text-dark-500 text-sm mb-4">We couldn't connect to the server. Please ensure the backend is running.</p>
                                         <button
                                             onClick={fetchUsers}
-                                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-50 text-primary-700 font-semibold text-sm hover:bg-primary-100 transition-colors"
+                                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-primary-50 text-primary-700 font-semibold text-sm hover:bg-primary-100 transition-colors"
                                         >
                                             <HiOutlineArrowPath className="w-4 h-4" />
                                             Retry
@@ -429,8 +429,8 @@ const RecruiterManagement = () => {
                                     <tr key={i} className="animate-pulse">
                                         <td className="px-5 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-9 h-9 rounded-full bg-dark-200"></div>
-                                                <div className="w-28 h-4 rounded bg-dark-200"></div>
+                                                <div className="w-9 h-9 rounded-md bg-dark-200"></div>
+                                                <div className="w-28 h-4 rounded-md bg-dark-200"></div>
                                             </div>
                                         </td>
                                         <td colSpan="4"></td>
@@ -448,7 +448,7 @@ const RecruiterManagement = () => {
                                     <tr key={u._id} className="hover:bg-dark-50/50 transition-colors">
                                         <td className="px-5 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center text-sm font-medium flex-shrink-0 transition-transform group-hover:scale-105 ${u.isActive ? 'bg-blue-50 text-blue-600 shadow-sm shadow-blue-100' : 'bg-rose-50 text-rose-500 shadow-sm shadow-rose-100'} border border-slate-100 relative`}>
+                                                <div className={`w-10 h-10 rounded-md overflow-hidden flex items-center justify-center text-sm font-medium flex-shrink-0 transition-transform group-hover:scale-105 ${u.isActive ? 'bg-blue-50 text-blue-600 shadow-sm shadow-blue-100' : 'bg-rose-50 text-rose-500 shadow-sm shadow-rose-100'} border border-slate-300 relative`}>
                                                     {u.avatar && !imageErrors[u._id] ? (
                                                         <img
                                                             src={u.avatar.startsWith('http') ? u.avatar : `${BASE_URL.replace(/\/$/, '')}/${u.avatar.replace(/^\//, '')}`}
@@ -470,9 +470,9 @@ const RecruiterManagement = () => {
                                             <button
                                                 onClick={() => handleToggleStatus(u._id)}
                                                 title={u.isActive ? 'Click to deactivate' : 'Click to activate'}
-                                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-medium uppercase tracking-widest transition-all hover:scale-105 active:scale-95 ${u.isActive ? 'bg-emerald-50 text-emerald-800 border border-emerald-100 shadow-sm shadow-emerald-50' : 'bg-rose-50 text-rose-600 border border-rose-100'}`}
+                                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-medium uppercase tracking-widest transition-all hover:scale-105 active:scale-95 ${u.isActive ? 'bg-emerald-50 text-emerald-900 border border-emerald-300 shadow-sm shadow-emerald-50' : 'bg-rose-100 text-rose-600 border border-rose-300'}`}
                                             >
-                                                <span className={`w-1.5 h-1.5 rounded-full ${u.isActive ? 'bg-emerald-700 animate-pulse' : 'bg-rose-500'}`}></span>
+                                                <span className={`w-1.5 h-1.5 rounded-md ${u.isActive ? 'bg-emerald-700 animate-pulse' : 'bg-rose-500'}`}></span>
                                                 {u.isActive ? 'Active' : 'Inactive'}
                                             </button>
                                         </td>
@@ -484,9 +484,9 @@ const RecruiterManagement = () => {
                                         </td>
                                         <td className="px-6 py-5">
                                             <div className="flex items-center justify-center gap-1">
-                                                <button onClick={() => openEditModal(u)} className="p-2 rounded-xl text-slate-800 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Edit"><HiOutlinePencilSquare className="w-5 h-5" /></button>
-                                                <button onClick={() => handleToggleStatus(u._id)} className={`p-2 rounded-xl transition-all ${u.isActive ? 'text-slate-600 hover:text-amber-600 hover:bg-amber-50' : 'text-slate-600 hover:text-emerald-600 hover:bg-emerald-50'}`} title={u.isActive ? "Deactivate" : "Activate"}>{u.isActive ? <HiOutlineEyeSlash className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}</button>
-                                                <button onClick={() => openDeleteModal(u)} className="p-2 rounded-xl text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-all" title="Delete"><HiOutlineTrash className="w-5 h-5" /></button>
+                                                <button onClick={() => openEditModal(u)} className="p-2 rounded-md text-slate-800 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Edit"><HiOutlinePencilSquare className="w-5 h-5" /></button>
+                                                <button onClick={() => handleToggleStatus(u._id)} className={`p-2 rounded-md transition-all ${u.isActive ? 'text-slate-600 hover:text-amber-600 hover:bg-amber-50' : 'text-slate-600 hover:text-emerald-600 hover:bg-emerald-50'}`} title={u.isActive ? "Deactivate" : "Activate"}>{u.isActive ? <HiOutlineEyeSlash className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}</button>
+                                                <button onClick={() => openDeleteModal(u)} className="p-2 rounded-md text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-all" title="Delete"><HiOutlineTrash className="w-5 h-5" /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -497,7 +497,7 @@ const RecruiterManagement = () => {
                 </div>
 
                 {pagination && pagination.totalPages > 1 && (
-                    <div className="flex items-center justify-between px-5 py-4 border-t border-dark-100 bg-dark-50/50">
+                    <div className="flex items-center justify-between px-5 py-4 border-t border-dark-300 bg-dark-50/50">
                         <p className="text-xs text-dark-500">Showing <span className="font-semibold text-dark-700">{(pagination.page - 1) * pagination.limit + 1}</span> to <span className="font-semibold text-dark-700">{Math.min(pagination.page * pagination.limit, pagination.total)}</span> of <span className="font-semibold text-dark-700">{pagination.total}</span> recruiters</p>
                         <div className="flex items-center gap-1">
                             <button onClick={() => handlePageChange(pagination.page - 1)} disabled={!pagination.hasPrevPage} className="p-1.5 rounded-md text-dark-500 hover:bg-dark-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"><HiOutlineChevronLeft className="w-4 h-4" /></button>
@@ -511,15 +511,15 @@ const RecruiterManagement = () => {
             {showCreateModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowCreateModal(false)} />
-                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
+                    <div className="relative bg-white rounded-md shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-lg font-bold text-black">Add New Recruiter</h3>
-                            <button onClick={() => setShowCreateModal(false)} className="p-1.5 rounded-lg hover:bg-dark-100 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
+                            <button onClick={() => setShowCreateModal(false)} className="p-1.5 rounded-md hover:bg-dark-100 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
                         </div>
                         <form onSubmit={handleCreateUser} className="space-y-6">
                             {/* Contact Person */}
                             <div className="space-y-4">
-                                <h4 className="text-xs font-medium text-slate-500 uppercase tracking-widest border-b border-dark-100 pb-2">Contact Information</h4>
+                                <h4 className="text-xs font-medium text-slate-500 uppercase tracking-widest border-b border-dark-300 pb-2">Contact Information</h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">First Name *</label><div className="relative"><HiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.firstName} onChange={(e) => handleFormChange('firstName', e.target.value)} placeholder="John" className={inputCls('firstName')} /></div>{formErrors.firstName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.firstName}</p>}</div>
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Last Name *</label><div className="relative"><HiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.lastName} onChange={(e) => handleFormChange('lastName', e.target.value)} placeholder="Doe" className={inputCls('lastName')} /></div>{formErrors.lastName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.lastName}</p>}</div>
@@ -529,8 +529,8 @@ const RecruiterManagement = () => {
                                 <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Phone *</label><div className="relative"><HiOutlinePhone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="tel" value={formData.phone} onChange={(e) => handleFormChange('phone', e.target.value)} placeholder="e.g. 9876543210" className={inputCls('phone')} /></div>{formErrors.phone && <p className="mt-1 text-[11px] text-danger-600">{formErrors.phone}</p>}</div>
                             </div>
                             <div className="flex items-center gap-3 pt-3">
-                                <button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 py-3 rounded-xl border border-dark-200 text-sm font-medium text-dark-600">Cancel</button>
-                                <button type="submit" disabled={formLoading} className="flex-1 py-3 bg-blue-600 text-white text-sm font-medium rounded-xl shadow-lg disabled:opacity-70">
+                                <button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 py-3 rounded-md border border-dark-300 text-sm font-medium text-dark-600">Cancel</button>
+                                <button type="submit" disabled={formLoading} className="flex-1 py-3 bg-blue-600 text-white text-sm font-medium rounded-md shadow-lg disabled:opacity-70">
                                     {formLoading ? 'Creating...' : 'Create Recruiter Account'}
                                 </button>
                             </div>
@@ -543,10 +543,10 @@ const RecruiterManagement = () => {
             {showEditModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowEditModal(false)} />
-                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 animate-in fade-in zoom-in duration-200">
+                    <div className="relative bg-white rounded-md shadow-2xl w-full max-w-lg p-6 animate-in fade-in zoom-in duration-200">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-lg font-bold text-black">Edit Recruiter</h3>
-                            <button onClick={() => setShowEditModal(false)} className="p-1.5 rounded-lg hover:bg-dark-100 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
+                            <button onClick={() => setShowEditModal(false)} className="p-1.5 rounded-md hover:bg-dark-100 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
                         </div>
                         <form onSubmit={handleUpdateUser} className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
@@ -555,7 +555,7 @@ const RecruiterManagement = () => {
                             </div>
                             <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Email *</label><div className="relative"><HiOutlineEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="email" value={formData.email} onChange={(e) => handleFormChange('email', e.target.value)} className={inputCls('email')} /></div>{formErrors.email && <p className="mt-1 text-[11px] text-danger-600">{formErrors.email}</p>}</div>
                             <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Phone</label><div className="relative"><HiOutlinePhone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="tel" value={formData.phone} onChange={(e) => handleFormChange('phone', e.target.value)} className={inputCls('phone')} /></div></div>
-                            <div className="flex items-center gap-3 pt-3"><button type="button" onClick={() => setShowEditModal(false)} className="flex-1 py-2.5 rounded-lg border border-dark-200 text-sm font-semibold text-dark-600">Cancel</button><button type="submit" disabled={formLoading} className="flex-1 py-2.5 gradient-primary text-white text-sm font-semibold rounded-lg shadow-md disabled:opacity-70">{formLoading ? 'Saving...' : 'Save Changes'}</button></div>
+                            <div className="flex items-center gap-3 pt-3"><button type="button" onClick={() => setShowEditModal(false)} className="flex-1 py-2.5 rounded-md border border-dark-300 text-sm font-semibold text-dark-600">Cancel</button><button type="submit" disabled={formLoading} className="flex-1 py-2.5 gradient-primary text-white text-sm font-semibold rounded-md shadow-md disabled:opacity-70">{formLoading ? 'Saving...' : 'Save Changes'}</button></div>
                         </form>
                     </div>
                 </div>
@@ -565,13 +565,13 @@ const RecruiterManagement = () => {
             {showDeleteModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)} />
-                    <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
+                    <div className="relative bg-white rounded-md shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
                         <div className="flex flex-col items-center text-center">
                             <div className="w-12 h-12 rounded-full bg-danger-50 flex items-center justify-center mb-4"><HiOutlineExclamationTriangle className="w-6 h-6 text-danger-600" /></div>
                             <h3 className="text-lg font-bold text-black">Delete Recruiter</h3>
                             <p className="text-sm text-slate-500 mt-2">Are you sure you want to delete <b>{selectedUser?.firstName} {selectedUser?.lastName}</b>? This action cannot be undone.</p>
                         </div>
-                        <div className="flex items-center gap-3 mt-8"><button type="button" onClick={() => setShowDeleteModal(false)} className="flex-1 py-2.5 rounded-lg border border-dark-200 text-sm font-medium text-dark-600">Cancel</button><button type="button" onClick={handleDeleteUser} disabled={formLoading} className="flex-1 py-2.5 bg-danger-600 text-white text-sm font-medium rounded-lg hover:bg-danger-700 shadow-md disabled:opacity-70">{formLoading ? 'Deleting...' : 'Yes, Delete'}</button></div>
+                        <div className="flex items-center gap-3 mt-8"><button type="button" onClick={() => setShowDeleteModal(false)} className="flex-1 py-2.5 rounded-md border border-dark-300 text-sm font-medium text-dark-600">Cancel</button><button type="button" onClick={handleDeleteUser} disabled={formLoading} className="flex-1 py-2.5 bg-danger-600 text-white text-sm font-medium rounded-md hover:bg-danger-700 shadow-md disabled:opacity-70">{formLoading ? 'Deleting...' : 'Yes, Delete'}</button></div>
                     </div>
                 </div>
             )}

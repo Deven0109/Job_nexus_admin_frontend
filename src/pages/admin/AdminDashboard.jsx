@@ -73,9 +73,9 @@ const AdminDashboard = () => {
             {/* Premium Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Total Candidates */}
-                <Link to="/candidates" className="group p-5 rounded-2xl border border-slate-100 hover:border-blue-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-blue-50/50">
+                <Link to="/candidates" className="group p-5 rounded-md border border-slate-300 hover:border-blue-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-blue-50/50">
                     <div className="relative z-10 flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                        <div className="w-14 h-14 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                             <HiOutlineUserGroup className="w-7 h-7" />
                         </div>
                         <div>
@@ -86,9 +86,9 @@ const AdminDashboard = () => {
                 </Link>
 
                 {/* Total Recruiters */}
-                <Link to="/recruiters" className="group p-5 rounded-2xl border border-slate-100 hover:border-purple-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-purple-50/50">
+                <Link to="/recruiters" className="group p-5 rounded-md border border-slate-300 hover:border-purple-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-purple-50/50">
                     <div className="relative z-10 flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
+                        <div className="w-14 h-14 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
                             <HiOutlineUsers className="w-7 h-7" />
                         </div>
                         <div>
@@ -99,9 +99,9 @@ const AdminDashboard = () => {
                 </Link>
 
                 {/* Total Employers */}
-                <Link to="/employers" className="group p-5 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-emerald-50/50">
+                <Link to="/employers" className="group p-5 rounded-md border border-slate-300 hover:border-emerald-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-emerald-50/50">
                     <div className="relative z-10 flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+                        <div className="w-14 h-14 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
                             <HiOutlineBuildingOffice2 className="w-7 h-7" />
                         </div>
                         <div>
@@ -112,9 +112,9 @@ const AdminDashboard = () => {
                 </Link>
 
                 {/* Total Jobs */}
-                <Link to="/jobs" className="group p-5 rounded-2xl border border-slate-100 hover:border-amber-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-amber-50/50">
+                <Link to="/jobs" className="group p-5 rounded-md border border-slate-300 hover:border-amber-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-amber-50/50">
                     <div className="relative z-10 flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
+                        <div className="w-14 h-14 rounded-md bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
                             <HiOutlineBriefcase className="w-7 h-7" />
                         </div>
                         <div>
@@ -125,9 +125,9 @@ const AdminDashboard = () => {
                 </Link>
 
                 {/* Total Applications */}
-                <Link to="/applications" className="group p-5 rounded-2xl border border-slate-100 hover:border-blue-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-blue-50/50">
+                <Link to="/applications" className="group p-5 rounded-md border border-slate-300 hover:border-blue-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-blue-50/50">
                     <div className="relative z-10 flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                        <div className="w-14 h-14 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                             <HiOutlineDocumentText className="w-7 h-7" />
                         </div>
                         <div>
@@ -138,9 +138,9 @@ const AdminDashboard = () => {
                 </Link>
 
                 {/* Hire Candidate */}
-                <Link to="/shortlisted-candidates" className="group p-5 rounded-2xl border border-slate-100 hover:border-rose-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-rose-50/50">
+                <Link to="/shortlisted-candidates" className="group p-5 rounded-md border border-slate-300 hover:border-rose-200 transition-all duration-300 relative overflow-hidden block bg-white shadow-sm hover:shadow-xl hover:shadow-rose-50/50">
                     <div className="relative z-10 flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-all duration-300">
+                        <div className="w-14 h-14 rounded-md bg-rose-50 text-rose-600 flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-all duration-300">
                             <HiOutlineCheckBadge className="w-7 h-7" />
                         </div>
                         <div>
@@ -152,13 +152,13 @@ const AdminDashboard = () => {
             </div>
 
             {/* Activity Overview */}
-            <div className="card p-8 border-none ring-1 ring-slate-200/80 bg-white relative z-20 shadow-sm">
+            <div className="card p-8 border-1px solid black  ring-1 ring-slate-200/80 bg-white relative z-20 shadow-sm">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-10">
                     <div>
                         <h3 className="text-2xl font-bold text-black">Activity Overview</h3>
                         <p className="text-sm text-slate-700 mt-1 font-medium">Real-time statistics for platform ecosystem</p>
                     </div>
-                    <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg self-end md:self-auto shadow-inner">
+                    <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-md self-end md:self-auto shadow-inner">
                         {['Week', 'Month', 'Year'].map((p) => (
                             <button
                                 key={p}
@@ -173,26 +173,26 @@ const AdminDashboard = () => {
 
                 <div className="flex flex-wrap items-center justify-end gap-5 text-[11px] font-medium mb-6">
                     <button onClick={() => toggleSeries('employers')} className={`flex items-center gap-2 transition-all ${visibleSeries.employers ? 'opacity-100' : 'opacity-20'}`}>
-                        <div className="w-3.5 h-3.5 rounded bg-blue-500"></div>
+                        <div className="w-3.5 h-3.5 rounded-md bg-blue-500"></div>
                         <span className="text-slate-700 uppercase tracking-widest">Companies</span>
                     </button>
                     <button onClick={() => toggleSeries('candidates')} className={`flex items-center gap-2 transition-all ${visibleSeries.candidates ? 'opacity-100' : 'opacity-20'}`}>
-                        <div className="w-3.5 h-3.5 rounded bg-emerald-500"></div>
+                        <div className="w-3.5 h-3.5 rounded-md bg-emerald-500"></div>
                         <span className="text-slate-700 uppercase tracking-widest">Candidates</span>
                     </button>
                     <button onClick={() => toggleSeries('jobs')} className={`flex items-center gap-2 transition-all ${visibleSeries.jobs ? 'opacity-100' : 'opacity-20'}`}>
-                        <div className="w-3.5 h-3.5 rounded bg-amber-500"></div>
+                        <div className="w-3.5 h-3.5 rounded-md bg-amber-500"></div>
                         <span className="text-slate-700 uppercase tracking-widest">Jobs</span>
                     </button>
                     <button onClick={() => toggleSeries('applications')} className={`flex items-center gap-2 transition-all ${visibleSeries.applications ? 'opacity-100' : 'opacity-20'}`}>
-                        <div className="w-3.5 h-3.5 rounded bg-purple-500"></div>
+                        <div className="w-3.5 h-3.5 rounded-md bg-purple-500"></div>
                         <span className="text-slate-700 uppercase tracking-widest">Applications</span>
                     </button>
                 </div>
 
                 <div className="relative h-[320px] mt-4 flex items-end justify-between gap-4 px-6 md:px-10 overflow-visible">
                     {/* Y-Axis Grid Lines matching reference */}
-                    <div className="absolute inset-x-0 inset-y-0 -top-4 bottom-8 flex flex-col justify-between pointer-events-none text-[11px] font-medium text-slate-300">
+                    <div className="absolute inset-x-0 inset-y-0 -top-4 bottom-8 flex flex-col justify-between pointer-events-none text-[11px] font-medium text-slate-500">
                         {[2, 1.5, 1, 0.5, 0].map(val => (
                             <div key={val} className="flex items-center gap-4 w-full">
                                 <span className="w-6 text-right">{val}</span>
@@ -212,7 +212,7 @@ const AdminDashboard = () => {
                             >
                                 {/* Column Backdrop Highlight */}
                                 {hoveredIdx === idx && (
-                                    <div className="absolute inset-x-1 -inset-y-4 bg-slate-50/80 rounded-2xl -z-10 animate-in fade-in duration-200 ring-1 ring-slate-100"></div>
+                                    <div className="absolute inset-x-1 -inset-y-4 bg-slate-50/80 rounded-md -z-10 animate-in fade-in duration-200 ring-1 ring-slate-100"></div>
                                 )}
 
                                 <div className="w-full flex items-end justify-center gap[4px] h-[200px] relative">
@@ -255,7 +255,7 @@ const AdminDashboard = () => {
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-2.5">
                                                         <div className="w-2.5 h-2.5 rounded-full bg-[#f9a825]"></div>
-                                                        <span className="text-[11px] font-medium text-slate-400">Jobs</span>
+                                                        <span className="text-[11px] font-medium text-slate-500">Jobs</span>
                                                     </div>
                                                     <span className="text-[12px] font-medium text-black">{item.jobs}</span>
                                                 </div>
@@ -297,7 +297,7 @@ const AdminDashboard = () => {
                             stats.recentApplications.map((app) => (
                                 <div key={app._id} className="p-6 hover:bg-slate-50/50 transition-colors flex items-center justify-between group">
                                     <div className="flex items-center gap-4">
-                                         <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-medium border-2 border-white shadow-sm overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform relative">
+                                         <div className="w-12 h-12 rounded-md bg-slate-100 flex items-center justify-center text-slate-500 font-medium border-2 border-slate-300 shadow-sm overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform relative">
                                             {app.candidate?.avatar && !imageErrors[app._id] ? (
                                                 <img 
                                                     src={app.candidate.avatar.startsWith('http') || app.candidate.avatar.startsWith('data:') 
@@ -337,16 +337,16 @@ const AdminDashboard = () => {
 
                 {/* Quick Actions */}
                 <div className="flex flex-col gap-6">
-                    <div className="card p-8 border-none ring-1 ring-slate-200/80 bg-white shadow-sm">
+                    <div className="card p-8 border-1px solid to-black ring-1 ring-slate-200/80 bg-white shadow-sm">
                         <h3 className="text-xl font-bold text-black mb-6">Quick Actions</h3>
                         <div className="space-y-4">
-                            <Link to="/jobs" className="flex items-center justify-center w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-[11px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 hover:-translate-y-1 active:scale-95">
+                            <Link to="/jobs" className="flex items-center justify-center w-full py-4 bg-blue-600 text-white rounded-md font-bold text-[11px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 hover:-translate-y-1 active:scale-95">
                                 Manage Jobs
                             </Link>
-                            <Link to="/applications" className="flex items-center justify-center w-full py-4 bg-white border-2 border-slate-200 text-slate-800 rounded-2xl font-bold text-[11px] uppercase tracking-widest hover:bg-slate-50 transition-all hover:border-slate-200">
+                            <Link to="/applications" className="flex items-center justify-center w-full py-4 bg-white border-2 border-slate-300 text-slate-800 rounded-md font-bold text-[11px] uppercase tracking-widest hover:bg-slate-50 transition-all hover:border-slate-200">
                                 Review Applications
                             </Link>
-                            <Link to="/recruiters" className="flex items-center justify-center w-full py-4 bg-white border-2 border-slate-200 text-slate-800 rounded-2xl font-bold text-[11px] uppercase tracking-widest hover:bg-slate-50 transition-all hover:border-slate-200">
+                            <Link to="/recruiters" className="flex items-center justify-center w-full py-4 bg-white border-2 border-slate-300 text-slate-800 rounded-md font-bold text-[11px] uppercase tracking-widest hover:bg-slate-50 transition-all hover:border-slate-200">
                                 Manage Recruiters
                             </Link>
                         </div>

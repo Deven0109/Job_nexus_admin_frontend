@@ -164,6 +164,9 @@ const EmployerManagement = () => {
 
     const validateForm = (isCreate) => {
         const errors = {};
+        const companyWebsite = formData.companyWebsite?.trim();
+        const websiteRegex = /^https?:\/\/(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:[/?#][^\s]*)?$/;
+
         if (!formData.firstName?.trim()) errors.firstName = 'Required';
         if (!formData.lastName?.trim()) errors.lastName = 'Required';
         if (!formData.email?.trim()) {
@@ -183,6 +186,9 @@ const EmployerManagement = () => {
             errors.phone = 'Required';
         } else if (!/^\+?[0-9]{10,15}$/.test(formData.phone)) {
             errors.phone = 'Invalid phone (10-15 digits)';
+        }
+        if (companyWebsite && !websiteRegex.test(companyWebsite)) {
+            errors.companyWebsite = 'Use valid URL (http:// or https://)';
         }
         return errors;
     };
@@ -338,9 +344,9 @@ const EmployerManagement = () => {
     const verifiedCount = employers.filter((e) => e.verifiedByAdmin).length;
 
     const inputCls = (field) =>
-        `w-full pl-10 pr-4 py-2.5 rounded-lg border text-sm text-dark-800 placeholder-dark-400 transition-all focus:ring-2 focus:ring-primary-100 ${formErrors[field]
+        `w-full pl-10 pr-4 py-2.5 rounded-md border text-sm text-dark-800 placeholder-dark-400 transition-all focus:ring-2 focus:ring-primary-100 ${formErrors[field]
             ? 'border-danger-400 focus:border-danger-500'
-            : 'border-dark-200 focus:border-primary-500'
+            : 'border-dark-300 focus:border-primary-500'
         }`;
 
     return (
@@ -355,7 +361,7 @@ const EmployerManagement = () => {
                 </div>
                 <button
                     onClick={openCreateModal}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-[11px] font-bold uppercase tracking-widest rounded-2xl hover:bg-slate-900 transition-all shadow-lg shadow-blue-100 active:scale-95"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-[11px] font-bold uppercase tracking-widest rounded-md hover:bg-slate-900 transition-all shadow-lg shadow-blue-100 active:scale-95"
                 >
                     <HiOutlineBuildingOffice2 className="w-4 h-4" />
                     Add Employer
@@ -364,9 +370,9 @@ const EmployerManagement = () => {
 
             {/* Stats Row */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-md bg-amber-50 text-amber-500 flex items-center justify-center">
                             <HiOutlineBuildingOffice2 className="w-6 h-6" />
                         </div>
                         <div>
@@ -377,9 +383,9 @@ const EmployerManagement = () => {
                         </div>
                     </div>
                 </div>
-                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-md bg-emerald-50 text-emerald-500 flex items-center justify-center">
                             <HiOutlineCheckCircle className="w-6 h-6" />
                         </div>
                         <div>
@@ -388,9 +394,9 @@ const EmployerManagement = () => {
                         </div>
                     </div>
                 </div>
-                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-md bg-rose-50 text-rose-500 flex items-center justify-center">
                             <HiOutlineNoSymbol className="w-6 h-6" />
                         </div>
                         <div>
@@ -399,9 +405,9 @@ const EmployerManagement = () => {
                         </div>
                     </div>
                 </div>
-                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+                <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-md bg-blue-50 text-blue-500 flex items-center justify-center">
                             <HiOutlineShieldCheck className="w-6 h-6" />
                         </div>
                         <div>
@@ -413,7 +419,7 @@ const EmployerManagement = () => {
             </div>
 
             {/* Filters */}
-            <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+            <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white">
                 <div className="flex flex-col sm:flex-row gap-4">
                     <div className="flex-1 relative">
                         <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -422,7 +428,7 @@ const EmployerManagement = () => {
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                             placeholder="Search name or email..."
-                            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm text-slate-700 placeholder-slate-400 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none"
+                            className="w-full pl-11 pr-4 py-3 rounded-md bg-slate-50 border border-slate-300 text-sm text-slate-700 placeholder-slate-400 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none"
                         />
                     </div>
                     <select
@@ -430,7 +436,7 @@ const EmployerManagement = () => {
                         onChange={(e) =>
                             setFilters((prev) => ({ ...prev, isActive: e.target.value, page: 1 }))
                         }
-                        className="px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-medium text-slate-600 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none appearance-none cursor-pointer min-w-[150px]"
+                        className="px-5 py-3 rounded-md bg-slate-50 border border-slate-300 text-sm font-medium text-slate-600 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none appearance-none cursor-pointer min-w-[150px]"
                     >
                         <option value="">All Status</option>
                         <option value="true">Active</option>
@@ -438,7 +444,7 @@ const EmployerManagement = () => {
                     </select>
                     <button
                         onClick={resetFilters}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-slate-50 text-slate-600 text-xs font-medium uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-100"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md bg-slate-50 text-slate-600 text-xs font-medium uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-300"
                     >
                         <HiOutlineArrowPath className="w-4 h-4" />
                         Reset
@@ -447,11 +453,11 @@ const EmployerManagement = () => {
             </div>
 
             {/* Employers Table */}
-            <div className="card rounded-3xl border-none ring-1 ring-slate-100 bg-white overflow-hidden shadow-sm">
+            <div className="card rounded-md  border-slate-300 ring-1 ring-slate-100 bg-white overflow-hidden shadow-sm">
                 <div className="overflow-x-auto scrollbar-hide">
                     <table className="w-full text-sm">
                         <thead>
-                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                            <tr className="bg-slate-50/50 border-b border-slate-300">
                                 <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">
                                     Employer
                                 </th>
@@ -479,9 +485,9 @@ const EmployerManagement = () => {
                             ) : loading ? (
                                 Array(5).fill().map((_, i) => (
                                     <tr key={i} className="animate-pulse">
-                                        <td className="px-6 py-5"><div className="h-5 w-32 bg-slate-100 rounded-lg"></div></td>
-                                        <td className="px-6 py-5"><div className="h-5 w-24 bg-slate-100 rounded-lg"></div></td>
-                                        <td className="px-6 py-5"><div className="h-5 w-20 bg-slate-100 rounded-lg"></div></td>
+                                        <td className="px-6 py-5"><div className="h-5 w-32 bg-slate-100 rounded-md"></div></td>
+                                        <td className="px-6 py-5"><div className="h-5 w-24 bg-slate-100 rounded-md"></div></td>
+                                        <td className="px-6 py-5"><div className="h-5 w-20 bg-slate-100 rounded-md"></div></td>
                                         <td className="px-6 py-5"></td>
                                         <td className="px-6 py-5"></td>
                                     </tr>
@@ -497,7 +503,7 @@ const EmployerManagement = () => {
                                     <tr key={emp._id} className="hover:bg-slate-50/50 transition-colors group">
                                         <td className="px-6 py-5">
                                             <div className="flex items-center gap-4">
-                                                <div className={`w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center text-sm font-medium flex-shrink-0 transition-transform group-hover:scale-105 ${emp.isActive ? 'bg-blue-50 text-blue-600 shadow-sm shadow-blue-100' : 'bg-rose-50 text-rose-500 shadow-sm shadow-rose-100'} border border-slate-100 relative`}>
+                                                <div className={`w-10 h-10 rounded-md overflow-hidden flex items-center justify-center text-sm font-medium flex-shrink-0 transition-transform group-hover:scale-105 ${emp.isActive ? 'bg-blue-50 text-blue-600 shadow-sm shadow-blue-100' : 'bg-rose-50 text-rose-500 shadow-sm shadow-rose-100'} border border-slate-300 relative`}>
                                                     {(emp.logo || emp.avatar) && !imageErrors[emp._id] ? (
                                                         <img
                                                             src={(emp.logo || emp.avatar).startsWith('http') ? (emp.logo || emp.avatar) : `${BASE_URL.replace(/\/$/, '')}/${(emp.logo || emp.avatar).replace(/^\//, '')}`}
@@ -521,8 +527,8 @@ const EmployerManagement = () => {
                                         </td>
                                         <td className="px-6 py-5 hidden md:table-cell">
                                             <div className="flex flex-col gap-1.5">
-                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest w-fit ${emp.isActive ? 'bg-emerald-50 text-emerald-900 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100'}`}>
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${emp.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest w-fit ${emp.isActive ? 'bg-emerald-50 text-emerald-900 border border-emerald-300' : 'bg-rose-50 text-rose-600 border border-rose-300'}`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-md ${emp.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
                                                     {emp.isActive ? 'Active' : 'Inactive'}
                                                 </span>
                                                 {emp.verifiedByAdmin && (
@@ -538,11 +544,11 @@ const EmployerManagement = () => {
                                         </td>
                                         <td className="px-6 py-5">
                                             <div className="flex items-center justify-center gap-1">
-                                                <button onClick={() => handleViewProfile(emp)} className="p-2 rounded-xl text-slate-800 hover:text-blue-600 hover:bg-blue-50 transition-all" title="View Profile"><HiOutlineEye className="w-5 h-5" /></button>
-                                                <button onClick={() => openEditModal(emp)} className="p-2 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Edit"><HiOutlinePencilSquare className="w-5 h-5" /></button>
-                                                <button onClick={() => handleToggleVerification(emp._id)} className={`p-2 rounded-xl transition-all ${emp.verifiedByAdmin ? 'text-slate-600 hover:text-rose-600 hover:bg-rose-50' : 'text-slate-600 hover:text-emerald-600 hover:bg-emerald-50'}`} title={emp.verifiedByAdmin ? 'Unverify' : 'Verify'}>{emp.verifiedByAdmin ? <HiOutlineXMark className="w-5 h-5" /> : <HiOutlineShieldCheck className="w-5 h-5" />}</button>
-                                                <button onClick={() => handleToggleStatus(emp._id)} className={`p-2 rounded-xl transition-all ${emp.isActive ? 'text-slate-600 hover:text-rose-600 hover:bg-rose-50' : 'text-slate-600 hover:text-emerald-600 hover:bg-emerald-50'}`} title={emp.isActive ? 'Suspend' : 'Activate'}>{emp.isActive ? <HiOutlineNoSymbol className="w-5 h-5" /> : <HiOutlineCheckCircle className="w-5 h-5" />}</button>
-                                                <button onClick={() => openDeleteModal(emp)} className="p-2 rounded-xl text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-all" title="Delete"><HiOutlineTrash className="w-5 h-5" /></button>
+                                                <button onClick={() => handleViewProfile(emp)} className="p-2 rounded-md text-slate-800 hover:text-blue-600 hover:bg-blue-50 transition-all" title="View Profile"><HiOutlineEye className="w-5 h-5" /></button>
+                                                <button onClick={() => openEditModal(emp)} className="p-2 rounded-md text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Edit"><HiOutlinePencilSquare className="w-5 h-5" /></button>
+                                                <button onClick={() => handleToggleVerification(emp._id)} className={`p-2 rounded-md transition-all ${emp.verifiedByAdmin ? 'text-slate-600 hover:text-rose-600 hover:bg-rose-50' : 'text-slate-600 hover:text-emerald-600 hover:bg-emerald-50'}`} title={emp.verifiedByAdmin ? 'Unverify' : 'Verify'}>{emp.verifiedByAdmin ? <HiOutlineXMark className="w-5 h-5" /> : <HiOutlineShieldCheck className="w-5 h-5" />}</button>
+                                                <button onClick={() => handleToggleStatus(emp._id)} className={`p-2 rounded-md transition-all ${emp.isActive ? 'text-slate-600 hover:text-rose-600 hover:bg-rose-50' : 'text-slate-600 hover:text-emerald-600 hover:bg-emerald-50'}`} title={emp.isActive ? 'Suspend' : 'Activate'}>{emp.isActive ? <HiOutlineNoSymbol className="w-5 h-5" /> : <HiOutlineCheckCircle className="w-5 h-5" />}</button>
+                                                <button onClick={() => openDeleteModal(emp)} className="p-2 rounded-md text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-all" title="Delete"><HiOutlineTrash className="w-5 h-5" /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -564,14 +570,14 @@ const EmployerManagement = () => {
                         <button
                             onClick={() => handlePageChange(pagination.page - 1)}
                             disabled={!pagination.hasPrevPage}
-                            className="p-2 rounded-lg text-dark-500 hover:bg-dark-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            className="p-2 rounded-md text-dark-500 hover:bg-dark-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                         >
                             <HiOutlineChevronLeft className="w-4 h-4" />
                         </button>
                         <button
                             onClick={() => handlePageChange(pagination.page + 1)}
                             disabled={!pagination.hasNextPage}
-                            className="p-2 rounded-lg text-dark-500 hover:bg-dark-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            className="p-2 rounded-md text-dark-500 hover:bg-dark-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                         >
                             <HiOutlineChevronRight className="w-4 h-4" />
                         </button>
@@ -583,18 +589,18 @@ const EmployerManagement = () => {
             {showProfileModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => { setShowProfileModal(false); setCompanyProfile(null); }} />
-                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
+                    <div className="relative bg-white rounded-md shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
 
                         {/* Modal Header */}
-                        <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-8 py-6 rounded-t-2xl">
+                        <div className="sticky top-0 z-10 bg-gradient-to-r bg-blue-500 px-8 py-6 rounded-md border-slate-300">
                             <button
                                 onClick={() => { setShowProfileModal(false); setCompanyProfile(null); }}
-                                className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors"
+                                className="absolute top-4 right-4 p-1.5 rounded-md bg-white/20 hover:bg-white/30 text-white transition-colors"
                             >
                                 <HiOutlineXMark className="w-5 h-5" />
                             </button>
                             <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center text-white text-lg font-bold backdrop-blur-sm overflow-hidden border border-white/30">
+                                <div className="w-14 h-14 rounded-md bg-white/20 flex items-center justify-center text-white text-lg font-bold backdrop-blur-sm overflow-hidden border border-slate-300">
                                     {companyProfile?.logo ? (
                                         <img
                                             src={companyProfile.logo.startsWith('http') ? companyProfile.logo : `${BASE_URL.replace(/\/$/, '')}/${companyProfile.logo.replace(/^\//, '')}`}
@@ -620,8 +626,8 @@ const EmployerManagement = () => {
                                 <div className="space-y-5 animate-pulse">
                                     {Array(5).fill().map((_, i) => (
                                         <div key={i} className="space-y-2">
-                                            <div className="h-3 w-24 bg-dark-200 rounded"></div>
-                                            <div className="h-10 bg-dark-100 rounded-xl"></div>
+                                            <div className="h-3 w-24 bg-dark-200 rounded-md"></div>
+                                            <div className="h-10 bg-dark-100 rounded-md"></div>
                                         </div>
                                     ))}
                                 </div>
@@ -635,7 +641,7 @@ const EmployerManagement = () => {
                                 <div className="space-y-5">
 
                                     {/* Company Name */}
-                                    <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-xl">
+                                    <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-md border border-slate-300">
                                         <HiOutlineBuildingOffice2 className="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" />
                                         <div>
                                             <p className="text-[11px] font-medium text-dark-400 uppercase tracking-wider mb-1">Company Name</p>
@@ -644,9 +650,9 @@ const EmployerManagement = () => {
                                     </div>
 
                                     {/* Two Column Grid */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
                                         {/* Industry */}
-                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-xl">
+                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-md border border-slate-300">
                                             <HiOutlineBriefcase className="w-5 h-5 text-warning-500 mt-0.5 flex-shrink-0" />
                                             <div>
                                                 <p className="text-[11px] font-medium text-dark-400 uppercase tracking-wider mb-1">Industry</p>
@@ -655,7 +661,7 @@ const EmployerManagement = () => {
                                         </div>
 
                                         {/* Location */}
-                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-xl">
+                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-md border border-slate-300">
                                             <HiOutlineMapPin className="w-5 h-5 text-danger-500 mt-0.5 flex-shrink-0" />
                                             <div>
                                                 <p className="text-[11px] font-medium text-dark-400 uppercase tracking-wider mb-1">Location</p>
@@ -664,7 +670,7 @@ const EmployerManagement = () => {
                                         </div>
 
                                         {/* Company Size */}
-                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-xl">
+                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-md border border-slate-300">
                                             <HiOutlineUsers className="w-5 h-5 text-secondary-500 mt-0.5 flex-shrink-0" />
                                             <div>
                                                 <p className="text-[11px] font-medium text-dark-400 uppercase tracking-wider mb-1">Company Size</p>
@@ -673,7 +679,7 @@ const EmployerManagement = () => {
                                         </div>
 
                                         {/* Website */}
-                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-xl">
+                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-md border border-slate-300">
                                             <HiOutlineGlobeAlt className="w-5 h-5 text-accent-500 mt-0.5 flex-shrink-0" />
                                             <div>
                                                 <p className="text-[11px] font-medium text-dark-400 uppercase tracking-wider mb-1">Website</p>
@@ -686,7 +692,7 @@ const EmployerManagement = () => {
                                         </div>
 
                                         {/* Contact Email */}
-                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-xl">
+                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-md border border-slate-300">
                                             <HiOutlineEnvelope className="w-5 h-5 text-success-500 mt-0.5 flex-shrink-0" />
                                             <div>
                                                 <p className="text-[11px] font-medium text-dark-400 uppercase tracking-wider mb-1">Contact Email</p>
@@ -695,7 +701,7 @@ const EmployerManagement = () => {
                                         </div>
 
                                         {/* Phone */}
-                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-xl">
+                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-md border border-slate-300">
                                             <HiOutlinePhone className="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" />
                                             <div>
                                                 <p className="text-[11px] font-medium text-dark-400 uppercase tracking-wider mb-1">Phone</p>
@@ -706,7 +712,7 @@ const EmployerManagement = () => {
 
                                     {/* Description */}
                                     {(companyProfile.companyDescription || companyProfile.description) && (
-                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-xl">
+                                        <div className="flex items-start gap-3 p-4 bg-dark-50 rounded-md border border-slate-300">
                                             <HiOutlineDocumentText className="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" />
                                             <div>
                                                 <p className="text-[11px] font-medium text-dark-400 uppercase tracking-wider mb-1">Company Description</p>
@@ -716,8 +722,8 @@ const EmployerManagement = () => {
                                     )}
 
                                     {/* Verification & Timestamps */}
-                                    <div className="flex items-center gap-4 pt-4 border-t border-dark-100">
-                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${companyProfile.verifiedByAdmin ? 'bg-success-50 text-success-700' : 'bg-warning-50 text-warning-700'}`}>
+                                    <div className="flex items-center gap-4 pt-4 border-t border-dark-300">
+                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold ${companyProfile.verifiedByAdmin ? 'bg-success-50 text-success-500' : 'bg-warning-200 text-warning-700'}`}>
                                             {companyProfile.verifiedByAdmin ? (
                                                 <><HiOutlineCheckCircle className="w-3.5 h-3.5" /> Verified</>
                                             ) : (
@@ -733,10 +739,10 @@ const EmployerManagement = () => {
                         </div>
 
                         {/* Modal Footer */}
-                        <div className="sticky bottom-0 bg-white px-8 py-4 border-t border-dark-100 rounded-b-2xl">
+                        <div className="sticky bottom-0 bg-white px-8 py-4 border-t border-dark-100 rounded-b-md">
                             <button
                                 onClick={() => { setShowProfileModal(false); setCompanyProfile(null); }}
-                                className="w-full py-3 rounded-xl border border-dark-200 text-sm font-medium text-dark-600 hover:bg-dark-50 transition-colors"
+                                className="w-full py-3 rounded-md border border-dark-300 text-sm font-medium text-dark-600 hover:bg-dark-50 transition-colors"
                             >
                                 Close
                             </button>
@@ -749,15 +755,15 @@ const EmployerManagement = () => {
             {showCreateModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowCreateModal(false)} />
-                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
+                    <div className="relative bg-white rounded-md shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-lg font-medium text-black">Add New Employer</h3>
-                            <button onClick={() => setShowCreateModal(false)} className="p-1.5 rounded-lg hover:bg-dark-100 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
+                            <button onClick={() => setShowCreateModal(false)} className="p-1.5 rounded-md hover:bg-dark-100 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
                         </div>
                         <form onSubmit={handleCreateEmployer} className="space-y-6">
                             {/* Contact Person */}
                             <div className="space-y-4">
-                                <h4 className="text-xs font-medium text-dark-400/95 uppercase tracking-widest border-b border-dark-100 pb-2">Contact Person</h4>
+                                <h4 className="text-xs font-medium text-dark-400/95 uppercase tracking-widest border-b border-dark-300 pb-2">Contact Person</h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">First Name *</label><div className="relative"><HiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.firstName} onChange={(e) => handleFormChange('firstName', e.target.value)} placeholder="John" className={inputCls('firstName')} /></div>{formErrors.firstName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.firstName}</p>}</div>
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Last Name *</label><div className="relative"><HiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.lastName} onChange={(e) => handleFormChange('lastName', e.target.value)} placeholder="Doe" className={inputCls('lastName')} /></div>{formErrors.lastName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.lastName}</p>}</div>
@@ -771,18 +777,18 @@ const EmployerManagement = () => {
 
                             {/* Company Info */}
                             <div className="space-y-4">
-                                <h4 className="text-xs font-medium text-dark-400/95 uppercase tracking-widest border-b border-dark-100 pb-2">Company Information</h4>
+                                <h4 className="text-xs font-medium text-dark-400/95 uppercase tracking-widest border-b border-dark-200 pb-2">Company Information</h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Name *</label><div className="relative"><HiOutlineBuildingOffice2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.companyName} onChange={(e) => handleFormChange('companyName', e.target.value)} placeholder="Acme Inc." className={inputCls('companyName')} /></div>{formErrors.companyName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.companyName}</p>}</div>
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Industry *</label><div className="relative"><HiOutlineBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.industry} onChange={(e) => handleFormChange('industry', e.target.value)} placeholder="Technology" className={inputCls('industry')} /></div>{formErrors.industry && <p className="mt-1 text-[11px] text-danger-600">{formErrors.industry}</p>}</div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Location *</label><div className="relative"><HiOutlineMapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.companyLocation} onChange={(e) => handleFormChange('companyLocation', e.target.value)} placeholder="San Francisco, CA" className={inputCls('companyLocation')} /></div>{formErrors.companyLocation && <p className="mt-1 text-[11px] text-danger-600">{formErrors.companyLocation}</p>}</div>
-                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Size</label><select value={formData.companySize} onChange={(e) => handleFormChange('companySize', e.target.value)} className="w-full px-4 py-2.5 rounded-lg border border-dark-200 text-sm appearance-none bg-white"><option value="1-10">1-10 employees</option><option value="11-50">11-50 employees</option><option value="51-200">51-200 employees</option><option value="201-500">201-500 employees</option><option value="501-1000">501-1000 employees</option><option value="1000+">1000+ employees</option></select></div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Size</label><select value={formData.companySize} onChange={(e) => handleFormChange('companySize', e.target.value)} className="w-full px-4 py-2.5 rounded-md border border-dark-200 text-sm appearance-none bg-white"><option value="1-10">1-10 employees</option><option value="11-50">11-50 employees</option><option value="51-200">51-200 employees</option><option value="201-500">201-500 employees</option><option value="501-1000">501-1000 employees</option><option value="1000+">1000+ employees</option></select></div>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3 pt-4"><button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 py-3 rounded-xl border border-dark-200 text-sm font-medium text-dark-600">Cancel</button><button type="submit" disabled={formLoading} className="flex-1 py-3 gradient-primary text-white text-sm font-medium rounded-xl shadow-lg disabled:opacity-70">{formLoading ? 'Creating...' : 'Create Employer Account'}</button></div>
+                            <div className="flex items-center gap-3 pt-4"><button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 py-3 rounded-md border border-dark-200 text-sm font-medium text-dark-600">Cancel</button><button type="submit" disabled={formLoading} className="flex-1 py-3 gradient-primary text-white text-sm font-medium rounded-md shadow-lg disabled:opacity-70">{formLoading ? 'Creating...' : 'Create Employer Account'}</button></div>
                         </form>
                     </div>
                 </div>
@@ -792,7 +798,7 @@ const EmployerManagement = () => {
             {showEditModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowEditModal(false)} />
-                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
+                    <div className="relative bg-white rounded-md shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-lg font-medium text-black">Edit Employer</h3>
                             <button onClick={() => setShowEditModal(false)} className="p-1.5 rounded-lg hover:bg-dark-100 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
@@ -800,7 +806,7 @@ const EmployerManagement = () => {
                         <form onSubmit={handleUpdateEmployer} className="space-y-6">
                             {/* Contact Person */}
                             <div className="space-y-4">
-                                <h4 className="text-xs font-medium text-dark-400/95 uppercase tracking-widest border-b border-dark-100 pb-2">Contact Person</h4>
+                                <h4 className="text-xs font-medium text-dark-400/95 uppercase tracking-widest border-b border-dark-200 pb-2">Contact Person</h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">First Name *</label><div className="relative"><HiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.firstName} onChange={(e) => handleFormChange('firstName', e.target.value)} className={inputCls('firstName')} /></div>{formErrors.firstName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.firstName}</p>}</div>
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Last Name *</label><div className="relative"><HiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.lastName} onChange={(e) => handleFormChange('lastName', e.target.value)} className={inputCls('lastName')} /></div>{formErrors.lastName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.lastName}</p>}</div>
@@ -813,23 +819,23 @@ const EmployerManagement = () => {
 
                             {/* Company Info */}
                             <div className="space-y-4">
-                                <h4 className="text-xs font-medium text-dark-400/95 uppercase tracking-widest border-b border-dark-100 pb-2">Company Information</h4>
+                                <h4 className="text-xs font-medium text-dark-400/95 uppercase tracking-widest border-b border-dark-200 pb-2">Company Information</h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Name *</label><div className="relative"><HiOutlineBuildingOffice2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.companyName} onChange={(e) => handleFormChange('companyName', e.target.value)} className={inputCls('companyName')} /></div>{formErrors.companyName && <p className="mt-1 text-[11px] text-danger-600">{formErrors.companyName}</p>}</div>
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Industry *</label><div className="relative"><HiOutlineBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.industry} onChange={(e) => handleFormChange('industry', e.target.value)} className={inputCls('industry')} /></div>{formErrors.industry && <p className="mt-1 text-[11px] text-danger-600">{formErrors.industry}</p>}</div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Location *</label><div className="relative"><HiOutlineMapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="text" value={formData.companyLocation} onChange={(e) => handleFormChange('companyLocation', e.target.value)} className={inputCls('companyLocation')} /></div>{formErrors.companyLocation && <p className="mt-1 text-[11px] text-danger-600">{formErrors.companyLocation}</p>}</div>
-                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Size</label><select value={formData.companySize} onChange={(e) => handleFormChange('companySize', e.target.value)} className="w-full px-4 py-2.5 rounded-lg border border-dark-200 text-sm appearance-none bg-white"><option value="1-10">1-10 employees</option><option value="11-50">11-50 employees</option><option value="51-200">51-200 employees</option><option value="201-500">201-500 employees</option><option value="501-1000">501-1000 employees</option><option value="1000+">1000+ employees</option></select></div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Size</label><select value={formData.companySize} onChange={(e) => handleFormChange('companySize', e.target.value)} className="w-full px-4 py-2.5 rounded-md border border-dark-200 text-sm appearance-none bg-white"><option value="1-10">1-10 employees</option><option value="11-50">11-50 employees</option><option value="51-200">51-200 employees</option><option value="201-500">201-500 employees</option><option value="501-1000">501-1000 employees</option><option value="1000+">1000+ employees</option></select></div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Email</label><div className="relative"><HiOutlineEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="email" value={formData.companyEmail} onChange={(e) => handleFormChange('companyEmail', e.target.value)} className={inputCls('companyEmail')} /></div></div>
-                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Website</label><div className="relative"><HiOutlineGlobeAlt className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="url" value={formData.companyWebsite} onChange={(e) => handleFormChange('companyWebsite', e.target.value)} className={inputCls('companyWebsite')} /></div></div>
+                                    <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Company Website</label><div className="relative"><HiOutlineGlobeAlt className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" /><input type="url" value={formData.companyWebsite} onChange={(e) => handleFormChange('companyWebsite', e.target.value)} placeholder="https://example.in" className={inputCls('companyWebsite')} /></div>{formErrors.companyWebsite && <p className="mt-1 text-[11px] text-danger-600">{formErrors.companyWebsite}</p>}</div>
                                 </div>
-                                <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Description</label><textarea value={formData.companyDescription} onChange={(e) => handleFormChange('companyDescription', e.target.value)} rows="3" className="w-full px-4 py-2.5 rounded-lg border border-dark-200 text-sm focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all"></textarea></div>
+                                <div><label className="block text-xs font-medium text-dark-700 mb-1.5">Description</label><textarea value={formData.companyDescription} onChange={(e) => handleFormChange('companyDescription', e.target.value)} rows="3" className="w-full px-4 py-2.5 rounded-md border border-dark-200 text-sm focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all"></textarea></div>
                             </div>
 
-                            <div className="flex items-center gap-3 pt-4"><button type="button" onClick={() => setShowEditModal(false)} className="flex-1 py-3 rounded-xl border border-dark-200 text-sm font-medium text-dark-600">Cancel</button><button type="submit" disabled={formLoading} className="flex-1 py-3 gradient-primary text-white text-sm font-medium rounded-xl shadow-lg disabled:opacity-70">{formLoading ? 'Saving...' : 'Save Changes'}</button></div>
+                            <div className="flex items-center gap-3 pt-4"><button type="button" onClick={() => setShowEditModal(false)} className="flex-1 py-3 rounded-md border border-dark-200 text-sm font-medium text-dark-600">Cancel</button><button type="submit" disabled={formLoading} className="flex-1 py-3 gradient-primary text-white text-sm font-medium rounded-md shadow-lg disabled:opacity-70">{formLoading ? 'Saving...' : 'Save Changes'}</button></div>
                         </form>
                     </div>
                 </div>
@@ -839,23 +845,23 @@ const EmployerManagement = () => {
             {showDeleteModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)} />
-                    <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
+                    <div className="relative bg-white rounded-md shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
                         <div className="flex flex-col items-center text-center">
-                            <div className="w-12 h-12 rounded-full bg-danger-50 flex items-center justify-center mb-4"><HiOutlineExclamationTriangle className="w-6 h-6 text-danger-600" /></div>
+                            <div className="w-12 h-12 rounded-md bg-danger-50 flex items-center justify-center mb-4"><HiOutlineExclamationTriangle className="w-6 h-6 text-danger-600" /></div>
                             <h3 className="text-lg font-medium text-black">Delete Employer</h3>
                             <p className="text-sm text-slate-400/95 mt-2">Are you sure you want to delete <b>{selectedEmployer?.companyName || selectedEmployer?.firstName}</b>? This action cannot be undone.</p>
                         </div>
                         <div className="flex items-center gap-3 mt-8">
                             <button
                                 onClick={() => setShowDeleteModal(false)}
-                                className="flex-1 py-3 rounded-xl border border-dark-200 text-sm font-medium text-dark-600 hover:bg-dark-50 transition-colors"
+                                className="flex-1 py-3 rounded-md border border-dark-200 text-sm font-medium text-dark-600 hover:bg-dark-50 transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleDeleteEmployer}
                                 disabled={formLoading}
-                                className="flex-1 py-3 bg-rose-600 text-white text-sm font-medium rounded-xl shadow-lg shadow-rose-100 hover:bg-rose-700 transition-colors disabled:opacity-70"
+                                className="flex-1 py-3 bg-rose-600 text-white text-sm font-medium rounded-md shadow-lg shadow-rose-100 hover:bg-rose-700 transition-colors disabled:opacity-70"
                             >
                                 {formLoading ? 'Deleting...' : 'Delete Account'}
                             </button>

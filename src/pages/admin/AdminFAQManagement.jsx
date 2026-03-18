@@ -164,7 +164,7 @@ const AdminFAQManagement = () => {
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#5b4eff] text-white text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-slate-900 transition-all shadow-lg shadow-[#5b4eff]/20 active:scale-95"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#5b4eff] text-white text-xs font-bold uppercase tracking-widest rounded-md hover:bg-slate-900 transition-all shadow-lg shadow-[#5b4eff]/20 active:scale-95"
                 >
                     <HiOutlinePlus className="w-4 h-4" />
                     Add FAQ
@@ -173,9 +173,9 @@ const AdminFAQManagement = () => {
 
             {/* Stats Row */}
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white shadow-sm">
+                <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white shadow-sm">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-md bg-amber-50 text-amber-500 flex items-center justify-center">
                             <HiOutlineQuestionMarkCircle className="w-6 h-6" />
                         </div>
                         <div>
@@ -186,9 +186,9 @@ const AdminFAQManagement = () => {
                         </div>
                     </div>
                 </div>
-                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white shadow-sm">
+                <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white shadow-sm">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-md bg-emerald-50 text-emerald-500 flex items-center justify-center">
                             <HiOutlineCheckCircle className="w-6 h-6" />
                         </div>
                         <div>
@@ -197,21 +197,21 @@ const AdminFAQManagement = () => {
                         </div>
                     </div>
                 </div>
-                <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white shadow-sm">
+                <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white shadow-sm">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-md bg-rose-50 text-rose-500 flex items-center justify-center">
                             <HiOutlineXMark className="w-6 h-6" />
                         </div>
                         <div>
                             <p className="text-xl font-bold text-black leading-none">{inactiveCount}</p>
-                            <p className="text-xs text-slate-700/95 font-bold mt-1 uppercase tracking-wider">inactive</p>
+                            <p className="text-xs text-slate-700/95 font-bold mt-1 uppercase tracking-wider">Inactive</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Filters */}
-            <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+            <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white">
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="flex-1 relative">
                         <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -220,13 +220,13 @@ const AdminFAQManagement = () => {
                             placeholder="Search FAQs..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm text-slate-700 placeholder-slate-400 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none"
+                            className="w-full pl-11 pr-4 py-3 rounded-md bg-slate-50 border border-slate-200 text-sm text-slate-700 placeholder-slate-400 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none"
                         />
                     </div>
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-medium text-slate-600 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none appearance-none cursor-pointer min-w-[150px]"
+                        className="px-5 py-3 rounded-md bg-slate-50 border border-slate-200 text-sm font-medium text-slate-600 focus:bg-white focus:border-[#5b4eff] focus:ring-4 focus:ring-[#5b4eff]/5 transition-all outline-none appearance-none cursor-pointer min-w-[150px]"
                     >
                         <option value="">All Status</option>
                         <option value="active">Active</option>
@@ -234,7 +234,7 @@ const AdminFAQManagement = () => {
                     </select>
                     <button
                         onClick={() => { setSearchTerm(''); setStatusFilter(''); }}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-100"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-200"
                     >
                         <HiOutlineArrowPath className="w-4 h-4" />
                         Reset
@@ -243,7 +243,7 @@ const AdminFAQManagement = () => {
             </div>
 
             {/* Table */}
-            <div className="card rounded-3xl border-none ring-1 ring-slate-100 bg-white overflow-hidden shadow-sm">
+            <div className="card rounded-md border-slate-300 ring-1 ring-slate-100 bg-white overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
@@ -259,10 +259,10 @@ const AdminFAQManagement = () => {
                             {loading ? (
                                 Array(5).fill(0).map((_, i) => (
                                     <tr key={i} className="animate-pulse">
-                                        <td className="px-5 py-4"><div className="w-3/4 h-4 bg-dark-100 rounded"></div></td>
-                                        <td className="px-5 py-4 hidden md:table-cell"><div className="w-1/2 h-4 bg-dark-100 rounded"></div></td>
+                                        <td className="px-5 py-4"><div className="w-3/4 h-4 bg-dark-100 rounded-md"></div></td>
+                                        <td className="px-5 py-4 hidden md:table-cell"><div className="w-1/2 h-4 bg-dark-100 rounded-md"></div></td>
                                         <td className="px-5 py-4"><div className="w-16 h-6 bg-dark-100 rounded-md"></div></td>
-                                        <td className="px-5 py-4 hidden lg:table-cell"><div className="w-20 h-4 bg-dark-100 rounded"></div></td>
+                                        <td className="px-5 py-4 hidden lg:table-cell"><div className="w-20 h-4 bg-dark-100 rounded-md"></div></td>
                                         <td className="px-5 py-4"><div className="w-24 h-8 bg-dark-100 rounded-md ml-auto"></div></td>
                                     </tr>
                                 ))
@@ -283,12 +283,12 @@ const AdminFAQManagement = () => {
                                             <button
                                                 onClick={() => handleToggleStatus(faq)}
                                                 title={faq.status === 'active' ? 'Click to deactivate' : 'Click to activate'}
-                                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 border ${faq.status === 'active'
+                                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 border ${faq.status === 'active'
                                                     ? 'bg-emerald-50 text-emerald-900 border border-emerald-100 shadow-sm shadow-emerald-50'
                                                     : 'bg-rose-50 text-rose-600 border border-rose-100'
                                                     }`}
                                             >
-                                                <span className={`w-1.5 h-1.5 rounded-full ${faq.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
+                                                <span className={`w-1.5 h-1.5 rounded-md ${faq.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
                                                 {faq.status === 'inactive' ? 'inactive' : faq.status}
                                             </button>
                                         </td>
@@ -318,7 +318,7 @@ const AdminFAQManagement = () => {
                             <button
                                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                                 disabled={currentPage === 1}
-                                className="p-2 rounded-xl border border-slate-100 text-slate-400/95 hover:text-[#5b4eff] hover:bg-slate-50 disabled:opacity-50 transition-all"
+                                className="p-2 rounded-md border border-slate-300 text-slate-400/95 hover:text-[#5b4eff] hover:bg-slate-50 disabled:opacity-50 transition-all"
                             >
                                 <HiOutlineChevronLeft className="w-4 h-4" />
                             </button>
@@ -326,7 +326,7 @@ const AdminFAQManagement = () => {
                                 <button
                                     key={i + 1}
                                     onClick={() => setCurrentPage(i + 1)}
-                                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${currentPage === i + 1
+                                    className={`w-9 h-9 rounded-md text-xs font-bold transition-all ${currentPage === i + 1
                                         ? 'bg-[#5b4eff] text-white shadow-lg shadow-[#5b4eff]/20'
                                         : 'text-slate-400/95 hover:bg-slate-50 hover:text-slate-600 border border-transparent hover:border-slate-100'
                                         }`}
@@ -337,7 +337,7 @@ const AdminFAQManagement = () => {
                             <button
                                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                                 disabled={currentPage === totalPages}
-                                className="p-2 rounded-xl border border-slate-100 text-slate-400/95 hover:text-[#5b4eff] hover:bg-slate-50 disabled:opacity-50 transition-all"
+                                className="p-2 rounded-md border border-slate-300 text-slate-400/95 hover:text-[#5b4eff] hover:bg-slate-50 disabled:opacity-50 transition-all"
                             >
                                 <HiOutlineChevronRight className="w-4 h-4" />
                             </button>
@@ -350,10 +350,10 @@ const AdminFAQManagement = () => {
             {showModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm shadow-2xl transition-all" onClick={() => !formLoading && setShowModal(false)} />
-                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+                    <div className="relative bg-white rounded-md shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
                         <div className="px-6 py-4 border-b border-dark-50 flex items-center justify-between">
                             <h3 className="text-lg font-medium text-dark-900">{editingFaq ? 'Edit FAQ' : 'Add New FAQ'}</h3>
-                            <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-dark-50 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
+                            <button onClick={() => setShowModal(false)} className="p-2 rounded-md hover:bg-dark-50 transition-colors"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
                         </div>
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
                             <div>
@@ -361,7 +361,7 @@ const AdminFAQManagement = () => {
                                 <textarea
                                     value={formData.question}
                                     onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                                    className="w-full px-4 py-3 rounded-xl border border-dark-200 text-sm focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all outline-none"
+                                    className="w-full px-4 py-3 rounded-md border border-dark-200 text-sm focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all outline-none"
                                     rows="2"
                                     placeholder="Enter question"
                                 />
@@ -371,7 +371,7 @@ const AdminFAQManagement = () => {
                                 <textarea
                                     value={formData.answer}
                                     onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-                                    className="w-full px-4 py-3 rounded-xl border border-dark-200 text-sm focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all outline-none"
+                                    className="w-full px-4 py-3 rounded-md border border-dark-200 text-sm focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all outline-none"
                                     rows="4"
                                     placeholder="Enter answer"
                                 />
@@ -381,15 +381,15 @@ const AdminFAQManagement = () => {
                                 <select
                                     value={formData.status}
                                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                    className="w-full px-4 py-3 rounded-xl border border-dark-200 text-sm focus:border-primary-500 transition-all outline-none appearance-none bg-white cursor-pointer"
+                                    className="w-full px-4 py-3 rounded-md border border-dark-200 text-sm focus:border-primary-500 transition-all outline-none appearance-none bg-white cursor-pointer"
                                 >
                                     <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
                             <div className="flex gap-3 pt-4">
-                                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-3 rounded-xl border border-dark-200 text-sm font-bold text-dark-600 hover:bg-dark-50 transition-all">Cancel</button>
-                                <button type="submit" disabled={formLoading} className="flex-1 py-3 gradient-primary text-white text-sm font-medium rounded-xl shadow-lg shadow-primary-500/20 disabled:opacity-70">
+                                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-3 rounded-md border border-dark-200 text-sm font-bold text-dark-600 hover:bg-dark-50 transition-all">Cancel</button>
+                                <button type="submit" disabled={formLoading} className="flex-1 py-3 gradient-primary text-white text-sm font-medium rounded-md shadow-lg shadow-primary-500/20 disabled:opacity-70">
                                     {formLoading ? 'Saving...' : editingFaq ? 'Update FAQ' : 'Create FAQ'}
                                 </button>
                             </div>
@@ -402,13 +402,13 @@ const AdminFAQManagement = () => {
             {showViewModal && viewingFaq && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm pointer-events-none" />
-                    <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in duration-200">
+                    <div className="relative bg-white rounded-md shadow-2xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in duration-200">
                         <div className="px-8 py-6 border-b border-dark-50 flex items-center justify-between bg-dark-50/30">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-2xl bg-primary-100 flex items-center justify-center text-primary-600"><HiOutlineQuestionMarkCircle className="w-6 h-6" /></div>
+                                <div className="w-10 h-10 rounded-md bg-primary-100 flex items-center justify-center text-primary-600"><HiOutlineQuestionMarkCircle className="w-6 h-6" /></div>
                                 <h3 className="text-xl font-bold text-dark-900">FAQ Details</h3>
                             </div>
-                            <button onClick={() => setShowViewModal(false)} className="p-2 rounded-xl hover:bg-white hover:shadow-lg transition-all"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
+                            <button onClick={() => setShowViewModal(false)} className="p-2 rounded-md hover:bg-white hover:shadow-lg transition-all"><HiOutlineXMark className="w-5 h-5 text-dark-400" /></button>
                         </div>
                         <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto">
                             <div className="space-y-3">
@@ -420,7 +420,7 @@ const AdminFAQManagement = () => {
                             </div>
                             <div className="space-y-3">
                                 <p className="text-xs font-bold text-dark-400/95 uppercase tracking-widest">Answer</p>
-                                <div className="bg-dark-50/50 rounded-2xl p-6 border border-dark-100 shadow-inner">
+                                <div className="bg-dark-50/50 rounded-md p-6 border border-dark-100 shadow-inner">
                                     <p className="text-dark-600 text-base leading-relaxed whitespace-pre-wrap font-medium">{viewingFaq.answer}</p>
                                 </div>
                             </div>

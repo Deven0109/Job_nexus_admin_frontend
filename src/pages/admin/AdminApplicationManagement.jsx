@@ -22,7 +22,6 @@ import {
     HiOutlineArrowLeft,
     HiOutlineBolt,
     HiOutlineUsers,
-    HiOutlineCurrencyRupee,
     HiOutlineCheckCircle,
     HiOutlineXMark,
     HiOutlinePencilSquare,
@@ -139,8 +138,8 @@ const AdminApplicationManagement = () => {
     const [selectedJob, setSelectedJob] = useState(null);
 
     const [pipeline, setPipeline] = useState({});
-    const [viewingProfile, setViewingProfile] = useState(null);
     const [pipelineLoading, setPipelineLoading] = useState(false);
+    const [pipelineJobTitle, setPipelineJobTitle] = useState('');
 
     const [jobs, setJobs] = useState([]);
     const [jobsLoading, setJobsLoading] = useState(true);
@@ -217,6 +216,7 @@ const AdminApplicationManagement = () => {
 
     const handleAllApplicationsClick = () => {
         if (selectedJob) fetchApplicants(selectedJob.jobId || selectedJob._id);
+        setPrevViewState('pipeline');
         setView('applicants');
     };
 
@@ -226,10 +226,22 @@ const AdminApplicationManagement = () => {
             setPrevViewState('jobs');
             return;
         }
+        if (view === 'applicants' && prevViewState === 'pipeline') {
+            setView('pipeline');
+            setPrevViewState('jobs');
+            return;
+        }
         setView('jobs');
         setPrevViewState(null);
         setSelectedJob(null);
         setApplicants([]);
+    };
+
+    const handlePipelineViewDetails = () => {
+        if (!selectedJob) return;
+        setPrevViewState('pipeline');
+        setView('applicants');
+        fetchApplicants(selectedJob.jobId || selectedJob._id);
     };
 
     const handleStatusUpdate = async (id, action, successMsg) => {
@@ -291,7 +303,15 @@ const AdminApplicationManagement = () => {
         setPipelineLoading(true);
         try {
             const res = await adminAPI.getJobPipeline(jobId);
-            if (res.data?.success) setPipeline(res.data.data);
+            if (res.data?.success) {
+                const data = res.data.data;
+                if (data.pipeline) {
+                    setPipeline(data.pipeline);
+                    if (data.jobTitle) setPipelineJobTitle(data.jobTitle);
+                } else {
+                    setPipeline(data);
+                }
+            }
         } catch (error) { toast.error('Failed to load hiring pipeline'); }
         finally { setPipelineLoading(false); }
     };
@@ -363,13 +383,20 @@ const AdminApplicationManagement = () => {
 
     const totalPipelineCandidates = COLUMN_CONFIG.reduce((sum, col) => sum + getCandidatesForColumn(col).length, 0);
 
-    const formatSalary = (min, max) => {
+    const CURRENCY_SYMBOLS = {
+        INR: '₹', USD: '$', EUR: '€', GBP: '£', AED: 'AED ', CAD: 'C$', AUD: 'A$', SGD: 'S$', SAR: 'SR ', QAR: 'QR ',
+    };
+
+    const formatSalary = (min, max, currency = 'INR') => {
+        const symbol = CURRENCY_SYMBOLS[currency] || CURRENCY_SYMBOLS.INR;
         const fmt = (n) => {
-            if (n >= 100000) return `₹${(n / 100000).toFixed(1)}L`;
-            if (n >= 1000) return `₹${(n / 1000).toFixed(0)}K`;
-            return `₹${n}`;
+            if (!n && n !== 0) return '0';
+            if (n >= 10000000) return `${(n / 10000000).toFixed(2)} Cr`;
+            if (n >= 100000) return `${(n / 100000).toFixed(2)} L`;
+            return n.toLocaleString('en-IN');
         };
-        return `${fmt(min)} – ${fmt(max)}`;
+        if (!min && !max && min !== 0 && max !== 0) return 'Not Specified';
+        return `${symbol}${fmt(min)} – ${symbol}${fmt(max)}`;
     };
 
     const renderJobCards = () => (
@@ -395,42 +422,49 @@ const AdminApplicationManagement = () => {
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative">
-                        <HiOutlineClock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400/95" />
+                        <HiOutlineClock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600/95" />
                         <select value={jobsStatusFilter} onChange={(e) => { setJobsStatusFilter(e.target.value); setJobsPage(1); }} className="pl-9 pr-8 py-3 rounded-md border border-slate-200 text-sm font-medium text-slate-700 bg-white hover:border-slate-900 transition-all outline-none appearance-none min-w-[140px]">
                             <option value="active">Active Only</option>
                             <option value="closed">Closed Only</option>
                             <option value="all">All Jobs</option>
                         </select>
-                        <HiOutlineArrowsUpDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400/95 pointer-events-none" />
+                        {/* <HiOutlineArrowsUpDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400/95 pointer-events-none" /> */}
                     </div>
                 </div>
             </div>
             <Stack spacing={2}>
                 {jobsLoading ? Array(limit).fill(0).map((_, i) => (
-                    <Paper key={i} elevation={0} sx={{ p: 4, borderRadius: 1.5, border: '1px solid #f1f5f9', bgcolor: 'white' }}>
+                    <Paper key={i} elevation={0} sx={{ p: 4, borderRadius: 1, border: '1px solid #f1f5f9', bgcolor: 'white' }}>
                         <div className="flex gap-6 animate-pulse"><Skeleton variant="circular" width={48} height={48} /><div className="flex-1"><Skeleton variant="text" width="40%" height={28} /><Skeleton variant="text" width="20%" height={16} sx={{ mt: 1 }} /></div></div>
                     </Paper>
                 )) : jobs.map((job) => (
-                    <Paper key={job._id} elevation={0} sx={{ p: { xs: 2.5, sm: 3 }, borderRadius: 1.5, border: '1px solid', borderColor: '#f1f5f9', bgcolor: 'white', transition: 'all 0.3s' }}>
+                    <Paper key={job._id} elevation={0} sx={{ p: { xs: 2.5, sm: 3 }, borderRadius: 1, border: '1px solid', borderColor: '#e2e8f0', bgcolor: 'white', transition: 'all 0.3s' }}>
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, alignItems: 'center' }}>
-                            <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0"><HiOutlineBuildingOffice2 className="w-7 h-7 text-slate-400/95" /></div>
+                            <div className="w-14 h-14 rounded-md bg-slate-50 border border-slate-300 flex items-center justify-center shrink-0"><HiOutlineBuildingOffice2 className="w-7 h-7 text-slate-400" /></div>
                             <Box sx={{ flex: 1, minWidth: { xs: '100%', sm: '200px' } }}>
-                                <div className="flex items-center gap-2 mb-1"><Typography variant="h6" fontWeight={800} sx={{ color: 'black' }}>{job.jobTitle || job.title}</Typography><span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${job.jobType?.toLowerCase() === 'full-time' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>{job.jobType}</span></div>
+                                <div className="flex items-center gap-2 mb-1"><Typography variant="h6" fontWeight={800} sx={{ color: '#0f172a' }}>{job.jobTitle || job.title}</Typography><span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${job.jobType?.toLowerCase() === 'full-time' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-100'}`}>{job.jobType}</span></div>
                                 <Stack direction="row" spacing={2} sx={{ color: 'text.secondary', flexWrap: 'wrap' }}>
-                                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 700 }}><HiOutlineMapPin className="w-3.5 h-3.5" /> {job.city || job.location}</Typography>
-                                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 700 }}><HiOutlineCurrencyRupee className="w-3.5 h-3.5" /> {formatSalary(job.salaryRange?.min, job.salaryRange?.max)}</Typography>
-                                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 700 }}><HiOutlineCalendarDays className="w-3.5 h-3.5" /> {new Date(job.createdAt).toLocaleDateString()}</Typography>
+                                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 700, color: '#475569' }}><HiOutlineMapPin className="w-3.5 h-3.5" /> {job.city || job.location}</Typography>
+                                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 700, color: '#10b981' }}>{formatSalary(job.salaryMin, job.salaryMax, job.currency)}</Typography>
+                                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 700, color: '#64748b' }}><HiOutlineCalendarDays className="w-3.5 h-3.5" /> {new Date(job.createdAt).toLocaleDateString()}</Typography>
                                 </Stack>
                             </Box>
                             <Box sx={{ display: 'flex', gap: 4, px: 3 }}>
                                 <Box sx={{ textAlign: 'center', minWidth: 60 }}><Typography variant="h6" fontWeight={800} color="primary">{job.applicantCount || 0}</Typography><Typography variant="caption" fontWeight={800} color="text.disabled" sx={{ fontSize: '10px' }}>Applicants</Typography></Box>
-                                <Box sx={{ textAlign: 'center', minWidth: 60 }}><Typography variant="h6" fontWeight={800} color="black">{job.vacancies || 0}</Typography><Typography variant="caption" fontWeight={800} color="text.disabled" sx={{ fontSize: '10px' }}>Positions</Typography></Box>
+                                <Box sx={{ textAlign: 'center', minWidth: 60 }}><Typography variant="h6" fontWeight={800} sx={{ color: '#0f172a' }}>{job.numberOfVacancies || job.vacancies || 0}</Typography><Typography variant="caption" fontWeight={800} color="text.disabled" sx={{ fontSize: '10px' }}>Positions</Typography></Box>
                             </Box>
-                            <Stack direction="row" spacing={1.5} sx={{ ml: 'auto' }}>
-                                <Button onClick={() => handlePipeline(job._id)} size="small" variant="contained" startIcon={<HiOutlineBolt />} sx={{ borderRadius: '14px', bgcolor: '#22c55e', color: '#000', '&:hover': { bgcolor: '#16a34a' } }}>Pipeline</Button>
-                                <Button onClick={() => handleViewApplicants(job)} size="small" variant="contained" startIcon={<HiOutlineUsers />} sx={{ borderRadius: '14px', bgcolor: '#5b4eff', color: '#fff' }}>Applicants</Button>
-                                <IconButton size="small" onClick={() => handleEditJob(job)} sx={{ color: '#d97706', bgcolor: '#fffbeb' }}><HiOutlinePencilSquare /></IconButton>
-                                <IconButton size="small" onClick={() => handleDeleteJob(job._id)} sx={{ color: '#dc2626', bgcolor: '#fef2f2' }}><HiOutlineTrash /></IconButton>
+                            <Stack direction="row" spacing={1.5} sx={{ ml: 'auto', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 1 }}>
+                                <Button onClick={() => handlePipeline(job._id)} size="small" variant="contained" startIcon={<HiOutlineBolt />} sx={{ border: '1px solid #74d798', borderRadius: 0.5, fontWeight: 600, textTransform: 'none', px: 3, height: 38, bgcolor: '#74d798', color: '#000', '&:hover': { bgcolor: '#35a25d', borderColor: '#35a25d' }, boxShadow: '0 4px 12px rgba(34, 197, 94, 0.25)', '& .MuiButton-startIcon': { color: '#000' } }}>Pipeline</Button>
+                                <Button onClick={() => handleViewApplicants(job)} size="small" variant="contained" startIcon={<HiOutlineUsers />} sx={{ position: 'relative', overflow: 'visible', border: '1px solid #5c52db', borderRadius: 0.5, fontWeight: 600, textTransform: 'none', px: 2.5, height: 38, bgcolor: '#5c52db', color: '#fff', '&:hover': { bgcolor: '#4a3fed', borderColor: '#4a3fed' }, boxShadow: '0 4px 12px rgba(91, 78, 255, 0.25)', '& .MuiButton-startIcon': { color: '#fff' } }}>
+                                    Applicants
+                                    {((job.applicantCount ?? 0) > 0 || true) && (
+                                        <span className="absolute -top-2 -right-2 bg-blue-200 border-2 border-white text-black text-[10px] h-5 min-w-[20px] px-1 rounded-full font-black shadow-sm flex items-center justify-center">
+                                            {job.applicantCount || 0}
+                                        </span>
+                                    )}
+                                </Button>
+                                <IconButton size="small" onClick={() => handleEditJob(job)} sx={{ color: '#d97706', bgcolor: '#fffbeb', borderRadius: '6px' }}><HiOutlinePencilSquare /></IconButton>
+                                <IconButton size="small" onClick={() => handleDeleteJob(job._id)} sx={{ color: '#dc2626', bgcolor: '#fef2f2', borderRadius: '6px' }}><HiOutlineTrash /></IconButton>
                             </Stack>
                         </Box>
                     </Paper>
@@ -459,7 +493,7 @@ const AdminApplicationManagement = () => {
             <Paper elevation={0} sx={{ p: 1, px: 2, borderRadius: 1.25, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 3 }}>
                 <IconButton onClick={handleBackToJobs} sx={{ bgcolor: '#f8fafc' }}><HiOutlineArrowLeft /></IconButton>
                 <Box sx={{ flex: 1 }}><Typography variant="h6" fontWeight={500}>Candidates & Applications</Typography><Typography variant="caption" color="primary.main">{selectedJob?.jobTitle || selectedJob?.title}</Typography></Box>
-                <Button onClick={() => handlePipeline(selectedJob?._id)} size="small" variant="contained" color="success" startIcon={<HiOutlineBolt />}>Pipeline</Button>
+                <Button onClick={() => handlePipeline(selectedJob?._id)} size="small" variant="contained" startIcon={<HiOutlineBolt />} sx={{ border: '1px solid #74d798', borderRadius: 0.5, fontWeight: 600, textTransform: 'none', px: 3, height: 38, bgcolor: '#74d798', color: '#000', '&:hover': { bgcolor: '#35a25d', borderColor: '#35a25d' }, boxShadow: '0 4px 12px rgba(34, 197, 94, 0.25)', '& .MuiButton-startIcon': { color: '#000' } }}>Pipeline</Button>
             </Paper>
             <Stack spacing={1}>
                 {applicantsLoading ? Array(3).fill(0).map((_, i) => (
@@ -467,7 +501,7 @@ const AdminApplicationManagement = () => {
                 )) : applicants.length === 0 ? (
                     <Paper sx={{ py: 12, textAlign: 'center', bgcolor: '#f8fafc' }}><HiOutlineUser className="w-12 h-12 mx-auto" /><Typography>No candidates found</Typography></Paper>
                 ) : applicants.map((app) => (
-                    <Paper key={app._id} elevation={0} sx={{ p: 1, px: 2, borderRadius: 1.5, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Paper key={app._id} elevation={0} sx={{ p: 1, px: 2, borderRadius: 1, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 2 }}>
                         <Avatar src={app.candidate?.avatar && !imageErrors[app._id] ? (app.candidate.avatar.startsWith('http') ? app.candidate.avatar : `${BASE_URL}/${app.candidate.avatar}`) : null} imgProps={{ onError: () => setImageErrors(prev => ({ ...prev, [app._id]: true })) }}>{app.candidate?.firstName?.[0]}</Avatar>
                         <Box sx={{ minWidth: 160 }}>
                             <Typography variant="subtitle2">{app.candidate?.firstName} {app.candidate?.lastName}</Typography>
@@ -481,7 +515,7 @@ const AdminApplicationManagement = () => {
                                 minWidth: 200, 
                                 bgcolor: '#FAF5FF', 
                                 border: '1px solid #E9D5FF', 
-                                borderRadius: '12px', 
+                                borderRadius: 1,
                                 p: '6px 10px',
                                 display: 'flex', 
                                 alignItems: 'center', 
@@ -491,7 +525,7 @@ const AdminApplicationManagement = () => {
                                     width: 32, 
                                     height: 32, 
                                     bgcolor: '#9333EA', 
-                                    borderRadius: '10px', 
+                                    borderRadius: 1,
                                     display: 'flex', 
                                     alignItems: 'center', 
                                     justifyContent: 'center',
@@ -535,7 +569,7 @@ const AdminApplicationManagement = () => {
                                     sx={{ 
                                         bgcolor: '#9333EA', 
                                         color: 'white', 
-                                        borderRadius: '8px', 
+                                        borderRadius: 1,
                                         fontWeight: 900, 
                                         fontSize: '9px',
                                         px: 1,
@@ -571,12 +605,12 @@ const AdminApplicationManagement = () => {
         <div className="h-[calc(100vh-64px)] flex flex-col pt-6 bg-slate-50 overflow-hidden -mx-4 -mb-6">
             <div className="shrink-0 px-3 sm:px-6 py-3 bg-white border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <button onClick={handleBackToJobs} className="p-2.5 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50"><HiOutlineArrowLeft className="w-5 h-5" /></button>
-                    <div><h1 className="text-xl font-bold text-slate-900">Hiring Pipeline</h1><p className="text-[12px] font-medium text-primary-800 uppercase tracking-widest">{selectedJob?.jobTitle || selectedJob?.title}</p></div>
+                    <button onClick={handleBackToJobs} className="p-2.5 rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"><HiOutlineArrowLeft className="w-5 h-5" /></button>
+                    <div><h1 className="text-xl font-bold text-slate-900">{pipelineJobTitle || selectedJob?.jobTitle || selectedJob?.title || 'Hiring'} Pipeline</h1><p className="text-[12px] font-medium text-primary-800 uppercase tracking-widest">Manage candidates & interviews • <span className="font-black">{totalPipelineCandidates}</span> Active Candidates</p></div>
                 </div>
                 <div className="flex items-center gap-2">
                     <button onClick={() => fetchPipeline(selectedJob?._id)} className="p-2 text-slate-500 hover:text-slate-900"><HiOutlineArrowPath className={pipelineLoading ? 'animate-spin' : ''} /></button>
-                    <button onClick={handleAllApplicationsClick} className="px-5 py-2.5 bg-[#0f172a] text-white text-[12px] font-medium uppercase rounded-xl">All Applications</button>
+                    <button onClick={handleAllApplicationsClick} className="px-5 py-2.5 bg-[#0f172a] text-white text-[12px] font-medium uppercase rounded-md">All Applications</button>
                 </div>
             </div>
             <DragDropContext onDragEnd={onDragEnd}>
@@ -584,7 +618,7 @@ const AdminApplicationManagement = () => {
                     {COLUMN_CONFIG.map((col) => (
                         <Droppable key={col.key} droppableId={col.key}>
                             {(provided) => (
-                                <div className="w-[320px] min-w-[320px] flex flex-col bg-slate-100/30 rounded-[32px] border border-slate-200/50 p-3">
+                                <div className="w-[320px] min-w-[320px] flex flex-col bg-slate-100/30 rounded-md border border-slate-200/50 p-3">
                                     <div className="flex items-center justify-between px-3 py-3 mb-3 shrink-0">
                                         <div className="flex items-center gap-2.5">
                                             <div className={`w-2 h-2 rounded-full ${col.color} shadow-sm ring-4 ring-white`} />
@@ -600,9 +634,9 @@ const AdminApplicationManagement = () => {
                                         {getCandidatesForColumn(col).map((app, index) => (
                                             <Draggable key={app._id} draggableId={app._id} index={index}>
                                                 {(provided) => (
-                                                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="bg-white p-3 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgb(0,0,0,0.02)] transition-all hover:shadow-xl hover:border-slate-300">
+                                                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="bg-white p-3 rounded-md border border-slate-100 shadow-[0_2px_8px_rgb(0,0,0,0.02)] transition-all hover:shadow-xl hover:border-slate-300">
                                                         <div className="flex items-center gap-3 mb-2.5">
-                                                            <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                                                            <div className="w-10 h-10 rounded-md overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
                                                                 {app.candidate?.avatar && !imageErrors[app._id] ? <img src={app.candidate.avatar.startsWith('http') ? app.candidate.avatar : `${BASE_URL}/${app.candidate.avatar}`} alt="Avatar" className="w-full h-full object-cover" onError={() => setImageErrors(prev => ({ ...prev, [app._id]: true }))} /> : <span className={`text-[12px] font-medium uppercase ${col.text}`}>{app.candidate?.firstName?.[0]}{app.candidate?.lastName?.[0]}</span>}
                                                             </div>
                                                             <div className="min-w-0">
@@ -629,7 +663,7 @@ const AdminApplicationManagement = () => {
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-2">
-                                                            <button onClick={() => setViewingProfile(app)} className={`flex-1 text-center py-2 ${col.bg} text-[10px] font-medium ${col.text} uppercase rounded-lg hover:brightness-95`}>View Details</button>
+                                                            <button onClick={handlePipelineViewDetails} className={`flex-1 text-center py-2 ${col.bg} text-[10px] font-medium ${col.text} uppercase rounded-lg hover:brightness-95`}>View Details</button>
                                                             {col.action && <button onClick={() => handleAction(app._id, col.action)} className={`p-2 rounded-lg ${col.bg} ${col.text} hover:scale-110`} title="Move Forward"><HiOutlineChevronDoubleRight className="w-3.5 h-3.5" /></button>}
                                                         </div>
                                                     </div>
@@ -650,33 +684,9 @@ const AdminApplicationManagement = () => {
     return (
         <div className="w-full h-full overflow-hidden">
             {view === 'jobs' ? renderJobCards() : view === 'applicants' ? renderApplicantsList() : renderPipelineView()}
-            {viewingProfile && (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-                        <div className="px-8 py-6 bg-slate-900 text-white flex items-center justify-between shrink-0">
-                            <div className="flex items-center gap-4">
-                                <Avatar src={viewingProfile.candidate?.avatar && !imageErrors[viewingProfile._id] ? (viewingProfile.candidate.avatar.startsWith('http') ? viewingProfile.candidate.avatar : `${BASE_URL}/${viewingProfile.candidate.avatar}`) : null} sx={{ width: 64, height: 64, border: '2px solid white' }}>{viewingProfile.candidate?.firstName?.[0]}</Avatar>
-                                <div><h3 className="text-2xl font-medium leading-none mb-1">{viewingProfile.candidate?.firstName} {viewingProfile.candidate?.lastName}</h3><p className="text-xs text-slate-400">{viewingProfile.candidate?.email}</p></div>
-                            </div>
-                            <button onClick={() => setViewingProfile(null)} className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20"><HiOutlineXMark className="w-6 h-6" /></button>
-                        </div>
-                        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-slate-50/50">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                <div className="space-y-6">
-                                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm"><h4 className="text-[11px] font-medium text-slate-400/95 uppercase mb-4">Professional Skills</h4><div className="flex flex-wrap gap-2">{(viewingProfile.candidateProfile?.skills || []).map((skill, idx) => <span key={idx} className="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-[10px] uppercase rounded-lg">{skill}</span>)}</div></div>
-                                </div>
-                                <div className="md:col-span-2 space-y-8">
-                                    <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm"><h4 className="text-[11px] font-medium text-primary-600 uppercase mb-4">Professional Summary</h4><p className="text-sm text-slate-600 leading-relaxed font-medium">{viewingProfile.candidateProfile?.summary || "No summary provided."}</p></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="p-6 bg-white border-t border-slate-100 flex items-center justify-end gap-3"><button onClick={() => setViewingProfile(null)} className="px-8 py-3 bg-slate-50 text-slate-600 text-[11px] font-medium uppercase rounded-xl">Close</button><a href={`${BASE_URL}${viewingProfile.resumeUrl}`} target="_blank" className="px-8 py-3 bg-primary-600 text-white text-[11px] font-medium uppercase rounded-xl">Download Resume</a></div>
-                    </div>
-                </div>
-            )}
             {isScheduling && (
                 <div className="fixed inset-0 z-[500] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-                    <Paper elevation={24} sx={{ width: '100%', maxWidth: 500, borderRadius: 2, overflow: 'hidden' }}>
+                    <Paper elevation={24} sx={{ width: '100%', maxWidth: 500, borderRadius: 1, overflow: 'hidden' }}>
                         <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <Typography variant="h6">Schedule Interview</Typography>
                             <IconButton onClick={() => setIsScheduling(null)}><HiOutlineXMark /></IconButton>

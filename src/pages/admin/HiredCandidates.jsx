@@ -99,14 +99,14 @@ const HiredCandidates = () => {
                         View all candidates who are hired (Final Selected) across all jobs
                     </p>
                 </div>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-900 text-xs font-bold uppercase tracking-widest">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-bold uppercase tracking-widest">
                     <HiOutlineUsers className="w-4 h-4" />
                     <span>Total Hired: {totalHired}</span>
                 </div>
             </div>
 
             {/* Filters */}
-            <div className="card p-5 rounded-3xl border-none ring-1 ring-slate-100 bg-white">
+            <div className="card p-5 rounded-md border-slate-300 ring-1 ring-slate-100 bg-white">
                 <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
                     <div className="flex-1 relative">
                         <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -122,11 +122,11 @@ const HiredCandidates = () => {
             </div>
 
             {/* Table */}
-            <div className="card rounded-3xl border-none ring-1 ring-slate-100 bg-white overflow-hidden shadow-sm">
+            <div className="card rounded-md border-slate-300 ring-1 ring-slate-200 bg-white overflow-hidden shadow-sm">
                 <div className="overflow-x-auto scrollbar-hide">
                     <table className="w-full text-sm">
                         <thead>
-                            <tr className="bg-slate-50/60 border-b border-slate-100">
+                            <tr className="bg-slate-50/60 border-b border-slate-300">
                                 <th className="text-left px-6 py-4 font-bold text-black text-[12px] uppercase tracking-widest">
                                     Candidate
                                 </th>
@@ -221,7 +221,7 @@ const HiredCandidates = () => {
                                         <tr key={app._id} className="hover:bg-slate-50/60 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs font-medium border border-emerald-100 overflow-hidden relative">
+                                                    <div className="w-9 h-9 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs font-medium border border-emerald-100 overflow-hidden relative">
                                                         {candidate.avatar && !imageErrors[app._id] ? (
                                                             <img
                                                                 src={
@@ -245,9 +245,9 @@ const HiredCandidates = () => {
                                                         <p className="text-sm font-bold text-black leading-tight">
                                                             {candidate.firstName} {candidate.lastName}
                                                         </p>
-                                                        <p className="text-[11px] font-bold text-black uppercase tracking-widest mt-0.5">
+                                                        <span className="inline-block mt-1 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-300 rounded-md uppercase tracking-widest">
                                                             HIRED
-                                                        </p>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -269,7 +269,7 @@ const HiredCandidates = () => {
                                                         {job.jobTitle || job.title || 'Untitled Job'}
                                                     </p>
                                                     {jobCategory && (
-                                                        <span className="inline-flex px-2 py-0.5 rounded-md bg-blue-50 text-[9px] font-bold text-blue-500 uppercase">
+                                                        <span className="inline-flex px-2 py-0.5 rounded-md bg-blue-100 text-[9px] font-bold text-blue-500 uppercase">
                                                             {jobCategory}
                                                         </span>
                                                     )}
@@ -294,7 +294,7 @@ const HiredCandidates = () => {
                                                 <div className="inline-flex items-center gap-2">
                                                     <button
                                                         onClick={() => setDeletingApp(app)}
-                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-rose-200 text-rose-500 hover:bg-rose-50 hover:border-rose-400 transition-all"
+                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-md border border-rose-200 text-rose-500 hover:bg-rose-50 hover:border-rose-400 transition-all"
                                                         title="Delete hired record"
                                                     >
                                                         <HiOutlineTrash className="w-4 h-4" />
