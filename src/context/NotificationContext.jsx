@@ -12,16 +12,51 @@ export const NotificationProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
 
-  const fetchInitialData = async () => {
+  const fetchInitialData = async (limit = 20) => {
     try {
-      const res = await notificationAPI.getMyNotifications({ limit: 10 });
+      const res = await notificationAPI.getMyNotifications({ limit, page: 1 });
       setNotifications(res.data?.data?.notifications || []);
+      setPage(1);
+
+      const pagination = res.data?.data?.pagination;
+      if (pagination) {
+        setHasMore(pagination.hasNextPage);
+      } else {
+        setHasMore(false);
+      }
       
       const countRes = await notificationAPI.getUnreadCount();
       setUnreadCount(countRes.data?.data?.count || 0);
     } catch (error) {
       console.error('Failed to fetch notifications', error);
+    }
+  };
+
+  const loadMoreNotifications = async () => {
+    if (!hasMore) return;
+    try {
+      const nextPage = page + 1;
+      const res = await notificationAPI.getMyNotifications({ limit: 20, page: nextPage });
+      const newNotifs = res.data?.data?.notifications || [];
+      
+      setNotifications(prev => {
+        const existingIds = prev.map(n => n._id);
+        const filtered = newNotifs.filter(n => !existingIds.includes(n._id));
+        return [...prev, ...filtered];
+      });
+      setPage(nextPage);
+      
+      const pagination = res.data?.data?.pagination;
+      if (pagination) {
+        setHasMore(pagination.hasNextPage);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Failed to load more notifications', error);
     }
   };
 
@@ -32,7 +67,7 @@ export const NotificationProvider = ({ children }) => {
       // Socket setup
       const apiUrl = import.meta.env.VITE_API_URL || '';
       const socketUrl = apiUrl.replace('/api', '');
-      
+
       const socketInstance = io(socketUrl, {
         withCredentials: true,
         transports: ['websocket', 'polling']
@@ -48,7 +83,7 @@ export const NotificationProvider = ({ children }) => {
         console.log('[Socket] New notification:', notification);
         setNotifications((prev) => [notification, ...prev]);
         setUnreadCount((prev) => prev + 1);
-        
+
         // Browser notification
         if (Notification.permission === 'granted') {
           new Notification(notification.title, {
@@ -72,7 +107,7 @@ export const NotificationProvider = ({ children }) => {
   const markAsRead = async (id) => {
     try {
       await notificationAPI.markAsRead(id);
-      setNotifications(prev => 
+      setNotifications(prev =>
         prev.map(n => n._id === id ? { ...n, isRead: true } : n)
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
@@ -113,7 +148,9 @@ export const NotificationProvider = ({ children }) => {
     markAsRead,
     markAllAsRead,
     deleteNotification,
-    refreshNotifications: fetchInitialData
+    refreshNotifications: fetchInitialData,
+    loadMoreNotifications,
+    hasMore
   };
 
   return (

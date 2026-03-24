@@ -161,6 +161,7 @@ const AdminEditJobRequest = () => {
                 experienceRequired: editData.experienceRequired,
                 salaryMin: Number(editData.salaryMin),
                 salaryMax: Number(editData.salaryMax),
+                currency: editData.currency,
                 workType: editData.workType,
                 country: editData.country,
                 state: editData.state,
@@ -182,12 +183,20 @@ const AdminEditJobRequest = () => {
         }
     };
 
-    const formatSalary = (n) => {
+    const formatSalary = (n, currency = 'INR') => {
         if (n === null || n === undefined || isNaN(Number(n))) return '—';
         const num = Number(n);
-        if (num >= 100000) return `₹${(num / 100000).toFixed(1)}L`;
-        if (num >= 1000) return `₹${(num / 1000).toFixed(0)}K`;
-        return `₹${num}`;
+        const symbols = {
+            USD: '$',
+            INR: '₹',
+            EUR: '€',
+            GBP: '£',
+            AED: 'AED '
+        };
+        const symbol = symbols[currency] || '₹';
+        if (num >= 100000 && currency === 'INR') return `${symbol}${(num / 100000).toFixed(1)}L`;
+        if (num >= 1000) return `${symbol}${(num / 1000).toFixed(0)}K`;
+        return `${symbol}${num}`;
     };
 
     const formatDate = (dateStr) => {
@@ -332,14 +341,25 @@ const AdminEditJobRequest = () => {
 
                     {/* Salary Box */}
                     <div className="p-6 bg-slate-50/50 rounded-2xl border border-slate-100/50">
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Salary Range</label>
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Salary Range & Currency</label>
                         {isEditing ? (
-                            <div className="flex gap-3">
-                                <input type="number" value={data.salaryMin} onChange={e => handleChange('salaryMin', e.target.value)} className={`${inputCls} border-none bg-white`} placeholder="Min" />
-                                <input type="number" value={data.salaryMax} onChange={e => handleChange('salaryMax', e.target.value)} className={`${inputCls} border-none bg-white`} placeholder="Max" />
+                            <div className="flex flex-col gap-3">
+                                <select 
+                                    value={data.currency || 'INR'} 
+                                    onChange={e => handleChange('currency', e.target.value)} 
+                                    className={`${inputCls} border-none bg-white appearance-none cursor-pointer`}
+                                >
+                                    {['USD', 'INR', 'EUR', 'GBP', 'AED', 'CAD', 'AUD', 'SGD', 'SAR', 'QAR'].map(c => (
+                                        <option key={c} value={c}>{c}</option>
+                                    ))}
+                                </select>
+                                <div className="flex gap-3">
+                                    <input type="number" value={data.salaryMin} onChange={e => handleChange('salaryMin', e.target.value)} className={`${inputCls} border-none bg-white flex-1`} placeholder="Min" />
+                                    <input type="number" value={data.salaryMax} onChange={e => handleChange('salaryMax', e.target.value)} className={`${inputCls} border-none bg-white flex-1`} placeholder="Max" />
+                                </div>
                             </div>
                         ) : (
-                            <p className="text-sm font-black text-black/80">{formatSalary(data.salaryMin)} – {formatSalary(data.salaryMax)}</p>
+                            <p className="text-sm font-black text-black/80">{formatSalary(data.salaryMin, data.currency)} – {formatSalary(data.salaryMax, data.currency)}</p>
                         )}
                     </div>
 

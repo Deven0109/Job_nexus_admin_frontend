@@ -52,7 +52,20 @@ const HiredCandidates = () => {
 
             if (result.success && result.data) {
                 setApplications(result.data.applications || result.data.items || []);
-                setPagination(result.data.pagination || null);
+                
+                // Extract global total to synchronize with dashboard
+                const total = result.data.pagination?.total ?? result.data.total ?? 0;
+                const pageNum = result.data.pagination?.page ?? result.data.page ?? filters.page;
+                const limitNum = result.data.pagination?.limit ?? result.data.limit ?? filters.limit;
+
+                setPagination({
+                    total: total,
+                    page: pageNum,
+                    limit: limitNum,
+                    totalPages: result.data.pagination?.totalPages ?? result.data.totalPages ?? Math.ceil(total / limitNum),
+                    hasNextPage: (pageNum * limitNum) < total,
+                    hasPrevPage: pageNum > 1
+                });
             } else {
                 throw new Error(result.message || 'Failed to load hired candidates');
             }
